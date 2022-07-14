@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="insert-into" author="Radius17">
+        <insert tableName="t_user_roles">
+            <column name="user_id" value="1"/>
+            <column name="roles_id" value="1"/>
+        </insert>
+        <insert tableName="t_user_roles">
+            <column name="user_id" value="1"/>
+            <column name="roles_id" value="1111"/>
+        </insert>
+        <insert tableName="t_user_roles">
+            <column name="user_id" value="2"/>
+            <column name="roles_id" value="1"/>
+        </insert>
+
+        <rollback>
+            DELETE FROM t_user_roles WHERE user_id=1 OR user_id=2;
+        </rollback>
+    </changeSet>
+
+
+</databaseChangeLog>

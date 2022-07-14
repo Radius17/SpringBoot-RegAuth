@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.1.100:48800/project112
+    username: postgres
+    driver-class-name: org.postgresql.Driver
+    password: 1
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
