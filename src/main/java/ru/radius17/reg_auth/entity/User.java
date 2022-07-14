@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.Set;
@@ -19,12 +20,11 @@ public class User implements UserDetails {
     @Setter
     private Long id;
 
-    @Size(min=5, message = "Не меньше 5 знаков")
     @Getter
     @Setter
+    @Size(min=5, message = "Не меньше 5 знаков")
     private String username;
 
-    @Size(min=5, message = "Не меньше 5 знаков")
     @Getter
     @Setter
     private String password;
@@ -41,10 +41,13 @@ public class User implements UserDetails {
 
     @Getter
     @Setter
+    // @NonNull
+    @NotEmpty(message = "Не заполнен телефон")
     private String phone;
 
     @Getter
     @Setter
+    @NotEmpty(message = "Не заполнен E-mail")
     private String email;
 
     @Getter

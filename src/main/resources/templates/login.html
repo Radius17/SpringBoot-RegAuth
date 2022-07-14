@@ -1,24 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" th:with="pageTitle='Вход в систему', pageHeader=${pageTitle}">
+<html lang="en"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      th:with="pageTitle='Вход в систему', pageHeader=${pageTitle}">
 <head>
   <th:block th:replace="fragments/header :: commonHead"></th:block>
   <!-- other elements you want to reference in your layout -->
 </head>
 <body>
 <div th:replace="fragments/header :: commonHeader"></div>
-<!-- проверка и редирект -->
 <div class="main-wrapper">
-  <form method="POST" action="/login">
+  <form method="post" action="/login">
     <h1 th:text="${pageHeader}"></h1>
     <div class="form-row">
-      <input name="username" type="text" placeholder="Логин"
+      <input name="username" class="form-control" type="text" placeholder="Логин"
              autofocus="true"/>
     </div>
     <div class="form-row">
-      <input name="password" type="password" placeholder="Пароль"/>
+      <input name="password" class="form-control" type="password" placeholder="Пароль"/>
     </div>
     <div class="form-row form-buttons-row">
-      <button type="submit">Войти</button>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
     </div>
     <div class="link-row">
       <a href="/registration">Зарегистрироваться >>></a>

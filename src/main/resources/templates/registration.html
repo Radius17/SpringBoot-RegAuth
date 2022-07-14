@@ -1,0 +1,53 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      th:with="pageTitle='Регистрация', pageHeader=${pageTitle}">
+<head>
+  <th:block th:replace="fragments/header :: commonHead"></th:block>
+  <!-- other elements you want to reference in your layout -->
+</head>
+<body>
+<div th:replace="fragments/header :: commonHeader"></div>
+<!-- проверка и редирект -->
+<div class="main-wrapper">
+  <h1 th:text="${pageHeader}"></h1>
+
+  <form th:object="${userForm}" action="/registration" method="post">
+    <div class="form-row">
+      <input class="form-control" type="text" th:field="*{username}" placeholder="Логин" autofocus="true" />
+      <p th:if="${#fields.hasErrors('username')}" th:errorclass="error" th:errors="*{username}" />
+    </div>
+    <div class="form-row">
+      <input class="form-control" type="password" th:field="*{password}" placeholder="Пароль" />
+    </div>
+    <div class="form-row">
+      <input class="form-control" type="password" th:field="*{passwordConfirm}" placeholder="Подтверждение пароля" />
+      <p th:if="${#fields.hasErrors('password')}" th:errorclass="error" th:errors="*{password}" />
+    </div>
+    <div class="form-row">
+      <input class="form-control" type="text" th:field="*{nickname}" placeholder="Ник" />
+      <p th:if="${#fields.hasErrors('nickname')}" th:errorclass="error" th:errors="*{nickname}" />
+    </div>
+    <div class="form-row">
+      <input class="form-control" type="tel" th:field="*{phone}" placeholder="Телефон" />
+      <p th:if="${#fields.hasErrors('phone')}" th:errorclass="error" th:errors="*{phone}" />
+    </div>
+    <div class="form-row">
+      <input class="form-control" type="email" th:field="*{email}" placeholder="E-mail" />
+      <p th:if="${#fields.hasErrors('email')}" th:errorclass="error" th:errors="*{email}" />
+    </div>
+    <div class="form-row form-buttons-row">
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Зарегистрироваться</button>
+    </div>
+  </form>
+
+  <div class="link-row">
+    <a href="/"><<< На главную</a>
+  </div>
+</div>
+
+</div>
+<div th:replace="fragments/footer :: commonFooter"></div>
+</body>
+</html>
