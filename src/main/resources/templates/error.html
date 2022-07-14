@@ -11,10 +11,13 @@
         <table>
             <tr><td>Error Message</td><td th:text="${message}"></td></tr>
             <tr><td>Status Code</td><td th:text="${status}"></td></tr>
-            <tr><td>Exception</td><td th:text="${exception}"></td></tr>
-            <tr><td>Stacktrace</td><td><pre th:text="${trace}"></pre></td></tr>
-            <tr><td>Binding Errors</td><td th:text="${errors}"></td></tr>
+            <tr sec:authorize="isAuthenticated()"><td>Exception</td><td th:text="${exception}"></td></tr>
+            <tr sec:authorize="isAuthenticated()"><td>Stacktrace</td><td><pre th:text="${trace}"></pre></td></tr>
+            <tr sec:authorize="isAuthenticated()"><td>Binding Errors</td><td th:text="${errors}"></td></tr>
         </table>
+    </div>
+    <div class="link-row">
+        <a href="/"><<< На главную</a>
     </div>
 </div>
 <div th:replace="fragments/footer :: commonFooter"></div>

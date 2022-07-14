@@ -1,5 +1,13 @@
-<!DOCTYPE html>
-<html lang="en" th:with="pageTitle='Танцуют все ! ©', pageHeader='Танцуют все ! ©'">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org http://www.thymeleaf.org
+      http://www.ultraq.net.nz/thymeleaf/layout http://www.ultraq.net.nz/thymeleaf/layout
+      http://www.thymeleaf.org/thymeleaf-extras-springsecurity4 http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      th:with="pageTitle='Танцуют все ! ©', pageHeader='Танцуют все ! ©'">
 <head>
   <th:block th:replace="fragments/header :: commonHead"></th:block>
   <!-- other elements you want to reference in your layout -->
@@ -10,6 +18,18 @@
   <h1 th:text="${pageHeader}"></h1>
   <fieldset>
     <legend>Панель управления</legend>
+    <div sec:authorize="!isAuthenticated()">
+      <h4><a href="/login">Войти</a></h4>
+      <h4><a href="/registration">Зарегистрироваться</a></h4>
+    </div>
+    <div sec:authorize="isAuthenticated()">
+      <h3>Здравствуйте, <span sec:authentication="name"></span> !</h3>
+      <h4><a href="/profile">Профиль</a></h4>
+      <div sec:authorize="hasRole('ADMIN')">
+        <h4><a href="/admin/users">Пользователи</a></h4>
+      </div>
+      <h4><a href="/logout">Выйти</a></h4>
+    </div>
   </fieldset>
   <fieldset>
     <legend>Пробные ссылки</legend>
