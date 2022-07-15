@@ -9,25 +9,25 @@
 <body>
 <div th:replace="fragments/header :: commonHeader"></div>
 <div class="main-wrapper">
-  <form method="post" action="/login">
-    <h1 th:text="${pageHeader}"></h1>
-    <div class="form-row">
-      <input name="username" class="form-control" type="text" placeholder="Логин"
+  <div class="container">
+    <div class="row g-3"><div class="col-12"><a class="btn btn-outline-primary" href="/">На главную</a></div></div>
+    <form class="form-signin row row-cols-lg-auto g-3 align-items-center" method="post" action="/login">
+      <h1 class="" th:text="${pageHeader}"></h1>
+      <div class="col-12">
+        <input name="username" class="form-control" type="text" placeholder="Логин"
              autofocus="true"/>
-    </div>
-    <div class="form-row">
-      <input name="password" class="form-control" type="password" placeholder="Пароль"/>
-    </div>
-    <div class="form-row form-buttons-row">
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
-    </div>
-    <div class="link-row">
-      <a href="/registration">Зарегистрироваться >>></a>
-    </div>
-    <div class="link-row">
-      <a href="/"><<< На главную</a>
-    </div>
-  </form>
+      </div>
+      <div class="col-12">
+        <input name="password" class="form-control" type="password" placeholder="Пароль"/>
+      </div>
+      <div class="col text-center form-buttons">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+      </div>
+      <div class="col text-center form-buttons">
+          <a class="btn btn-lg btn-primary btn-block" href="/registration">Зарегистрироваться</a>
+      </div>
+    </form>
+  </div>
 </div>
 <div th:replace="fragments/footer :: commonFooter"></div>
 </body>

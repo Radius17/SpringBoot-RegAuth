@@ -1,41 +1,13 @@
 body {
-    background: #FFFFA8;
+
 }
-.main-wrapper{
-    width:960px;
+.main-wrapper {
+
+}
+.form-signin,
+.form-register,
+.form-profile{
     max-width: 100%;
+    width: 360px;
     margin: 0 auto;
-}
-.main-wrapper .form-row,
-.main-wrapper .list-row,
-.main-wrapper .link-row{
-    display: block;
-    padding-bottom: 15px;
-}
-.main-wrapper fieldset{
-    margin-bottom: 25px;
-}
-.main-wrapper .form-row input{
-    width: 100%;
-    padding:4px;
-}
-.main-wrapper form button{
-    padding:4px 15px;
-}
-.main-wrapper .form-buttons-row{
-    text-align: center;
-}
-.main-wrapper .list-row table{
-    width:100%;
-}
-.main-wrapper .list-row table tr{
-
-}
-.main-wrapper .list-row table tr th,
-.main-wrapper .list-row table tr td{
-    border: 1px solid;
-    padding:5px;
-}
-.main-wrapper .list-row table tr td{
-
 }

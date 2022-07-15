@@ -2,7 +2,7 @@
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      th:with="pageTitle='Регистрация', pageHeader=${pageTitle}">
+      th:with="pageTitle='Профиль', pageHeader=${pageTitle}">
 <head>
   <th:block th:replace="fragments/header :: commonHead"></th:block>
   <!-- other elements you want to reference in your layout -->
@@ -12,10 +12,10 @@
 <div class="main-wrapper">
   <div class="container">
     <div class="row g-3"><div class="col-12"><a class="btn btn-outline-primary" href="/">На главную</a></div></div>
-    <form class="form-register row row-cols-lg-auto g-3 align-items-center"  th:object="${userForm}" action="/registration" method="post">
+    <form class="form-register row row-cols-lg-auto g-3 align-items-center"  th:object="${userForm}" action="/profile" method="post">
       <h1 th:text="${pageHeader}"></h1>
       <div class="col-12">
-        <input class="form-control" type="text" th:field="*{username}" placeholder="Логин" autofocus="true" />
+        <input class="form-control" type="text" th:field="*{username}" placeholder="Логин" th:readonly="true" />
         <p th:if="${#fields.hasErrors('username')}" th:errorclass="error" th:errors="*{username}" />
       </div>
       <div class="col-12">
@@ -27,7 +27,7 @@
       </div>
       <div class="col-12">
         <input class="form-control" type="text" th:field="*{nickname}" placeholder="Ник" />
-        <p th:if="${#fields.hasErrors('nickname')}" th:errorclass="error" th:errors="*{nickname}" />
+        <p th:if="${#fields.hasErrors('nickname')}" th:errorclass="error" th:errors="*{nickname}" autofocus="true" />
       </div>
       <div class="col-12">
         <input class="form-control" type="tel" th:field="*{phone}" placeholder="Телефон" />
@@ -38,7 +38,7 @@
         <p th:if="${#fields.hasErrors('email')}" th:errorclass="error" th:errors="*{email}" />
       </div>
       <div class="col-12 text-center form-buttons">
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Зарегистрироваться</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Сохранить</button>
       </div>
     </form>
   </div>

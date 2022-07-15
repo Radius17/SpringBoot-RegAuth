@@ -7,17 +7,19 @@
 <body>
 <div th:replace="fragments/header :: commonHeader"></div>
 <div class="main-wrapper">
-    <div class="list-row">
-        <table>
-            <tr><td>Error Message</td><td th:text="${message}"></td></tr>
-            <tr><td>Status Code</td><td th:text="${status}"></td></tr>
-            <tr sec:authorize="isAuthenticated()"><td>Exception</td><td th:text="${exception}"></td></tr>
-            <tr sec:authorize="isAuthenticated()"><td>Stacktrace</td><td><pre th:text="${trace}"></pre></td></tr>
-            <tr sec:authorize="isAuthenticated()"><td>Binding Errors</td><td th:text="${errors}"></td></tr>
-        </table>
-    </div>
-    <div class="link-row">
-        <a href="/"><<< На главную</a>
+    <div class="container">
+        <div class="row g-3"><div class="col-12"><a class="btn btn-outline-primary" href="/">На главную</a></div></div>
+        <div class="row g-3">
+            <div class="col-12">
+                <table class="table">
+                    <tr><th>Error Message</th><td th:text="${message}"></td></tr>
+                    <tr><th>Status Code</th><td th:text="${status}"></td></tr>
+                    <tr sec:authorize="isAuthenticated()"><th>Exception</th><td th:text="${exception}"></td></tr>
+                    <tr sec:authorize="isAuthenticated()"><th>Stacktrace</th><td><pre th:text="${trace}"></pre></td></tr>
+                    <tr sec:authorize="isAuthenticated()"><th>Binding Errors</th><td th:text="${errors}"></td></tr>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 <div th:replace="fragments/footer :: commonFooter"></div>

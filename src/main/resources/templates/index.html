@@ -15,27 +15,33 @@
 <body>
 <div th:replace="fragments/header :: commonHeader"></div>
 <div class="main-wrapper">
-  <h1 th:text="${pageHeader}"></h1>
-  <fieldset>
-    <legend>Панель управления</legend>
-    <div sec:authorize="isAuthenticated()" th:remove="tag">
-      <h3>Здравствуйте, <span sec:authentication="name"></span> !</h3>
-      <h4><a href="/profile">Профиль</a></h4>
-      <div sec:authorize="hasRole('ADMIN')">
-        <h4><a href="/admin/users">Пользователи</a></h4>
+  <div class="container">
+    <div class="row">
+      <div class="col text-center">
+        <h1 th:text="${pageHeader}"></h1>
+        <fieldset>
+          <legend>Панель управления</legend>
+          <div sec:authorize="isAuthenticated()" th:remove="tag">
+            <h3>Здравствуйте, <span sec:authentication="name"></span> !</h3>
+            <h4><a href="/profile">Профиль</a></h4>
+            <div sec:authorize="hasRole('ADMIN')">
+              <h4><a href="/admin/users">Пользователи</a></h4>
+            </div>
+            <h4><a href="/logout">Выйти</a></h4>
+          </div>
+          <div sec:authorize="!isAuthenticated()" th:remove="tag">
+            <h4><a href="/login">Войти</a></h4>
+            <h4><a href="/registration">Зарегистрироваться</a></h4>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Пробные ссылки</legend>
+          <h4><a href="/profile">Профиль (только пользователи)</a></h4>
+          <h4><a href="/admin/users">Пользователи (только админ)</a></h4>
+        </fieldset>
       </div>
-      <h4><a href="/logout">Выйти</a></h4>
     </div>
-    <div sec:authorize="!isAuthenticated()" th:remove="tag">
-      <h4><a href="/login">Войти</a></h4>
-      <h4><a href="/registration">Зарегистрироваться</a></h4>
-    </div>
-  </fieldset>
-  <fieldset>
-    <legend>Пробные ссылки</legend>
-    <h4><a href="/profile">Профиль (только пользователи)</a></h4>
-    <h4><a href="/admin/users">Пользователи (только админ)</a></h4>
-  </fieldset>
+  </div>
 </div>
 <div th:replace="fragments/footer :: commonFooter"></div>
 </body>

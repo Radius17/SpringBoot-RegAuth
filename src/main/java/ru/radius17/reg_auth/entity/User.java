@@ -22,7 +22,7 @@ public class User implements UserDetails {
 
     @Getter
     @Setter
-    @Size(min=5, message = "Не меньше 5 знаков")
+    @Size(min=4, message = "Не меньше 4 знаков")
     private String username;
 
     @Getter
@@ -36,7 +36,7 @@ public class User implements UserDetails {
 
     @Getter
     @Setter
-    @Size(min=5, message = "Не меньше 5 знаков")
+    @Size(min=4, message = "Не меньше 4 знаков")
     private String nickname;
 
     @Getter
