@@ -37,12 +37,16 @@ public class ProfileController {
             userForm.setPasswordConfirm(null);
         } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())){
             bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, "Пароли не совпадают"));
-            return "profile";
         }
 
         if (bindingResult.hasErrors()) {
             return "profile";
         }
+
+        userForm.setId(mySelf.getId());
+        userForm.setUsername(mySelf.getUsername());
+        userForm.setComments(mySelf.getComments());
+        userForm.setRoles(mySelf.getRoles());
 
         if (!userService.saveUser(userForm, mySelf)){
             model.addAttribute("profileError", "Ошибка сохранения.");

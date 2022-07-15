@@ -1,7 +1,7 @@
 package ru.radius17.reg_auth.controller;
 
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
+import ru.radius17.reg_auth.entity.Role;
 import ru.radius17.reg_auth.entity.User;
 import ru.radius17.reg_auth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.util.Collections;
 
 @Controller
 public class RegistrationController {
@@ -33,12 +34,15 @@ public class RegistrationController {
             bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, "Пароль не может быть пустым"));
         } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())){
             bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, "Пароли не совпадают"));
-            return "registration";
         }
 
         if (bindingResult.hasErrors()) {
             return "registration";
         }
+
+        userForm.setId(null);
+        userForm.setComments("");
+        userForm.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
 
         if (!userService.addUser(userForm)){
             model.addAttribute("registrationError", "Ошибка регистрации.");

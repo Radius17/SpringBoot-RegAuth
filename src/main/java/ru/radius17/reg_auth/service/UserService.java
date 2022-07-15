@@ -2,7 +2,6 @@ package ru.radius17.reg_auth.service;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import ru.radius17.reg_auth.entity.Role;
 import ru.radius17.reg_auth.entity.User;
 import ru.radius17.reg_auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.Null;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,9 +51,6 @@ public class UserService implements UserDetailsService {
     }
     public boolean addUser(User userForm) {
         //@TODO Обработка ошибок уникальности полей
-        userForm.setId(null);
-        userForm.setComments("");
-        userForm.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
         try {
             userRepository.save(userForm);
@@ -67,14 +61,8 @@ public class UserService implements UserDetailsService {
     }
     public boolean saveUser(User userForm, User mySelf) {
         //@TODO Обработка ошибок уникальности полей
-        userForm.setId(mySelf.getId());
-        userForm.setUsername(mySelf.getUsername());
-        userForm.setComments(mySelf.getComments());
-        userForm.setRoles(mySelf.getRoles());
         if(userForm.getPassword().equals(userForm.getPasswordConfirm())){
             userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
-        } else {
-            userForm.setPassword(mySelf.getPassword());
         }
         try {
             userRepository.save(userForm);
