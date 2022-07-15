@@ -1,5 +1,13 @@
-<!DOCTYPE html>
-<html lang="en" th:with="pageTitle='Танцуют все ! ©', pageHeader='Танцуют все ! ©'">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org http://www.thymeleaf.org
+      http://www.ultraq.net.nz/thymeleaf/layout http://www.ultraq.net.nz/thymeleaf/layout
+      http://www.thymeleaf.org/thymeleaf-extras-springsecurity4 http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      th:with="pageTitle='Танцуют все ! ©', pageHeader=${pageTitle}">
 <head>
   <th:block th:replace="fragments/header :: commonHead"></th:block>
   <!-- other elements you want to reference in your layout -->
@@ -7,7 +15,15 @@
 <body>
 <div th:replace="fragments/header :: commonHeader"></div>
 <div class="main-wrapper">
-<!-- Some content here -->
+  <div class="container">
+    <div class="row g-3"><div class="col-12"><a class="btn btn-outline-primary" href="/">На главную</a></div></div>
+    <div class="row g-3">
+      <div class="col text-center">
+        <h1 th:text="${pageHeader}"></h1>
+        <!-- Some content here -->
+      </div>
+    </div>
+  </div>
 </div>
 <div th:replace="fragments/footer :: commonFooter"></div>
 </body>
