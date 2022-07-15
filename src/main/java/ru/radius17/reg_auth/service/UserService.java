@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.Null;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -82,5 +83,14 @@ public class UserService implements UserDetailsService {
         }
         return true;
     }
-
+    public List<User> allUsers() {
+        return userRepository.findAll();
+    }
+    public boolean deleteUser(Long userId) {
+        if (userRepository.findById(userId).isPresent()) {
+            userRepository.deleteById(userId);
+            return true;
+        }
+        return false;
+    }
 }
