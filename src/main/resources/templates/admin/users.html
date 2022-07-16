@@ -16,7 +16,6 @@
 <div th:replace="fragments/header :: commonHeader"></div>
 <div class="main-wrapper">
   <div class="container">
-    <div class="row g-3"><div class="col-12"><a class="btn btn-outline-primary" href="/">На главную</a></div></div>
     <div class="row g-3">
       <div class="col text-center">
         <table class="table">
@@ -42,7 +41,7 @@
               <form action="/admin/users" method="post">
                 <input type="hidden" name="userId" th:value="${user.id}"/>
                 <input type="hidden" name="action" value="delete"/>
-                <button class="btn btn-danger btn-block" type="submit">Удалить</button>
+                <button title="Удалить" class="btn btn-danger btn-block" type="submit"><i class="bi-trash"></i></button>
               </form>
             </td>
           </tr>

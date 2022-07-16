@@ -18,6 +18,9 @@ SpringBoot registration and authentication.
 >
 > Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
 
+> Bootstrap Icons v1.9.0 (https://icons.getbootstrap.com/)
 >
-> 
+> Official open source SVG icon library for Bootstrap.
+>
+> Licensed under MIT (https://github.com/twbs/icons/blob/main/LICENSE.md)
 

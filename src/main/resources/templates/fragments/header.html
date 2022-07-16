@@ -4,6 +4,7 @@
   <title th:text="${pageTitle}">Template title</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
   <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap-icons.css" />
   <link rel="stylesheet" type="text/css" href="/css/style.css" />
   <script type="text/javascript" src="/js/bootstrap.bundle.min.js"></script>
   <script type="text/javascript" src="/js/main.js"></script>
@@ -11,4 +12,10 @@
 </th:block>
 
 <th:block th:fragment="commonHeader">
+  <header class="navbar navbar-expand-lg navbar-dark bd-navbar sticky-top">
+    <div class="container">
+      <div class="row g-3"><div class="col-12">
+        <a title="На главную" class="btn btn-outline-primary" href="/"><i class="bi-house"></i></a></div></div>
+    </div>
+  </header>
 </th:block>
