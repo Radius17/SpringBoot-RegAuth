@@ -3,6 +3,7 @@ package ru.radius17.reg_auth.controller;
 import org.springframework.validation.FieldError;
 import ru.radius17.reg_auth.entity.Role;
 import ru.radius17.reg_auth.entity.User;
+import ru.radius17.reg_auth.repository.RoleRepository;
 import ru.radius17.reg_auth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,7 +43,8 @@ public class RegistrationController {
 
         userForm.setId(null);
         userForm.setComments("");
-        userForm.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
+        // userForm.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
+        userForm.setRoles(Collections.singleton(userService.getDefaultRole()));
 
         if (!userService.addUser(userForm)){
             model.addAttribute("registrationError", "Ошибка регистрации.");

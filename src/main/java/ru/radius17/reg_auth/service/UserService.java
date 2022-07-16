@@ -2,7 +2,9 @@ package ru.radius17.reg_auth.service;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import ru.radius17.reg_auth.entity.Role;
 import ru.radius17.reg_auth.entity.User;
+import ru.radius17.reg_auth.repository.RoleRepository;
 import ru.radius17.reg_auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +19,9 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -80,5 +85,9 @@ public class UserService implements UserDetailsService {
             return true;
         }
         return false;
+    }
+
+    public Role getDefaultRole() {
+        return roleRepository.findById(1L).orElse(new Role());
     }
 }
