@@ -17,24 +17,12 @@
 <div class="main-wrapper">
   <div class="container">
     <div class="row">
-      <div class="col text-center">
-        <h1 th:text="${pageHeader}"></h1>
-        <fieldset>
-          <legend>Панель управления</legend>
-          <div sec:authorize="isAuthenticated()" th:remove="tag">
-            <h3>Здравствуйте, <span sec:authentication="name"></span> !</h3>
-            <h4><a href="/profile">Профиль</a></h4>
-            <div sec:authorize="hasRole('ADMIN')">
-              <h4><a href="/admin/users">Пользователи</a></h4>
-            </div>
-            <h4><a href="/logout">Выйти</a></h4>
-          </div>
-          <div sec:authorize="!isAuthenticated()" th:remove="tag">
-            <h4><a href="/login">Войти</a></h4>
-            <h4><a href="/registration">Зарегистрироваться</a></h4>
-          </div>
-        </fieldset>
-        <fieldset>
+      <div class="col g-3 text-center">
+        <h1 class="h3" th:text="${pageHeader}"></h1>
+        <div sec:authorize="isAuthenticated()" th:remove="tag">
+          <h3 class="h4">Здравствуйте, <span sec:authentication="name"></span> !</h3>
+        </div>
+        <fieldset class="border p-2 my-3">
           <legend>Пробные ссылки</legend>
           <h4><a href="/profile">Профиль (только пользователи)</a></h4>
           <h4><a href="/admin/users">Пользователи (только админ)</a></h4>

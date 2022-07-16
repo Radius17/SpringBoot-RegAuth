@@ -8,10 +8,9 @@
 <div th:replace="fragments/header :: commonHeader"></div>
 <div class="main-wrapper">
     <div class="container">
-        <div class="row g-3"><div class="col-12"><a class="btn btn-outline-primary" href="/">На главную</a></div></div>
         <div class="row g-3">
             <div class="col-12">
-                <table class="table">
+                <table class="table my-3">
                     <tr><th>Error Message</th><td th:text="${message}"></td></tr>
                     <tr><th>Status Code</th><td th:text="${status}"></td></tr>
                     <tr sec:authorize="isAuthenticated()"><th>Exception</th><td th:text="${exception}"></td></tr>

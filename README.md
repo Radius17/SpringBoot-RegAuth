@@ -18,6 +18,14 @@ SpringBoot registration and authentication.
 >
 > Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
 
+> Bootstrap Utilities v5.0.2 (https://getbootstrap.com/)
+> 
+> Copyright 2011-2021 The Bootstrap Authors
+> 
+> Copyright 2011-2021 Twitter, Inc.
+> 
+> Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+
 > Bootstrap Icons v1.9.0 (https://icons.getbootstrap.com/)
 >
 > Official open source SVG icon library for Bootstrap.

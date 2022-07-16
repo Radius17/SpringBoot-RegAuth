@@ -12,7 +12,7 @@
 <div class="main-wrapper">
   <div class="container">
     <form class="form-register row row-cols-lg-auto g-3 align-items-center"  th:object="${userForm}" action="/registration" method="post">
-      <h1 th:text="${pageHeader}"></h1>
+      <h1 class="h3" th:text="${pageHeader}"></h1>
       <div class="col-12">
         <input class="form-control" type="text" th:field="*{username}" placeholder="Логин" autofocus="true" />
         <p th:if="${#fields.hasErrors('username')}" th:errorclass="error" th:errors="*{username}" />
@@ -37,7 +37,7 @@
         <p th:if="${#fields.hasErrors('email')}" th:errorclass="error" th:errors="*{email}" />
       </div>
       <div class="col-12 text-center form-buttons">
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Зарегистрироваться</button>
+        <button class="btn btn-primary btn-block" type="submit">Зарегистрироваться</button>
       </div>
     </form>
   </div>

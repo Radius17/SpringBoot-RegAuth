@@ -16,8 +16,13 @@
 <div th:replace="fragments/header :: commonHeader"></div>
 <div class="main-wrapper">
   <div class="container">
-    <div class="row g-3">
-      <div class="col text-center">
+    <div class="row">
+      <div class="col-12 g-3">
+        <h1 class="h3" th:text="${pageHeader}"></h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col g-3 text-center">
         <table class="table">
           <thead>
             <th>ID</th>

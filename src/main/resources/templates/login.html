@@ -11,7 +11,7 @@
 <div class="main-wrapper">
   <div class="container">
     <form class="form-signin row row-cols-lg-auto g-3 align-items-center" method="post" action="/login">
-      <h1 class="" th:text="${pageHeader}"></h1>
+      <h1 class="h3" th:text="${pageHeader}"></h1>
       <div class="col-12">
         <input name="username" class="form-control" type="text" placeholder="Логин"
              autofocus="true"/>
@@ -20,10 +20,10 @@
         <input name="password" class="form-control" type="password" placeholder="Пароль"/>
       </div>
       <div class="col text-center form-buttons">
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+        <button class="btn btn-primary btn-block" type="submit">Войти</button>
       </div>
       <div class="col text-center form-buttons">
-          <a class="btn btn-lg btn-primary btn-block" href="/registration">Зарегистрироваться</a>
+          <a class="btn btn-primary btn-block" href="/registration">Зарегистрироваться</a>
       </div>
     </form>
   </div>
