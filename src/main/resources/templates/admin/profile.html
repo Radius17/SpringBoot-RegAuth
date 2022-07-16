@@ -1,0 +1,47 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      th:with="pageTitle='Профиль', pageHeader=${pageTitle}">
+<head>
+  <th:block th:replace="fragments/header :: commonHead"></th:block>
+  <!-- other elements you want to reference in your layout -->
+</head>
+<body>
+<div th:replace="fragments/header :: commonHeader"></div>
+<div class="main-wrapper">
+  <div class="container">
+    <form class="form-register row row-cols-lg-auto g-3 align-items-center"  th:object="${userForm}" action="/profile" method="post">
+      <h1 class="h3" th:text="${pageHeader}"></h1>
+      <div class="col-12">
+        <input class="form-control" type="text" th:field="*{username}" placeholder="Логин" />
+        <p th:if="${#fields.hasErrors('username')}" th:errorclass="error" th:errors="*{username}" autofocus="true" />
+      </div>
+      <div class="col-12">
+        <input class="form-control" type="password" th:field="*{password}" placeholder="Пароль" />
+      </div>
+      <div class="col-12">
+        <input class="form-control" type="password" th:field="*{passwordConfirm}" placeholder="Подтверждение пароля" />
+        <p th:if="${#fields.hasErrors('password')}" th:errorclass="error" th:errors="*{password}" />
+      </div>
+      <div class="col-12">
+        <input class="form-control" type="text" th:field="*{nickname}" placeholder="Ник" />
+        <p th:if="${#fields.hasErrors('nickname')}" th:errorclass="error" th:errors="*{nickname}" />
+      </div>
+      <div class="col-12">
+        <input class="form-control" type="tel" th:field="*{phone}" placeholder="Телефон" />
+        <p th:if="${#fields.hasErrors('phone')}" th:errorclass="error" th:errors="*{phone}" />
+      </div>
+      <div class="col-12">
+        <input class="form-control" type="email" th:field="*{email}" placeholder="E-mail" />
+        <p th:if="${#fields.hasErrors('email')}" th:errorclass="error" th:errors="*{email}" />
+      </div>
+      <div class="col-12 text-center form-buttons">
+        <button class="btn btn-primary btn-block" type="submit">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+<div th:replace="fragments/footer :: commonFooter"></div>
+</body>
+</html>
