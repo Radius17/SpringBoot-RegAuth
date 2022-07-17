@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class LoginController {
+public class UserLoginController {
     @RequestMapping("/login")
     public String login(Model model) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

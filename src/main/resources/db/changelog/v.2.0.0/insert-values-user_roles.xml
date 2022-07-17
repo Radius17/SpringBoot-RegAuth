@@ -11,6 +11,10 @@
         </insert>
         <insert tableName="t_user_roles">
             <column name="user_id" value="1"/>
+            <column name="roles_id" value="111"/>
+        </insert>
+        <insert tableName="t_user_roles">
+            <column name="user_id" value="1"/>
             <column name="roles_id" value="1111"/>
         </insert>
         <insert tableName="t_user_roles">

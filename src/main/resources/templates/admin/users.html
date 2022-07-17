@@ -1,12 +1,11 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
 <html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.thymeleaf.org http://www.thymeleaf.org
-      http://www.ultraq.net.nz/thymeleaf/layout http://www.ultraq.net.nz/thymeleaf/layout
-      http://www.thymeleaf.org/thymeleaf-extras-springsecurity4 http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xsi:schemaLocation="http://www.thymeleaf.org
+          http://www.ultraq.net.nz/thymeleaf/layout
+          http://www.ultraq.net.nz/thymeleaf/layout"
       th:with="pageTitle='Управление пользователями', pageHeader=${pageTitle}">
 <head>
   <th:block th:replace="fragments/header :: commonHead"></th:block>
@@ -21,18 +20,28 @@
         <h1 class="h3" th:text="${pageHeader}"></h1>
       </div>
     </div>
+    <div class="col-12" th:if="${infoMessage}">
+      <div class="alert alert-info alert-dismissible fade show mb-0" th:inline="text">[[${infoMessage}]]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    </div>
+    <div class="col-12" th:if="${errorMessage}">
+      <div class="alert alert-danger alert-dismissible fade show mb-0" th:inline="text">[[${errorMessage}]]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    </div>
+    <div class="col-12 text-end">
+      <a title="Добавить" class="btn btn-success btn-block" th:href="'/admin/users/add'"><i class="bi-plus"></i></a>
+    </div>
     <div class="row">
       <div class="col g-3 text-center">
-        <table class="table">
-          <thead>
+        <table class="table table-striped align-middle">
+          <thead><tr>
             <th>ID</th>
             <th>Логин</th>
             <th>Ник</th>
             <th>E-mail</th>
             <th>Телефон</th>
             <th>Роли</th>
+            <th>Активен</th>
             <th>Действия</th>
-          </thead>
+          </tr></thead>
           <tr th:each="user: ${itemsPage}">
             <td th:text="${user.id}" />
             <td th:text="${user.username}" />
@@ -40,8 +49,11 @@
             <td th:text="${user.email}" />
             <td th:text="${user.phone}" />
             <td>
-              <span th:each="role: ${user.roles}" th:text="${role.name}+';'" />
+              <!-- <span th:each="role: ${user.roles}" th:text="${role.label}+';'" /> -->
+              <!-- <span th:with="userRoles=${user.roles}" th:utext="${#strings.arrayJoin(userRoles.![label], '<br />')}" th:remove="tag" /> -->
+              <span th:utext="${#strings.arrayJoin(user.roles.![label], ',<br />')}" th:remove="tag"></span>
             </td>
+            <td th:text="${user.enabled} ? 'Да' : 'Нет'" />
             <td>
               <form action="/admin/users"
                     method="post"
@@ -49,7 +61,7 @@
                     onsubmit="return confirm('Вы действительно хотите удалить '+this.getAttribute('data-username')+'?');">
                 <input type="hidden" name="userId" th:value="${user.id}"/>
                 <input type="hidden" name="action" value="delete"/>
-                <a title="Изменить" class="btn btn-success btn-block" th:href="'/admin/users/'+${user.id}"><i class="bi-pen"></i></a>
+                <a title="Изменить" class="btn btn-success btn-block" th:href="'/admin/users/modify/'+${user.id}"><i class="bi-pen"></i></a>
                 <button title="Удалить" class="btn btn-danger btn-block" type="submit"><i class="bi-trash"></i></button>
               </form>
             </td>
@@ -59,20 +71,14 @@
       <div class="row" th:if="${itemsPage.totalPages > 0}">
         <div class="col g-3">
           <ul class="pagination justify-content-center">
-            <li th:if="${itemsPage.number} > 0" class="page-item">
-              <a th:text="Пред." th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number})}"></a>
-            </li>
-            <li th:if="${itemsPage.number} <= 0" class="page-item disabled">
-              <a th:text="Пред." th:class="page-link" href="#"></a>
+            <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
+              <a th:text="'Пред.'" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number})}"></a>
             </li>
             <li th:class="${pageNumber==itemsPage.number + 1} ? 'page-item active' : 'page-item'" th:each="pageNumber : ${pageNumbers}">
               <a th:text="${pageNumber}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${pageNumber})}"></a>
             </li>
-            <li th:if="${itemsPage.number} + 1 < ${itemsPage.totalPages}" class="page-item">
-              <a th:text="След." th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number}+2)}"></a>
-            </li>
-            <li th:if="${itemsPage.number} + 1 >= ${itemsPage.totalPages}" class="page-item disabled">
-              <a th:text="След." th:class="page-link" href="#"></a>
+            <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
+              <a th:text="'След.'" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number}+2)}"></a>
             </li>
           </ul>
         </div>

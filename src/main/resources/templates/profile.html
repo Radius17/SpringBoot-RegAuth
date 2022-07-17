@@ -13,28 +13,37 @@
   <div class="container">
     <form class="form-register row row-cols-lg-auto g-3 align-items-center"  th:object="${userForm}" action="/profile" method="post">
       <h1 class="h3" th:text="${pageHeader}"></h1>
-      <div class="col-12">
-        <input class="form-control" type="text" th:field="*{username}" placeholder="Логин" th:readonly="true" />
-        <p th:if="${#fields.hasErrors('username')}" th:errorclass="error" th:errors="*{username}" />
+      <div class="col-12" th:if="${formErrorMessage}">
+        <div class="alert alert-danger mb-0" th:text="${formErrorMessage}">Info!</div>
       </div>
       <div class="col-12">
-        <input class="form-control" type="password" th:field="*{password}" placeholder="Пароль" />
+        <label class="form-label" th:for="username" th:text="Логин"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="text" th:field="*{username}" placeholder="Логин" th:readonly="true" />
+        <span th:if="${#fields.hasErrors('username')}" th:errorclass="invalid-feedback" th:errors="*{username}" />
       </div>
       <div class="col-12">
-        <input class="form-control" type="password" th:field="*{passwordConfirm}" placeholder="Подтверждение пароля" />
-        <p th:if="${#fields.hasErrors('password')}" th:errorclass="error" th:errors="*{password}" />
+        <label class="form-label" th:for="password" th:text="Пароль"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="password" th:field="*{password}" placeholder="Пароль" />
       </div>
       <div class="col-12">
-        <input class="form-control" type="text" th:field="*{nickname}" placeholder="Ник" />
-        <p th:if="${#fields.hasErrors('nickname')}" th:errorclass="error" th:errors="*{nickname}" autofocus="true" />
+        <label class="form-label" th:for="passwordConfirm" th:text="'Подтверждение пароля'"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="password" th:field="*{passwordConfirm}" placeholder="Подтверждение пароля" />
+        <span th:if="${#fields.hasErrors('password')}" th:errorclass="invalid-feedback" th:errors="*{password}" />
       </div>
       <div class="col-12">
-        <input class="form-control" type="tel" th:field="*{phone}" placeholder="Телефон" />
-        <p th:if="${#fields.hasErrors('phone')}" th:errorclass="error" th:errors="*{phone}" />
+        <label class="form-label" th:for="nickname" th:text="Ник"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="text" th:field="*{nickname}" placeholder="Ник" />
+        <span th:if="${#fields.hasErrors('nickname')}" th:errorclass="invalid-feedback" th:errors="*{nickname}" autofocus="true" />
       </div>
       <div class="col-12">
-        <input class="form-control" type="email" th:field="*{email}" placeholder="E-mail" />
-        <p th:if="${#fields.hasErrors('email')}" th:errorclass="error" th:errors="*{email}" />
+        <label class="form-label" th:for="phone" th:text="Телефон"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="tel" th:field="*{phone}" placeholder="Телефон" />
+        <span th:if="${#fields.hasErrors('phone')}" th:errorclass="invalid-feedback" th:errors="*{phone}" />
+      </div>
+      <div class="col-12">
+        <label class="form-label" th:for="email" th:text="E-mail"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="email" th:field="*{email}" placeholder="E-mail" />
+        <span th:if="${#fields.hasErrors('email')}" th:errorclass="invalid-feedback" th:errors="*{email}" />
       </div>
       <div class="col-12 text-center form-buttons">
         <button class="btn btn-primary btn-block" type="submit">Сохранить</button>

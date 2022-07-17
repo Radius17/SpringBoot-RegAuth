@@ -22,7 +22,11 @@
             <column name="email" type="varchar(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="comments" type="varchar(255)"/>
+            <column name="description" type="varchar(255)"/>
+            <column name="enabled" type="bool" defaultValue="true">
+                <constraints nullable="false" unique="false" />
+            </column>
+
         </createTable>
     </changeSet>
 

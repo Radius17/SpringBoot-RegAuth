@@ -9,7 +9,12 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="name" type="varchar(255)"/>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="label" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
         </createTable>
     </changeSet>
 

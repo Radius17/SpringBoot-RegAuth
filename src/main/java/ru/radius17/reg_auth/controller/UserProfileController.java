@@ -15,13 +15,13 @@ import ru.radius17.reg_auth.service.UserService;
 import javax.validation.Valid;
 
 @Controller
-public class ProfileController {
+public class UserProfileController {
 
     @Autowired
     private UserService userService;
 
     @GetMapping("/profile")
-    public String profile(Model model) throws UsernameNotFoundException {
+    public String modifyProfile(Model model) throws UsernameNotFoundException {
         User user = userService.getMySelf();
         user.setPassword(null);
         user.setPasswordConfirm(null);
@@ -37,6 +37,7 @@ public class ProfileController {
             userForm.setPasswordConfirm(null);
         } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())){
             bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, "Пароли не совпадают"));
+            bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, "Пароли не совпадают"));
         }
 
         if (bindingResult.hasErrors()) {
@@ -45,11 +46,11 @@ public class ProfileController {
 
         userForm.setId(mySelf.getId());
         userForm.setUsername(mySelf.getUsername());
-        userForm.setComments(mySelf.getComments());
+        userForm.setDescription(mySelf.getDescription());
         userForm.setRoles(mySelf.getRoles());
-
+        userForm.setEnabled(mySelf.getEnabled());
         if (!userService.saveUser(userForm, mySelf)){
-            model.addAttribute("profileError", "Ошибка сохранения.");
+            model.addAttribute("formErrorMessage", "Ошибка сохранения.");
             return "profile";
         }
         return "redirect:/";

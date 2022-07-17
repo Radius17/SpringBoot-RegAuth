@@ -1,5 +1,6 @@
 package ru.radius17.reg_auth.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -52,31 +53,36 @@ public class User implements UserDetails {
 
     @Getter
     @Setter
-    private String comments;
+    private String description;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @Getter
     @Setter
     private Set<Role> roles;
 
+    @Getter
+    @Setter
+    @Builder.Default
+    private Boolean enabled = false;
+
     public User() { }
 
     @Override
-    public boolean isAccountNonExpired() { return true; }
+    public boolean isAccountNonExpired() { return this.enabled; }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.enabled;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return this.enabled;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.enabled;
     }
 
     @Override

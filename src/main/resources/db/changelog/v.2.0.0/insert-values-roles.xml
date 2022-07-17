@@ -8,16 +8,27 @@
         <insert tableName="t_role">
             <column name="id" value="1"/>
             <column name="name" value="ROLE_USER"/>
+            <column name="label" value="User"/>
+        </insert>
+
+        <insert tableName="t_role">
+            <column name="id" value="111"/>
+            <column name="name" value="ROLE_MANAGER"/>
+            <column name="label" value="Manager"/>
         </insert>
 
         <insert tableName="t_role">
             <column name="id" value="1111"/>
             <column name="name" value="ROLE_ADMIN"/>
+            <column name="label" value="Administrator"/>
         </insert>
 
         <rollback>
             <delete tableName="t_role">
                 <where>id = 1</where>
+            </delete>
+            <delete tableName="t_role">
+                <where>id = 111</where>
             </delete>
             <delete tableName="t_role">
                 <where>id = 1111</where>

@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" th:with="pageTitle=${status} + ' - ' + ${message}">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      th:with="pageTitle=${status} + ' - ' + ${message}">
 <head>
     <th:block th:replace="fragments/header :: commonHead"></th:block>
     <!-- other elements you want to reference in your layout -->
