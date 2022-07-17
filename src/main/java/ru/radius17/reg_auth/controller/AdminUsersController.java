@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.radius17.reg_auth.entity.Role;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,31 +45,6 @@ public class AdminUsersController {
     public String saveUserProfile(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, Model model) {
         User mySelf = userService.getMySelf();
         return "admin/profile";
-/*
-        if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()){
-            userForm.setPassword(mySelf.getPassword());
-            userForm.setPasswordConfirm(null);
-        } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())){
-            bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, "Пароли не совпадают"));
-            bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, "Пароли не совпадают"));
-        }
-
-        if (bindingResult.hasErrors()) {
-            return "profile";
-        }
-
-        userForm.setId(mySelf.getId());
-        userForm.setUsername(mySelf.getUsername());
-        userForm.setDescription(mySelf.getDescription());
-        userForm.setRoles(mySelf.getRoles());
-        userForm.setEnabled(mySelf.getEnabled());
-        if (!userService.saveUser(userForm, mySelf)){
-            model.addAttribute("formErrorMessage", "Ошибка сохранения.");
-            return "profile";
-        }
-        return "redirect:/";
-
- */
     }
 
     @GetMapping("/admin/users")
