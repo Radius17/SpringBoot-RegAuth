@@ -2,7 +2,7 @@
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      th:with="pageTitle='Вход в систему', pageHeader=${pageTitle}">
+      th:with="pageTitle=#{title.login}, pageHeader=${pageTitle}">
 <head>
   <th:block th:replace="fragments/header :: commonHead"></th:block>
   <!-- other elements you want to reference in your layout -->
@@ -14,17 +14,17 @@
     <form class="form-signin row row-cols-lg-auto g-3 align-items-center" method="post" action="/login">
       <h1 class="h3" th:text="${pageHeader}"></h1>
       <div class="col-12">
-        <input name="username" class="form-control" type="text" placeholder="Логин"
+        <input name="username" class="form-control" type="text" th:placeholder="#{user.login}"
              autofocus="true"/>
       </div>
       <div class="col-12">
-        <input name="password" class="form-control" type="password" placeholder="Пароль"/>
+        <input name="password" class="form-control" type="password" th:placeholder="#{user.password}"/>
       </div>
       <div class="col text-center form-buttons">
-        <button class="btn btn-primary btn-block" type="submit">Войти</button>
+        <button class="btn btn-primary btn-block" type="submit" th:text="#{submit.login}"></button>
       </div>
       <div class="col text-center form-buttons">
-          <a class="btn btn-primary btn-block" href="/registration">Зарегистрироваться</a>
+          <a class="btn btn-primary btn-block" href="/registration" th:text="#{link.register}"></a>
       </div>
     </form>
   </div>

@@ -2,7 +2,7 @@
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      th:with="pageTitle='Профиль', pageHeader=${pageTitle}">
+      th:with="pageTitle=#{title.profile}, pageHeader=${pageTitle}">
 <head>
   <th:block th:replace="fragments/header :: commonHead"></th:block>
   <!-- other elements you want to reference in your layout -->
@@ -17,36 +17,36 @@
         <div class="alert alert-danger mb-0" th:text="${formErrorMessage}">Info!</div>
       </div>
       <div class="col-12">
-        <label class="form-label" th:for="username" th:text="Логин"></label>
-        <input class="form-control" th:errorclass="is-invalid" type="text" th:field="*{username}" placeholder="Логин" th:readonly="true" />
+        <label class="form-label" th:for="username" th:text="#{user.login}"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="text" th:field="*{username}" th:placeholder="#{user.login}" th:readonly="true" />
         <span th:if="${#fields.hasErrors('username')}" th:errorclass="invalid-feedback" th:errors="*{username}" />
       </div>
       <div class="col-12">
-        <label class="form-label" th:for="password" th:text="Пароль"></label>
-        <input class="form-control" th:errorclass="is-invalid" type="password" th:field="*{password}" placeholder="Пароль" />
+        <label class="form-label" th:for="password" th:text="#{user.password}"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="password" th:field="*{password}" th:placeholder="#{user.password}" />
       </div>
       <div class="col-12">
-        <label class="form-label" th:for="passwordConfirm" th:text="'Подтверждение пароля'"></label>
-        <input class="form-control" th:errorclass="is-invalid" type="password" th:field="*{passwordConfirm}" placeholder="Подтверждение пароля" />
+        <label class="form-label" th:for="passwordConfirm" th:text="#{user.passwordConfirm}"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="password" th:field="*{passwordConfirm}" th:placeholder="#{user.passwordConfirm}" />
         <span th:if="${#fields.hasErrors('password')}" th:errorclass="invalid-feedback" th:errors="*{password}" />
       </div>
       <div class="col-12">
-        <label class="form-label" th:for="nickname" th:text="Ник"></label>
-        <input class="form-control" th:errorclass="is-invalid" type="text" th:field="*{nickname}" placeholder="Ник" />
+        <label class="form-label" th:for="nickname" th:text="#{user.nickname}"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="text" th:field="*{nickname}" th:placeholder="#{user.nickname}" />
         <span th:if="${#fields.hasErrors('nickname')}" th:errorclass="invalid-feedback" th:errors="*{nickname}" autofocus="true" />
       </div>
       <div class="col-12">
-        <label class="form-label" th:for="phone" th:text="Телефон"></label>
-        <input class="form-control" th:errorclass="is-invalid" type="tel" th:field="*{phone}" placeholder="Телефон" />
+        <label class="form-label" th:for="phone" th:text="#{user.phone}"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="tel" th:field="*{phone}" th:placeholder="#{user.phone}" />
         <span th:if="${#fields.hasErrors('phone')}" th:errorclass="invalid-feedback" th:errors="*{phone}" />
       </div>
       <div class="col-12">
-        <label class="form-label" th:for="email" th:text="E-mail"></label>
-        <input class="form-control" th:errorclass="is-invalid" type="email" th:field="*{email}" placeholder="E-mail" />
+        <label class="form-label" th:for="email" th:text="#{user.email}"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="email" th:field="*{email}" th:placeholder="#{user.email}" />
         <span th:if="${#fields.hasErrors('email')}" th:errorclass="invalid-feedback" th:errors="*{email}" />
       </div>
       <div class="col-12 text-center form-buttons">
-        <button class="btn btn-primary btn-block" type="submit">Сохранить</button>
+        <button class="btn btn-primary btn-block" type="submit" th:text="#{submit.save}"></button>
       </div>
     </form>
   </div>

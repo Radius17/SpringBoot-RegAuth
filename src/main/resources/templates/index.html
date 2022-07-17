@@ -20,12 +20,12 @@
       <div class="col g-3 text-center">
         <h1 class="h3" th:text="${pageHeader}"></h1>
         <div sec:authorize="isAuthenticated()" th:remove="tag">
-          <h3 class="h4">Здравствуйте, <span sec:authentication="name"></span> !</h3>
+          <h3 class="h4">Hi, <span sec:authentication="name"></span> !</h3>
         </div>
         <fieldset class="border p-2 my-3">
-          <legend>Пробные ссылки</legend>
-          <h4><a href="/profile">Профиль (только пользователи)</a></h4>
-          <h4><a href="/admin/users">Пользователи (только админ)</a></h4>
+          <legend>Test links</legend>
+          <h4><a href="/profile">Profile (users only)</a></h4>
+          <h4><a href="/admin/users">Users (admin only)</a></h4>
         </fieldset>
       </div>
     </div>

@@ -6,7 +6,7 @@
       xsi:schemaLocation="http://www.thymeleaf.org
           http://www.ultraq.net.nz/thymeleaf/layout
           http://www.ultraq.net.nz/thymeleaf/layout"
-      th:with="pageTitle='Управление пользователями', pageHeader=${pageTitle}">
+      th:with="pageTitle=#{title.usersmanagement}, pageHeader=${pageTitle}">
 <head>
   <th:block th:replace="fragments/header :: commonHead"></th:block>
   <!-- other elements you want to reference in your layout -->
@@ -27,20 +27,20 @@
       <div class="alert alert-danger alert-dismissible fade show mb-0" th:inline="text">[[${errorMessage}]]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     </div>
     <div class="col-12 text-end">
-      <a title="Добавить" class="btn btn-success btn-block" th:href="'/admin/users/add'"><i class="bi-plus"></i></a>
+      <a th:title="#{link.add}" class="btn btn-success btn-block" th:href="'/admin/users/add'"><i class="bi-plus"></i></a>
     </div>
     <div class="row">
       <div class="col g-3 text-center">
         <table class="table table-striped align-middle">
           <thead><tr>
-            <th>ID</th>
-            <th>Логин</th>
-            <th>Ник</th>
-            <th>E-mail</th>
-            <th>Телефон</th>
-            <th>Роли</th>
-            <th>Активен</th>
-            <th>Действия</th>
+            <th th:text="#{user.id}"></th>
+            <th th:text="#{user.login}"></th>
+            <th th:text="#{user.nickname}"></th>
+            <th th:text="#{user.email}"></th>
+            <th th:text="#{user.phone}"></th>
+            <th th:text="#{user.roles}"></th>
+            <th th:text="#{user.enabled}"></th>
+            <th th:text="#{user.actions}"></th>
           </tr></thead>
           <tr th:each="user: ${itemsPage}">
             <td th:text="${user.id}" />
@@ -53,16 +53,16 @@
               <!-- <span th:with="userRoles=${user.roles}" th:utext="${#strings.arrayJoin(userRoles.![label], '<br />')}" th:remove="tag" /> -->
               <span th:utext="${#strings.arrayJoin(user.roles.![label], ',<br />')}" th:remove="tag"></span>
             </td>
-            <td th:text="${user.enabled} ? 'Да' : 'Нет'" />
+            <td th:text="${user.enabled} ? #{user.enabled.yes} : #{user.enabled.no}" />
             <td>
               <form action="/admin/users"
                     method="post"
                     th:data-username="${user.username}"
-                    onsubmit="return confirm('Вы действительно хотите удалить '+this.getAttribute('data-username')+'?');">
+                    th:onsubmit="'return confirm(\'' + #{confirm.delete} + ' \' + this.getAttribute(\'data-username\')+\'?\');'">
                 <input type="hidden" name="userId" th:value="${user.id}"/>
                 <input type="hidden" name="action" value="delete"/>
-                <a title="Изменить" class="btn btn-success btn-block" th:href="'/admin/users/modify/'+${user.id}"><i class="bi-pen"></i></a>
-                <button title="Удалить" class="btn btn-danger btn-block" type="submit"><i class="bi-trash"></i></button>
+                <a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="'/admin/users/modify/'+${user.id}"><i class="bi-pen"></i></a>
+                <button th:title="#{submit.delete}" class="btn btn-danger btn-block" type="submit"><i class="bi-trash"></i></button>
               </form>
             </td>
           </tr>
@@ -72,13 +72,13 @@
         <div class="col g-3">
           <ul class="pagination justify-content-center">
             <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
-              <a th:text="'Пред.'" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number})}"></a>
+              <a th:text="#{link.prev}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number})}"></a>
             </li>
             <li th:class="${pageNumber==itemsPage.number + 1} ? 'page-item active' : 'page-item'" th:each="pageNumber : ${pageNumbers}">
               <a th:text="${pageNumber}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${pageNumber})}"></a>
             </li>
             <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
-              <a th:text="'След.'" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number}+2)}"></a>
+              <a th:text="#{link.next}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number}+2)}"></a>
             </li>
           </ul>
         </div>
