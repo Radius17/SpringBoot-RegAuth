@@ -7,7 +7,7 @@
   <th:block th:replace="fragments/header :: commonHead"></th:block>
   <!-- other elements you want to reference in your layout -->
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 <div th:replace="fragments/header :: commonHeader"></div>
 <div class="main-wrapper">
   <div class="container">
@@ -63,10 +63,13 @@
       <div class="col-12">
         <div class="row">
           <div class="col text-center form-buttons">
-            <a class="btn btn-primary btn-block" href="/admin/users" th:text="#{link.users}"></a>
+            <a class="btn btn-primary btn-block" th:href="@{/admin/users/(limit=${pageSize}, page=${pageNo}, sort=${sortBy})}" th:text="#{link.cancel}"></a>
           </div>
           <div class="col text-center form-buttons">
             <input type="hidden" th:field="*{id}" />
+            <input type="hidden" name="page" th:value="${pageNo}"/>
+            <input type="hidden" name="limit" th:value="${pageSize}"/>
+            <input type="hidden" name="sort" th:value="${sortBy}"/>
             <button class="btn btn-primary btn-block" type="submit" th:text="#{submit.save}"></button>
           </div>
         </div>

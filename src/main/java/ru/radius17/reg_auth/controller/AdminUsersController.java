@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -38,7 +37,15 @@ public class AdminUsersController {
         return "admin/profile";
     }
     @RequestMapping(method = RequestMethod.GET, value = "/admin/users/modify/{id}")
-    public String modifyUserProfile(@PathVariable("id") Long id, Model model){
+    public String modifyUserProfile(@PathVariable("id") Long id,
+                                    @RequestParam(name = "page", defaultValue = "1") Integer pageNo,
+                                    @RequestParam(name = "limit", defaultValue = "10") Integer pageSize,
+                                    @RequestParam(name = "sort", defaultValue = "username") String sortBy,
+                                    Model model){
+        model.addAttribute("pageNo", pageNo);
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("sortBy", sortBy);
+
         User user = userService.getUserById(id);
         model.addAttribute("userForm", user);
         List<Role> listRoles = roleService.getAllRoles();
@@ -49,7 +56,17 @@ public class AdminUsersController {
         return "admin/profile";
     }
     @RequestMapping(method = RequestMethod.POST, value = "/admin/users/save")
-    public String saveUserProfile(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, Model model) {
+    public String saveUserProfile(@ModelAttribute("userForm") @Valid User userForm,
+                                  BindingResult bindingResult,
+                                  @RequestParam(name = "page", defaultValue = "1") Integer pageNo,
+                                  @RequestParam(name = "limit", defaultValue = "10") Integer pageSize,
+                                  @RequestParam(name = "sort", defaultValue = "username") String sortBy,
+                                  RedirectAttributes redirectAttributes,
+                                  Model model) {
+        model.addAttribute("pageNo", pageNo);
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("sortBy", sortBy);
+
         List<Role> listRoles = roleService.getAllRoles();
         model.addAttribute("listRoles", listRoles);
         Boolean isNewUser = userForm.getId()==null;
@@ -88,6 +105,11 @@ public class AdminUsersController {
             return "profile";
         }
 
+        redirectAttributes.addAttribute("page", pageNo);
+        redirectAttributes.addAttribute("limit", pageSize);
+        redirectAttributes.addAttribute("sort", sortBy);
+        redirectAttributes.addAttribute("infoMessage", isNewUser ? "Пользователь добавлен" : "Пользователь сохранен");
+
         return "redirect:/admin/users";
     }
 
@@ -101,6 +123,7 @@ public class AdminUsersController {
 
         model.addAttribute("infoMessage", infoMessage);
         model.addAttribute("errorMessage", errorMessage);
+        model.addAttribute("sortBy", sortBy);
 
         Page<User> itemsPage = userService.getUsersPaginated(PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy)));
         model.addAttribute("itemsPage", itemsPage);
@@ -122,16 +145,22 @@ public class AdminUsersController {
     @PostMapping("/admin/users")
     public String deleteUser(@RequestParam(required = true, defaultValue = "" ) Long userId,
                              @RequestParam(required = true, defaultValue = "" ) String action,
-                             RedirectAttributes attributes) {
+                             @RequestParam(name = "page", defaultValue = "1") Integer pageNo,
+                             @RequestParam(name = "limit", defaultValue = "10") Integer pageSize,
+                             @RequestParam(name = "sort", defaultValue = "username") String sortBy,
+                             RedirectAttributes redirectAttributes) {
         // @TODO Запретить удаление себя
         if (action.equals("delete")){
             User mySelf = userService.getMySelf();
             if(mySelf.getId().equals(userId)){
-                attributes.addAttribute("errorMessage", "Нельзя удалить самого себя.");
+                redirectAttributes.addAttribute("errorMessage", "Нельзя удалить самого себя.");
             } else {
                 userService.deleteUser(userId);
             }
         }
+        redirectAttributes.addAttribute("page", pageNo);
+        redirectAttributes.addAttribute("limit", pageSize);
+        redirectAttributes.addAttribute("sort", sortBy);
         return "redirect:/admin/users";
     }
 }

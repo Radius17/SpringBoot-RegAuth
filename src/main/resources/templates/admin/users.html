@@ -11,7 +11,7 @@
   <th:block th:replace="fragments/header :: commonHead"></th:block>
   <!-- other elements you want to reference in your layout -->
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 <div th:replace="fragments/header :: commonHeader"></div>
 <div class="main-wrapper">
   <div class="container">
@@ -21,10 +21,10 @@
       </div>
     </div>
     <div class="col-12" th:if="${infoMessage}">
-      <div class="alert alert-info alert-dismissible fade show mb-0" th:inline="text">[[${infoMessage}]]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+      <div class="alert alert-info alert-dismissible fade show" th:inline="text">[[${infoMessage}]]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     </div>
     <div class="col-12" th:if="${errorMessage}">
-      <div class="alert alert-danger alert-dismissible fade show mb-0" th:inline="text">[[${errorMessage}]]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+      <div class="alert alert-danger alert-dismissible fade show" th:inline="text">[[${errorMessage}]]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     </div>
     <div class="col-12 text-end">
       <a th:title="#{link.add}" class="btn btn-success btn-block" th:href="'/admin/users/add'"><i class="bi-plus"></i></a>
@@ -61,7 +61,10 @@
                     th:onsubmit="'return confirm(\'' + #{confirm.delete} + ' \' + this.getAttribute(\'data-username\')+\'?\');'">
                 <input type="hidden" name="userId" th:value="${user.id}"/>
                 <input type="hidden" name="action" value="delete"/>
-                <a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="'/admin/users/modify/'+${user.id}"><i class="bi-pen"></i></a>
+                <input type="hidden" name="page" th:value="${itemsPage.number + 1}"/>
+                <input type="hidden" name="limit" th:value="${itemsPage.size}"/>
+                <input type="hidden" name="sort" th:value="${sortBy}"/>
+                <a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="@{'/admin/users/modify/'+${user.id}(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${sortBy})}"><i class="bi-pen"></i></a>
                 <button th:title="#{submit.delete}" class="btn btn-danger btn-block" type="submit"><i class="bi-trash"></i></button>
               </form>
             </td>
@@ -72,13 +75,19 @@
         <div class="col g-3">
           <ul class="pagination justify-content-center">
             <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
-              <a th:text="#{link.prev}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number})}"></a>
+              <a th:text="#{link.first}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=1, sort=${sortBy})}"></a>
+            </li>
+            <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
+              <a th:text="#{link.prev}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number}, sort=${sortBy})}"></a>
             </li>
             <li th:class="${pageNumber==itemsPage.number + 1} ? 'page-item active' : 'page-item'" th:each="pageNumber : ${pageNumbers}">
-              <a th:text="${pageNumber}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${pageNumber})}"></a>
+              <a th:text="${pageNumber}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${pageNumber}, sort=${sortBy})}"></a>
             </li>
             <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
-              <a th:text="#{link.next}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number}+2)}"></a>
+              <a th:text="#{link.next}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number}+2, sort=${sortBy})}"></a>
+            </li>
+            <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
+              <a th:text="#{link.last}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.totalPages}, sort=${sortBy})}"></a>
             </li>
           </ul>
         </div>

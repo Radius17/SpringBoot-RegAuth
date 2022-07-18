@@ -48,7 +48,7 @@ public class UserRegistrationController {
         userForm.setRoles(Collections.singleton(roleService.getDefaultRole()));
         userForm.setEnabled(true);
         if (!userService.addUser(userForm)){
-            model.addAttribute("registrationError", "Ошибка регистрации.");
+            model.addAttribute("formErrorMessage", "Ошибка регистрации.");
             return "registration";
         }
         return "redirect:/";

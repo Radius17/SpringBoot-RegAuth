@@ -1,2 +1,9 @@
 <th:block th:fragment="commonFooter">
+    <footer class="mt-auto">
+      <div class="container">
+         <div class="row">
+            <div class="col-12 text-center py-3" th:text="'&copy; ' + ${#dates.format(#dates.createNow(), 'YYYY')} + ' My firm'"></div>
+          </div>
+        </div>
+    </footer>
 </th:block>
