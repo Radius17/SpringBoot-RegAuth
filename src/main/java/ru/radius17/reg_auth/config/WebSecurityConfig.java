@@ -31,6 +31,7 @@ public class WebSecurityConfig {
         httpSecurity.authorizeRequests().anyRequest().authenticated();
         //Настройка для входа в систему и перенарпавление на главную страницу после успешного входа
         httpSecurity.formLogin().loginPage("/login").defaultSuccessUrl("/").permitAll();
+        httpSecurity.rememberMe().key("uniqueAndSecret").tokenValiditySeconds(86400);
         // Настройки для выхода из системы
         httpSecurity.logout().permitAll().logoutSuccessUrl("/").deleteCookies("JSESSIONID");
 
