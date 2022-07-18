@@ -49,7 +49,7 @@ public class UserProfileController {
         userForm.setDescription(mySelf.getDescription());
         userForm.setRoles(mySelf.getRoles());
         userForm.setEnabled(mySelf.getEnabled());
-        if (!userService.saveUser(userForm, mySelf)){
+        if (!userService.saveUser(userForm)){
             model.addAttribute("formErrorMessage", "Ошибка сохранения.");
             return "profile";
         }

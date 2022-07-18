@@ -62,7 +62,7 @@ public class UserService implements UserDetailsService {
         }
         return true;
     }
-    public boolean saveUser(User userForm, User mySelf) {
+    public boolean saveUser(User userForm) {
         //@TODO Обработка ошибок уникальности полей
         if(userForm.getPassword().equals(userForm.getPasswordConfirm())){
             userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));

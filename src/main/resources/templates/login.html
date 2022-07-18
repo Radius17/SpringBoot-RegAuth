@@ -24,11 +24,15 @@
         <input class="form-check-input" type="checkbox" name="remember-me" id="remember-me" />
         <label class="form-check-label" for="remember-me" th:text="#{user.remember-me}"></label>
       </div>
-      <div class="col text-center form-buttons">
-        <button class="btn btn-primary btn-block" type="submit" th:text="#{submit.login}"></button>
-      </div>
-      <div class="col text-center form-buttons">
-          <a class="btn btn-primary btn-block" href="/registration" th:text="#{link.register}"></a>
+      <div class="col-12">
+        <div class="row">
+          <div class="col text-center form-buttons">
+            <button class="btn btn-primary btn-block" type="submit" th:text="#{submit.login}"></button>
+          </div>
+          <div class="col text-center form-buttons">
+              <a class="btn btn-primary btn-block" href="/registration" th:text="#{link.register}"></a>
+          </div>
+        </div>
       </div>
     </form>
   </div>
