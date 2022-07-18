@@ -15,7 +15,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 @Configuration
 @ComponentScan(basePackages = "ru.radius17.reg_auth.config")
-public class MvcConfig implements WebMvcConfigurer {
+public class MessagesConfig implements WebMvcConfigurer {
 
     @Bean
     public MessageSource messageSource() {
