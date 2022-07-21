@@ -1,5 +1,7 @@
 package ru.radius17.reg_auth.controller;
 
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,6 +24,8 @@ import java.util.stream.IntStream;
 
 @Controller
 public class AdminUsersController {
+    @Autowired
+    ReloadableResourceBundleMessageSource ms;
     @Autowired
     private UserService userService;
     @Autowired
@@ -76,19 +80,22 @@ public class AdminUsersController {
         model.addAttribute("isMySelf", isMySelf);
         if(isNewUser){
             if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()){
-                bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, "Пароль не может быть пустым"));
-                bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, "Пароль не может быть пустым"));
+                String errMess = ms.getMessage("user.passwordCannotBeEmpty", null, LocaleContextHolder.getLocale());
+                bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, errMess));
+                bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, errMess));
             } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())){
-                bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, "Пароли не совпадают"));
-                bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, "Пароли не совпадают"));
+                String errMess = ms.getMessage("user.passwordsNotMatch", null, LocaleContextHolder.getLocale());
+                bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, errMess));
+                bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, errMess));
             }
         } else {
             if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()){
                 userForm.setPassword(mySelf.getPassword());
                 userForm.setPasswordConfirm(null);
             } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())){
-                bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, "Пароли не совпадают"));
-                bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, "Пароли не совпадают"));
+                String errMess = ms.getMessage("user.passwordsNotMatch", null, LocaleContextHolder.getLocale());
+                bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, errMess));
+                bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, errMess));
             }
         }
 
@@ -101,14 +108,14 @@ public class AdminUsersController {
         }
 
         if (!userService.saveUser(userForm)){
-            model.addAttribute("formErrorMessage", "Ошибка сохранения.");
+            model.addAttribute("formErrorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
             return "profile";
         }
 
         redirectAttributes.addAttribute("page", pageNo);
         redirectAttributes.addAttribute("limit", pageSize);
         redirectAttributes.addAttribute("sort", sortBy);
-        redirectAttributes.addAttribute("infoMessage", isNewUser ? "Пользователь добавлен" : "Пользователь сохранен");
+        redirectAttributes.addAttribute("infoMessage", ms.getMessage(isNewUser ? "user.addedSuccessfully" : "user.savedSuccessfully", null, LocaleContextHolder.getLocale()));
 
         return "redirect:/admin/users";
     }
@@ -153,7 +160,7 @@ public class AdminUsersController {
         if (action.equals("delete")){
             User mySelf = userService.getMySelf();
             if(mySelf.getId().equals(userId)){
-                redirectAttributes.addAttribute("errorMessage", "Нельзя удалить самого себя.");
+                redirectAttributes.addAttribute("errorMessage", ms.getMessage("user.youCannotDeleteYourSelf", null, LocaleContextHolder.getLocale()));
             } else {
                 userService.deleteUser(userId);
             }

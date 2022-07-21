@@ -1,6 +1,8 @@
 package ru.radius17.reg_auth.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,10 +20,24 @@ import javax.validation.Valid;
 public class UserProfileController {
 
     @Autowired
+    ReloadableResourceBundleMessageSource ms;
+    @Autowired
     private UserService userService;
 
     @GetMapping("/profile")
     public String modifyProfile(Model model) throws UsernameNotFoundException {
+        // =========================================================
+        // Variant 1 (Required Autowired ApplicationContext appContext;)
+        // =========================================================
+        // ReloadableResourceBundleMessageSource messageSource = (ReloadableResourceBundleMessageSource) appContext.getBean("messageSource");
+        // Locale locale = LocaleContextHolder.getLocale();
+        // String mess =  messageSource.getMessage("index.welcome",null, locale);
+        // System.out.print(mess);
+        // =========================================================
+        // Variant 2 (Required Autowired ReloadableResourceBundleMessageSource ms;)
+        // =========================================================
+        // System.out.print(ms.getMessage("index.welcome", null, LocaleContextHolder.getLocale()));
+        // =========================================================
         User user = userService.getMySelf();
         user.setPassword(null);
         user.setPasswordConfirm(null);
@@ -32,12 +48,13 @@ public class UserProfileController {
     @PostMapping("/profile")
     public String saveProfile(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, Model model) {
         User mySelf = userService.getMySelf();
-        if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()){
+        if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()) {
             userForm.setPassword(mySelf.getPassword());
             userForm.setPasswordConfirm(null);
-        } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())){
-            bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, "Пароли не совпадают"));
-            bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, "Пароли не совпадают"));
+        } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
+            String errMess = ms.getMessage("user.passwordsNotMatch", null, LocaleContextHolder.getLocale());
+            bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, errMess));
+            bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, errMess));
         }
 
         if (bindingResult.hasErrors()) {
@@ -49,8 +66,8 @@ public class UserProfileController {
         userForm.setDescription(mySelf.getDescription());
         userForm.setRoles(mySelf.getRoles());
         userForm.setEnabled(mySelf.getEnabled());
-        if (!userService.saveUser(userForm)){
-            model.addAttribute("formErrorMessage", "Ошибка сохранения.");
+        if (!userService.saveUser(userForm)) {
+            model.addAttribute("formErrorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
             return "profile";
         }
         return "redirect:/";

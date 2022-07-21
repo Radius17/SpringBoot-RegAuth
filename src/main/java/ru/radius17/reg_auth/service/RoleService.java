@@ -16,7 +16,8 @@ public class RoleService {
     public Role getDefaultRole() {
         return roleRepository.findById(1L).orElse(new Role());
     }
-    public List<Role> getAllRoles(){
+
+    public List<Role> getAllRoles() {
         return roleRepository.findAll();
     }
 }

@@ -14,61 +14,46 @@ import java.util.Set;
 
 @Entity
 @Table(name = "t_user")
+@Getter
+@Setter
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
-    @Setter
     private Long id;
 
-    @Getter
-    @Setter
-    @Size(min=4, message = "Не меньше 4 знаков")
+    @Size(min = 4, message = "Не меньше 4 знаков")
     private String username;
 
-    @Getter
-    @Setter
     private String password;
 
     @Transient
-    @Getter
-    @Setter
     private String passwordConfirm;
 
-    @Getter
-    @Setter
-    @Size(min=4, message = "Не меньше 4 знаков")
+    @Size(min = 4, message = "Не меньше 4 знаков")
     private String nickname;
 
-    @Getter
-    @Setter
     // @NonNull
     @NotEmpty(message = "Не заполнен телефон")
     private String phone;
 
-    @Getter
-    @Setter
     @NotEmpty(message = "Не заполнен E-mail")
     private String email;
 
-    @Getter
-    @Setter
     private String description;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @Getter
-    @Setter
     private Set<Role> roles;
 
-    @Getter
-    @Setter
     @Builder.Default
     private Boolean enabled = false;
 
-    public User() { }
+    public User() {
+    }
 
     @Override
-    public boolean isAccountNonExpired() { return this.enabled; }
+    public boolean isAccountNonExpired() {
+        return this.enabled;
+    }
 
     @Override
     public boolean isAccountNonLocked() {
