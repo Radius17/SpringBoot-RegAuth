@@ -3,6 +3,8 @@ package ru.radius17.reg_auth.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -17,11 +19,12 @@ import java.util.Set;
 @Getter
 @Setter
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(min = 4, message = "Не меньше 4 знаков")
+    @Size(min = 4, message = "{user.atLeastXCharacters}")
     private String username;
 
     private String password;
@@ -29,14 +32,14 @@ public class User implements UserDetails {
     @Transient
     private String passwordConfirm;
 
-    @Size(min = 4, message = "Не меньше 4 знаков")
+    @Size(min = 4, message = "{user.atLeastXCharacters}")
     private String nickname;
 
     // @NonNull
-    @NotEmpty(message = "Не заполнен телефон")
+    @NotEmpty(message = "{user.emptyPhone}")
     private String phone;
 
-    @NotEmpty(message = "Не заполнен E-mail")
+    @NotEmpty(message = "{user.emptyEmail}")
     private String email;
 
     private String description;
