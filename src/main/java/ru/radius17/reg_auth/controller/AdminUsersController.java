@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -33,7 +34,7 @@ public class AdminUsersController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/admin/users/add")
     public String addUserProfile( Model model){
-        model.addAttribute("userForm", userService.getUserById(0L));
+        model.addAttribute("userForm", userService.getEmptyUser());
         List<Role> listRoles = roleService.getAllRoles();
         model.addAttribute("listRoles", listRoles);
         model.addAttribute("isNewUser", true);
@@ -41,7 +42,7 @@ public class AdminUsersController {
         return "admin/profile";
     }
     @RequestMapping(method = RequestMethod.GET, value = "/admin/users/modify/{id}")
-    public String modifyUserProfile(@PathVariable("id") Long id,
+    public String modifyUserProfile(@PathVariable("id") UUID id,
                                     @RequestParam(name = "page", defaultValue = "1") Integer pageNo,
                                     @RequestParam(name = "limit", defaultValue = "10") Integer pageSize,
                                     @RequestParam(name = "sort", defaultValue = "username") String sortBy,
@@ -150,7 +151,7 @@ public class AdminUsersController {
     }
 
     @PostMapping("/admin/users")
-    public String deleteUser(@RequestParam(required = true, defaultValue = "" ) Long userId,
+    public String deleteUser(@RequestParam(required = true, defaultValue = "" ) UUID userId,
                              @RequestParam(required = true, defaultValue = "" ) String action,
                              @RequestParam(name = "page", defaultValue = "1") Integer pageNo,
                              @RequestParam(name = "limit", defaultValue = "10") Integer pageSize,
@@ -162,7 +163,11 @@ public class AdminUsersController {
             if(mySelf.getId().equals(userId)){
                 redirectAttributes.addAttribute("errorMessage", ms.getMessage("user.youCannotDeleteYourSelf", null, LocaleContextHolder.getLocale()));
             } else {
-                userService.deleteUser(userId);
+                if(userService.deleteUser(userId)){
+                    redirectAttributes.addAttribute("infoMessage", ms.getMessage("user.deletedSuccessfully", null, LocaleContextHolder.getLocale()));
+                } else {
+                    redirectAttributes.addAttribute("errorMessage", ms.getMessage("delete.error", null, LocaleContextHolder.getLocale()));
+                }
             }
         }
         redirectAttributes.addAttribute("page", pageNo);

@@ -24,10 +24,10 @@
 
         <rollback>
             <delete tableName="t_user">
-                <where>id = 1</where>
+                <where>username = 'user'</where>
             </delete>
             <delete tableName="t_user">
-                <where>id = 2</where>
+                <where>username = 'admin'</where>
             </delete>
         </rollback>
     </changeSet>

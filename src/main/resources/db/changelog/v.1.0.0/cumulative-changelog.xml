@@ -8,6 +8,7 @@
         <tagDatabase tag="v.1.0.0"/>
     </changeSet>
 
+    <include file="create-extension-uuid.xml" relativeToChangelogFile="true"/>
     <include file="create-table-role.xml" relativeToChangelogFile="true"/>
     <include file="create-table-user.xml" relativeToChangelogFile="true"/>
     <include file="create-table-user_roles.xml" relativeToChangelogFile="true"/>

@@ -4,21 +4,16 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-    <changeSet id="insert-into" author="Radius17">
+    <changeSet id="create-extension-uuid" author="Radius17">
         <sql dbms="postgresql" endDelimiter=";">
-            INSERT INTO t_user_roles (SELECT tu.id, tr.id FROM t_user tu, t_role tr WHERE tu.username='admin' )
-        </sql>
-        <sql dbms="postgresql" endDelimiter=";">
-            INSERT INTO t_user_roles (SELECT tu.id, tr.id FROM t_user tu, t_role tr WHERE tu.username='user' AND tr.name='ROLE_USER' )
+            CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
         </sql>
 
         <rollback>
             <sql dbms="postgresql" endDelimiter=";">
-                DELETE FROM t_user_roles WHERE user_id IN (SELECT tu.id FROM t_user tu WHERE tu.username='admin' OR tu.username='user')
+                DROP EXTENSION IF EXISTS "uuid-ossp"
             </sql>
         </rollback>
-
     </changeSet>
-
 
 </databaseChangeLog>

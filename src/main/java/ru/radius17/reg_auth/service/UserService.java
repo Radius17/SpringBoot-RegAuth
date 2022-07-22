@@ -13,6 +13,7 @@ import ru.radius17.reg_auth.entity.User;
 import ru.radius17.reg_auth.repository.UserRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -30,9 +31,13 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public User getUserById(Long id) {
+    public User getUserById(UUID id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElse(new User());
+    }
+
+    public User getEmptyUser() {
+        return new User();
     }
 
     public User getMySelf() {
@@ -86,7 +91,7 @@ public class UserService implements UserDetailsService {
         return pagedResult;
     }
 
-    public boolean deleteUser(Long userId) {
+    public boolean deleteUser(UUID userId) {
         if (userRepository.findById(userId).isPresent()) {
             userRepository.deleteById(userId);
             return true;

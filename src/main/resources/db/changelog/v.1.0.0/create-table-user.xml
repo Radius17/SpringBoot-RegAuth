@@ -6,7 +6,7 @@
 
     <changeSet id="create-table-role" author="Radius17">
         <createTable tableName="t_user">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="id" type="uuid" defaultValue="uuid_generate_v4()">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="username" type="varchar(255)">
