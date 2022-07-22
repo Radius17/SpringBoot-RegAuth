@@ -26,6 +26,7 @@ logging:
     org:
       springframework: info
     com: info
+    web: debug
 server:
   servlet:
     session:
