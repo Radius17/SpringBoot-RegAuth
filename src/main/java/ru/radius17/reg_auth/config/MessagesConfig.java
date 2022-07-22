@@ -17,15 +17,19 @@ import java.util.Locale;
 @ComponentScan(basePackages = "ru.radius17.reg_auth.config")
 public class MessagesConfig implements WebMvcConfigurer {
 
+    // Loading custom resources
     @Bean
     public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new
-                ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:RegAuthLang");
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasenames(
+                "classpath:/messages/reg_auth_messages",
+                "classpath:messages"
+        );
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
 
+    // Switching language
     @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver slr = new SessionLocaleResolver();

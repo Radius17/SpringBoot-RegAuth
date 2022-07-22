@@ -110,7 +110,7 @@ public class AdminUsersController {
 
         if (!userService.saveUser(userForm)){
             model.addAttribute("formErrorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
-            return "profile";
+            return "admin/profile";
         }
 
         redirectAttributes.addAttribute("page", pageNo);
