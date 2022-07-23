@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.radius17.reg_auth.entity.User;
 import ru.radius17.reg_auth.service.RoleService;
 import ru.radius17.reg_auth.service.UserService;
@@ -34,7 +35,10 @@ public class UserRegistrationController {
     }
 
     @PostMapping("/registration")
-    public String addUser(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, Model model) {
+    public String addUser(@ModelAttribute("userForm") @Valid User userForm,
+                          BindingResult bindingResult,
+                          RedirectAttributes redirectAttributes,
+                          Model model) {
         // System.out.println("BINDING " + bindingResult);
         if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()) {
             String errMess = ms.getMessage("user.passwordCannotBeEmpty", null, LocaleContextHolder.getLocale());
@@ -58,6 +62,8 @@ public class UserRegistrationController {
             model.addAttribute("formErrorMessage", ms.getMessage("registration.error", null, LocaleContextHolder.getLocale()));
             return "registration";
         }
+
+        redirectAttributes.addAttribute("infoMessage", ms.getMessage("user.registeredSuccessfully", null, LocaleContextHolder.getLocale()));
         return "redirect:/";
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.radius17.reg_auth.entity.User;
 import ru.radius17.reg_auth.service.UserService;
 
@@ -46,7 +47,10 @@ public class UserProfileController {
     }
 
     @PostMapping("/profile")
-    public String saveProfile(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, Model model) {
+    public String saveProfile(@ModelAttribute("userForm") @Valid User userForm,
+                              BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes,
+                              Model model) {
         User mySelf = userService.getMySelf();
         if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()) {
             userForm.setPassword(mySelf.getPassword());
@@ -70,6 +74,8 @@ public class UserProfileController {
             model.addAttribute("formErrorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
             return "profile";
         }
+
+        redirectAttributes.addAttribute("infoMessage", ms.getMessage("user.profileSaved", null, LocaleContextHolder.getLocale()));
         return "redirect:/";
     }
 }
