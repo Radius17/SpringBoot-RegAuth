@@ -126,7 +126,11 @@ public class UserService implements UserDetailsService {
 
     public boolean deleteUser(UUID userId) {
         if (userRepository.findById(userId).isPresent()) {
-            userRepository.deleteById(userId);
+            try {
+                userRepository.deleteById(userId);
+            } catch (Exception e) {
+                return false;
+            }
             return true;
         }
         return false;
