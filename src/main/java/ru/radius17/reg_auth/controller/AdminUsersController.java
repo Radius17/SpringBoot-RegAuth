@@ -108,7 +108,7 @@ public class AdminUsersController {
             userForm.setRoles(mySelf.getRoles());
         }
 
-        if (!userService.saveUser(userForm)){
+        if (!userService.saveUser(userForm, bindingResult, isNewUser)){
             model.addAttribute("formErrorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
             return "admin/profile";
         }

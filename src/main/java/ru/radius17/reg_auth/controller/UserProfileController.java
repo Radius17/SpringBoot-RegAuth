@@ -66,7 +66,7 @@ public class UserProfileController {
         userForm.setDescription(mySelf.getDescription());
         userForm.setRoles(mySelf.getRoles());
         userForm.setEnabled(mySelf.getEnabled());
-        if (!userService.saveUser(userForm)) {
+        if (!userService.saveUser(userForm, bindingResult, false)) {
             model.addAttribute("formErrorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
             return "profile";
         }

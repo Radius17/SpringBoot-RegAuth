@@ -54,7 +54,7 @@ public class UserRegistrationController {
         userForm.setDescription("");
         userForm.setRoles(Collections.singleton(roleService.getDefaultRole()));
         userForm.setEnabled(true);
-        if (!userService.addUser(userForm)) {
+        if (!userService.saveUser(userForm, bindingResult, true)) {
             model.addAttribute("formErrorMessage", ms.getMessage("registration.error", null, LocaleContextHolder.getLocale()));
             return "registration";
         }

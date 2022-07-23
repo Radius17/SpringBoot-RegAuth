@@ -1,6 +1,9 @@
 package ru.radius17.reg_auth.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,14 +12,18 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 import ru.radius17.reg_auth.entity.User;
 import ru.radius17.reg_auth.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class UserService implements UserDetailsService {
+    @Autowired
+    ReloadableResourceBundleMessageSource ms;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -62,24 +69,49 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public boolean addUser(User userForm) {
-        //@TODO Обработка ошибок уникальности полей
-        userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
-        try {
-            userRepository.save(userForm);
-        } catch (Exception e) {
-            return false;
+    private void checkConstraintViolation(DataIntegrityViolationException e, BindingResult bindingResult){
+        org.hibernate.exception.ConstraintViolationException exDetail = (org.hibernate.exception.ConstraintViolationException) e.getCause();
+        String constraintName = exDetail.getConstraintName();
+        String constraintRejectedFieldName = "";
+        String constraintRejectedFieldMessage = "";
+        switch (constraintName) {
+            case "t_user_username_key":
+                constraintRejectedFieldName = "username";
+                constraintRejectedFieldMessage = ms.getMessage("NotUnique.user.username", null, LocaleContextHolder.getLocale());
+                break;
+            case "t_user_email_key":
+                constraintRejectedFieldName = "email";
+                constraintRejectedFieldMessage = ms.getMessage("NotUnique.user.email", null, LocaleContextHolder.getLocale());
+                break;
+            case "t_user_nickname_key":
+                constraintRejectedFieldName = "nickname";
+                constraintRejectedFieldMessage = ms.getMessage("NotUnique.user.nickname", null, LocaleContextHolder.getLocale());
+                break;
+            case "t_user_phone_key":
+                constraintRejectedFieldName = "phone";
+                constraintRejectedFieldMessage = ms.getMessage("NotUnique.user.phone", null, LocaleContextHolder.getLocale());
+                break;
         }
-        return true;
+        if(!constraintRejectedFieldName.isEmpty())
+            bindingResult.rejectValue(constraintRejectedFieldName, null, constraintRejectedFieldMessage);
     }
 
-    public boolean saveUser(User userForm) {
-        //@TODO Обработка ошибок уникальности полей
-        if (userForm.getPassword().equals(userForm.getPasswordConfirm())) {
+    // @TODO Transactional
+    // @Transactional // Падает
+    public boolean saveUser(User userForm, BindingResult bindingResult, Boolean isNewUser) {
+        if(isNewUser){
             userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
+        } else {
+            if (userForm.getPassword().equals(userForm.getPasswordConfirm())) {
+                userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
+            }
         }
+
         try {
             userRepository.save(userForm);
+        } catch (DataIntegrityViolationException e) {
+            this.checkConstraintViolation(e, bindingResult);
+            return false;
         } catch (Exception e) {
             return false;
         }
