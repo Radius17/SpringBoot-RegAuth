@@ -69,7 +69,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    private void checkConstraintViolation(DataIntegrityViolationException e, BindingResult bindingResult){
+    private void checkConstraintViolation(DataIntegrityViolationException e, BindingResult bindingResult) {
         org.hibernate.exception.ConstraintViolationException exDetail = (org.hibernate.exception.ConstraintViolationException) e.getCause();
         String constraintName = exDetail.getConstraintName();
         String constraintRejectedFieldName = "";
@@ -92,12 +92,12 @@ public class UserService implements UserDetailsService {
                 constraintRejectedFieldMessage = ms.getMessage("NotUnique.user.phone", null, LocaleContextHolder.getLocale());
                 break;
         }
-        if(!constraintRejectedFieldName.isEmpty())
+        if (!constraintRejectedFieldName.isEmpty())
             bindingResult.rejectValue(constraintRejectedFieldName, null, constraintRejectedFieldMessage);
     }
 
     public boolean saveUser(User userForm, BindingResult bindingResult, Boolean isNewUser) {
-        if(isNewUser){
+        if (isNewUser) {
             userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
         } else {
             if (userForm.getPassword().equals(userForm.getPasswordConfirm())) {
@@ -115,10 +115,7 @@ public class UserService implements UserDetailsService {
         }
         return true;
     }
-    @Transactional
-    public void save(User user){
-        userRepository.save(user);
-    }
+
     public Page<User> getUsersPaginated(Pageable pageable) {
         Page<User> pagedResult = userRepository.findAll(pageable);
         return pagedResult;
@@ -127,12 +124,22 @@ public class UserService implements UserDetailsService {
     public boolean deleteUser(UUID userId) {
         if (userRepository.findById(userId).isPresent()) {
             try {
-                userRepository.deleteById(userId);
+                this.delete(userId);
             } catch (Exception e) {
                 return false;
             }
             return true;
         }
         return false;
+    }
+
+    @Transactional
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void delete(UUID userId) {
+        userRepository.deleteById(userId);
     }
 }
