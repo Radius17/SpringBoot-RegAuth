@@ -27,18 +27,6 @@ public class UserProfileController {
 
     @GetMapping("/profile")
     public String modifyProfile(Model model) throws UsernameNotFoundException {
-        // =========================================================
-        // Variant 1 (Required Autowired ApplicationContext appContext;)
-        // =========================================================
-        // ReloadableResourceBundleMessageSource messageSource = (ReloadableResourceBundleMessageSource) appContext.getBean("messageSource");
-        // Locale locale = LocaleContextHolder.getLocale();
-        // String mess =  messageSource.getMessage("index.welcome",null, locale);
-        // System.out.print(mess);
-        // =========================================================
-        // Variant 2 (Required Autowired ReloadableResourceBundleMessageSource ms;)
-        // =========================================================
-        // System.out.print(ms.getMessage("index.welcome", null, LocaleContextHolder.getLocale()));
-        // =========================================================
         User user = userService.getMySelf();
         user.setPassword(null);
         user.setPasswordConfirm(null);

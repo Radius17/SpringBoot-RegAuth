@@ -3,6 +3,7 @@ package ru.radius17.reg_auth.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,8 +29,31 @@ public class UserRegistrationController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private Environment env;
+
     @GetMapping("/registration")
     public String registration(Model model) {
+        // =========================================================
+        // Variant 1 (Required Autowired ApplicationContext appContext;)
+        // =========================================================
+        // ReloadableResourceBundleMessageSource messageSource = (ReloadableResourceBundleMessageSource) appContext.getBean("messageSource");
+        // Locale locale = LocaleContextHolder.getLocale();
+        // String mess =  messageSource.getMessage("index.welcome",null, locale);
+        // System.out.print(mess);
+        // =========================================================
+        // Variant 2 (Required Autowired ReloadableResourceBundleMessageSource ms;)
+        // =========================================================
+        // System.out.print(ms.getMessage("index.welcome", null, LocaleContextHolder.getLocale()));
+        // =========================================================
+        // Environment use example
+        // =========================================================
+        String app_name = env.getProperty("spring.application.name");
+        if (app_name != null) {
+            System.out.println("=========================================================");
+            System.out.println(app_name);
+            System.out.println("=========================================================");
+        }
         model.addAttribute("userForm", userService.getEmptyUser());
         return "registration";
     }
