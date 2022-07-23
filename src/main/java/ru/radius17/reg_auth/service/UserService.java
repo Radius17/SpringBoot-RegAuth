@@ -96,8 +96,6 @@ public class UserService implements UserDetailsService {
             bindingResult.rejectValue(constraintRejectedFieldName, null, constraintRejectedFieldMessage);
     }
 
-    // @TODO Transactional
-    // @Transactional // Падает
     public boolean saveUser(User userForm, BindingResult bindingResult, Boolean isNewUser) {
         if(isNewUser){
             userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
@@ -108,7 +106,7 @@ public class UserService implements UserDetailsService {
         }
 
         try {
-            userRepository.save(userForm);
+            this.save(userForm);
         } catch (DataIntegrityViolationException e) {
             this.checkConstraintViolation(e, bindingResult);
             return false;
@@ -117,7 +115,10 @@ public class UserService implements UserDetailsService {
         }
         return true;
     }
-
+    @Transactional
+    public void save(User user){
+        userRepository.save(user);
+    }
     public Page<User> getUsersPaginated(Pageable pageable) {
         Page<User> pagedResult = userRepository.findAll(pageable);
         return pagedResult;
