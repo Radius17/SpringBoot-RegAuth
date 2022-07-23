@@ -17,8 +17,8 @@
         <div class="alert alert-danger mb-0" th:text="${formErrorMessage}">Info!</div>
       </div>
       <div class="col-12">
-        <label class="form-label" th:for="username" th:text="#{user.login}"></label>
-        <input class="form-control" th:errorclass="is-invalid" type="text" th:field="*{username}" th:placeholder="#{user.login}" autofocus="true" />
+        <label class="form-label" th:for="username" th:text="#{user.username}"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="text" th:field="*{username}" th:placeholder="#{user.username}" autofocus="true" />
         <span th:if="${#fields.hasErrors('username')}" th:errorclass="invalid-feedback" th:errors="*{username}" />
       </div>
       <div class="col-12">
