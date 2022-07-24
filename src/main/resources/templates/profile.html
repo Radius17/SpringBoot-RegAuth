@@ -2,7 +2,11 @@
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      th:with="pageTitle=#{title.profile}, pageHeader=${pageTitle}">
+      th:with="
+      pageHeader=#{title.profile},
+      appName=${@environment.getProperty('spring.application.name')},
+      pageTitle=${(appName!=null ? appName + ' - ' : '') + pageHeader}
+      ">
 <head>
   <th:block th:replace="fragments/header :: commonHead"></th:block>
   <!-- other elements you want to reference in your layout -->

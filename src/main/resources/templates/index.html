@@ -7,7 +7,11 @@
       xsi:schemaLocation="http://www.thymeleaf.org http://www.thymeleaf.org
       http://www.ultraq.net.nz/thymeleaf/layout http://www.ultraq.net.nz/thymeleaf/layout
       http://www.thymeleaf.org/thymeleaf-extras-springsecurity4 http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
-      th:with="pageTitle=#{index.welcome}, pageHeader=${pageTitle}">
+      th:with="
+      pageHeader=#{index.welcome},
+      appName=${@environment.getProperty('spring.application.name')},
+      pageTitle=${(appName!=null ? appName + ' - ' : '') + pageHeader}
+      ">
 <head>
   <th:block th:replace="fragments/header :: commonHead"></th:block>
   <!-- other elements you want to reference in your layout -->

@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: Reg and auth example
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/my_database
