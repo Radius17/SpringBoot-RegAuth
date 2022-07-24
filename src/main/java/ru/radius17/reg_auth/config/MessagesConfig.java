@@ -22,6 +22,7 @@ public class MessagesConfig implements WebMvcConfigurer {
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasenames(
+                /* For override messages, place new message file in top */
                 "classpath:/messages/reg_auth_messages",
                 "classpath:messages"
         );
