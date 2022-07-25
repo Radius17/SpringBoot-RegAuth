@@ -99,6 +99,7 @@ public class AdminUsersController {
         try {
             userService.saveUser(userForm);
         } catch (Exception e) {
+            System.out.print(e);
             model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
             return "admin/profile";
         }
@@ -145,6 +146,7 @@ public class AdminUsersController {
                     userService.deleteUser(userId);
                     redirectAttributes.addAttribute("infoMessage", ms.getMessage("user.deletedSuccessfully", null, LocaleContextHolder.getLocale()));
                 } catch (Exception e) {
+                    System.out.print(e);
                     redirectAttributes.addAttribute("errorMessage", ms.getMessage("delete.error", null, LocaleContextHolder.getLocale()));
                 }
             }
