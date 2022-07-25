@@ -17,7 +17,6 @@ import ru.radius17.reg_auth.service.RoleService;
 import ru.radius17.reg_auth.service.UserService;
 
 import javax.validation.Valid;
-import java.util.Collections;
 
 @Controller
 public class UserRegistrationController {
@@ -59,10 +58,7 @@ public class UserRegistrationController {
     }
 
     @PostMapping("/registration")
-    public String addUser(@ModelAttribute("userForm") @Valid User userForm,
-                          BindingResult bindingResult,
-                          RedirectAttributes redirectAttributes,
-                          Model model) {
+    public String addUser(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         // System.out.println("BINDING " + bindingResult);
         if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()) {
             String errMess = ms.getMessage("user.passwordCannotBeEmpty", null, LocaleContextHolder.getLocale());
@@ -78,12 +74,17 @@ public class UserRegistrationController {
             return "registration";
         }
 
+        // Always new user
         userForm.setId(null);
+        // Empty by default
         userForm.setDescription("");
-        userForm.setRoles(Collections.singleton(roleService.getDefaultRole()));
+        // Enable by default
         userForm.setEnabled(true);
-        if (!userService.saveUser(userForm, bindingResult, true)) {
-            model.addAttribute("formErrorMessage", ms.getMessage("registration.error", null, LocaleContextHolder.getLocale()));
+
+        try {
+            userService.saveUser(userForm);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", ms.getMessage("registration.error", null, LocaleContextHolder.getLocale()));
             return "registration";
         }
 

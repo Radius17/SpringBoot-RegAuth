@@ -35,10 +35,7 @@ public class UserProfileController {
     }
 
     @PostMapping("/profile")
-    public String saveProfile(@ModelAttribute("userForm") @Valid User userForm,
-                              BindingResult bindingResult,
-                              RedirectAttributes redirectAttributes,
-                              Model model) {
+    public String saveProfile(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         User mySelf = userService.getMySelf();
         if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()) {
             userForm.setPassword(mySelf.getPassword());
@@ -53,13 +50,21 @@ public class UserProfileController {
             return "profile";
         }
 
+        // Restrict to change UUID
         userForm.setId(mySelf.getId());
+        // Restrict to change username
         userForm.setUsername(mySelf.getUsername());
+        // Restrict to change description
         userForm.setDescription(mySelf.getDescription());
+        // Restrict to change roles
         userForm.setRoles(mySelf.getRoles());
+        // Restrict to change enabled
         userForm.setEnabled(mySelf.getEnabled());
-        if (!userService.saveUser(userForm, bindingResult, false)) {
-            model.addAttribute("formErrorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
+
+        try {
+            userService.saveUser(userForm);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
             return "profile";
         }
 
