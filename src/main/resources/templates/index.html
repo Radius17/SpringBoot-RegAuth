@@ -21,6 +21,8 @@
 <div class="main-wrapper">
   <div class="container">
     <div class="row">
+      <!-- No controller route - no message :( -->
+      <div th:replace="fragments/header :: messageBlock"></div>
       <div class="col g-3 text-center">
         <div th:replace="fragments/test :: simpleTest"></div>
       </div>

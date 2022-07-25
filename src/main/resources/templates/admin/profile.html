@@ -17,9 +17,7 @@
   <div class="container">
     <form class="form-register row row-cols-lg-auto g-3 align-items-center"  th:object="${userForm}" th:action="'/admin/users/save'" method="post">
       <h1 class="h3" th:text="${pageHeader}"></h1>
-      <div class="col-12" th:if="${formErrorMessage}">
-        <div class="alert alert-danger mb-0" th:text="${formErrorMessage}">Info!</div>
-      </div>
+      <div th:replace="fragments/header :: messageBlock"></div>
       <div class="col-12">
         <label class="form-label" th:for="username" th:text="#{user.username}"></label>
         <input class="form-control" th:errorclass="is-invalid" type="text" th:field="*{username}" th:placeholder="#{user.username}" />

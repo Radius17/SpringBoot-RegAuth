@@ -24,12 +24,7 @@
         <h1 class="h3" th:text="${pageHeader}"></h1>
       </div>
     </div>
-    <div class="col-12" th:if="${infoMessage}">
-      <div class="alert alert-info alert-dismissible fade show" th:inline="text">[[${infoMessage}]]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-    </div>
-    <div class="col-12" th:if="${errorMessage}">
-      <div class="alert alert-danger alert-dismissible fade show" th:inline="text">[[${errorMessage}]]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-    </div>
+    <div th:replace="fragments/header :: messageBlock"></div>
     <div class="col-12 text-end">
       <a th:title="#{link.add}" class="btn btn-success btn-block" th:href="'/admin/users/add'"><i class="bi-plus"></i></a>
     </div>

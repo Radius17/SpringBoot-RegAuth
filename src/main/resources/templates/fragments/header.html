@@ -1,3 +1,12 @@
+<th:block th:fragment="messageBlock">
+  <div class="col-12" th:if="${infoMessage}">
+    <div class="alert alert-info alert-dismissible fade show" th:inline="text">[[${infoMessage}]]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+  </div>
+  <div class="col-12" th:if="${errorMessage}">
+    <div class="alert alert-danger alert-dismissible fade show" th:inline="text">[[${errorMessage}]]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+  </div>
+</th:block>
+
 <th:block th:fragment="commonHead">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" charset="UTF-8"/>

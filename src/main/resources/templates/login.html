@@ -17,6 +17,7 @@
   <div class="container">
     <form class="form-signin row row-cols-lg-auto g-3 align-items-center" method="post" action="/login">
       <h1 class="h3" th:text="${pageHeader}"></h1>
+      <div th:replace="fragments/header :: messageBlock"></div>
       <div class="col-12">
         <input name="username" class="form-control" type="text" th:placeholder="#{user.username}"
              autofocus="true"/>
