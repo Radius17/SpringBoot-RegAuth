@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import ru.radius17.reg_auth.entity.User;
 import ru.radius17.reg_auth.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
@@ -68,6 +69,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @Transactional
     public void saveUser(User user) {
         User mySelf = this.getMySelf();
 
@@ -86,11 +88,20 @@ public class UserService implements UserDetailsService {
             }
         }
 
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            System.out.print(e);
+        }
     }
 
+    @Transactional
     public void deleteUser(UUID userId) {
-        userRepository.deleteById(userId);
+        try {
+            userRepository.deleteById(userId);
+        } catch (Exception e) {
+            System.out.print(e);
+        }
     }
 
     public Page<User> getUsersPaginated(Pageable pageable) {
