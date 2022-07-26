@@ -100,4 +100,8 @@ public class UserService implements UserDetailsService {
         Page<User> pagedResult = userRepository.findAll(pageable);
         return pagedResult;
     }
+    public Page<User> getUsersFilteredByUsernameAndPaginated(String username, Pageable pageable) {
+        Page<User> pagedResult = userRepository.findByUsernameContaining(username, pageable);
+        return pagedResult;
+    }
 }

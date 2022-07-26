@@ -117,6 +117,7 @@ public class AdminUsersController {
     public String userList(@RequestParam(name = "page", defaultValue = "-1") Integer pageNo,
                            @RequestParam(name = "limit", defaultValue = "-1") Integer pageSize,
                            @RequestParam(name = "sort", defaultValue = "") String sortBy,
+                           @RequestParam(name = "username", defaultValue = "") String username,
                            @RequestParam(name = "infoMessage", required = false) String infoMessage,
                            @RequestParam(name = "errorMessage", required = false) String errorMessage,
                            @ModelAttribute("userListPageRequest") PageRequest pageRequest,
@@ -130,7 +131,12 @@ public class AdminUsersController {
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("sortBy", sortBy);
 
-        Page<User> itemsPage = userService.getUsersPaginated(PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy)));
+        Page<User> itemsPage;
+        if(username.isEmpty()){
+            itemsPage = userService.getUsersPaginated(PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy)));
+        } else {
+            itemsPage = userService.getUsersFilteredByUsernameAndPaginated(username, PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy)));
+        }
         model.addAttribute("itemsPage", itemsPage);
 
         int totalPages = itemsPage.getTotalPages();
