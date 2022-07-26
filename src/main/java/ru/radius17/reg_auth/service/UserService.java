@@ -51,22 +51,11 @@ public class UserService implements UserDetailsService {
     public User getMySelf() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
-            String username = ((UserDetails) principal).getUsername();
-            // User user = userService.findUserById(75L); // Test
-            User user = userRepository.findByUsername(username);
-            if (user == null) {
-                // По всей видимости сразу выкидывает
-                throw new UsernameNotFoundException("User not found by name");
-            }
-            if (user.getId() == null) {
-                // По всей видимости сразу выкидывает
-                throw new UsernameNotFoundException("User not found");
-            }
-            // @TODO Надо оптимизировать
-            Optional<User> userFromDb = userRepository.findById(user.getId());
+            Optional<User> userFromDb = userRepository.findById(((User) principal).getId());
+            if(userFromDb.isEmpty()) throw new UsernameNotFoundException("Myself not found by id...");
             return userFromDb.orElse(new User());
         } else {
-            return new User();
+            throw new UsernameNotFoundException("User absent...");
         }
     }
 
