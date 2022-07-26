@@ -2,6 +2,7 @@ package ru.radius17.reg_auth.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,10 +11,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.radius17.reg_auth.entity.User;
 import ru.radius17.reg_auth.repository.UserRepository;
 
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
@@ -69,8 +70,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    @Transactional
-    public void saveUser(User user) {
+    public void saveUser(User user) throws UserServiceException {
         User mySelf = this.getMySelf();
 
         if (user.getId() == null) {
@@ -89,19 +89,22 @@ public class UserService implements UserDetailsService {
         }
 
         try {
-            userRepository.save(user);
+            this.transactionalSave(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new UserServiceException(e);
         } catch (Exception e) {
             System.out.print(e);
         }
     }
 
     @Transactional
+    public void transactionalSave(User user) {
+        userRepository.save(user);
+    }
+
+    @Transactional
     public void deleteUser(UUID userId) {
-        try {
-            userRepository.deleteById(userId);
-        } catch (Exception e) {
-            System.out.print(e);
-        }
+        userRepository.deleteById(userId);
     }
 
     public Page<User> getUsersPaginated(Pageable pageable) {

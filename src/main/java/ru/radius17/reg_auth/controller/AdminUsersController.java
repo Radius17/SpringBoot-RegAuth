@@ -16,6 +16,7 @@ import ru.radius17.reg_auth.entity.Role;
 import ru.radius17.reg_auth.entity.User;
 import ru.radius17.reg_auth.service.RoleService;
 import ru.radius17.reg_auth.service.UserService;
+import ru.radius17.reg_auth.service.UserServiceException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -43,7 +44,11 @@ public class AdminUsersController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/admin/users/modify/{id}")
-    public String modifyUserProfile(@PathVariable("id") UUID id, @RequestParam(name = "page", defaultValue = "1") Integer pageNo, @RequestParam(name = "limit", defaultValue = "10") Integer pageSize, @RequestParam(name = "sort", defaultValue = "username") String sortBy, Model model) {
+    public String modifyUserProfile(@PathVariable("id") UUID id,
+                                    @RequestParam(name = "page", defaultValue = "1") Integer pageNo,
+                                    @RequestParam(name = "limit", defaultValue = "10") Integer pageSize,
+                                    @RequestParam(name = "sort", defaultValue = "username") String sortBy,
+                                    Model model) {
         model.addAttribute("pageNo", pageNo);
         model.addAttribute("pageSize", pageSize);
         model.addAttribute("sortBy", sortBy);
@@ -59,7 +64,13 @@ public class AdminUsersController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/admin/users/save")
-    public String saveUserProfile(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, @RequestParam(name = "page", defaultValue = "1") Integer pageNo, @RequestParam(name = "limit", defaultValue = "10") Integer pageSize, @RequestParam(name = "sort", defaultValue = "username") String sortBy, RedirectAttributes redirectAttributes, Model model) {
+    public String saveUserProfile(@ModelAttribute("userForm") @Valid User userForm,
+                                  BindingResult bindingResult,
+                                  @RequestParam(name = "page", defaultValue = "1") Integer pageNo,
+                                  @RequestParam(name = "limit", defaultValue = "10") Integer pageSize,
+                                  @RequestParam(name = "sort", defaultValue = "username") String sortBy,
+                                  RedirectAttributes redirectAttributes,
+                                  Model model) {
         model.addAttribute("pageNo", pageNo);
         model.addAttribute("pageSize", pageSize);
         model.addAttribute("sortBy", sortBy);
@@ -98,8 +109,12 @@ public class AdminUsersController {
 
         try {
             userService.saveUser(userForm);
+        } catch (UserServiceException e) {
+            if (!e.getConstraintRejectedFieldName().isEmpty())
+                bindingResult.rejectValue(e.getConstraintRejectedFieldName(), null, ms.getMessage(e.getConstraintRejectedFieldMessage(), null, LocaleContextHolder.getLocale()));
+            model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
+            return "admin/profile";
         } catch (Exception e) {
-            System.out.print(e);
             model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
             return "admin/profile";
         }
@@ -113,7 +128,12 @@ public class AdminUsersController {
     }
 
     @GetMapping("/admin/users")
-    public String userList(@RequestParam(name = "page", defaultValue = "1") Integer pageNo, @RequestParam(name = "limit", defaultValue = "10") Integer pageSize, @RequestParam(name = "sort", defaultValue = "username") String sortBy, @RequestParam(name = "infoMessage", required = false) String infoMessage, @RequestParam(name = "errorMessage", required = false) String errorMessage, Model model) {
+    public String userList(@RequestParam(name = "page", defaultValue = "1") Integer pageNo,
+                           @RequestParam(name = "limit", defaultValue = "10") Integer pageSize,
+                           @RequestParam(name = "sort", defaultValue = "username") String sortBy,
+                           @RequestParam(name = "infoMessage", required = false) String infoMessage,
+                           @RequestParam(name = "errorMessage", required = false) String errorMessage,
+                           Model model) {
 
         model.addAttribute("infoMessage", infoMessage);
         model.addAttribute("errorMessage", errorMessage);
@@ -135,7 +155,12 @@ public class AdminUsersController {
     }
 
     @PostMapping("/admin/users")
-    public String deleteUser(@RequestParam(required = true, defaultValue = "") UUID userId, @RequestParam(required = true, defaultValue = "") String action, @RequestParam(name = "page", defaultValue = "1") Integer pageNo, @RequestParam(name = "limit", defaultValue = "10") Integer pageSize, @RequestParam(name = "sort", defaultValue = "username") String sortBy, RedirectAttributes redirectAttributes) {
+    public String deleteUser(@RequestParam(required = true, defaultValue = "") UUID userId,
+                             @RequestParam(required = true, defaultValue = "") String action,
+                             @RequestParam(name = "page", defaultValue = "1") Integer pageNo,
+                             @RequestParam(name = "limit", defaultValue = "10") Integer pageSize,
+                             @RequestParam(name = "sort", defaultValue = "username") String sortBy,
+                             RedirectAttributes redirectAttributes) {
 
         if (action.equals("delete")) {
             User mySelf = userService.getMySelf();
