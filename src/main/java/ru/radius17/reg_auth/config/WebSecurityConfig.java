@@ -19,6 +19,8 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable();
+        httpSecurity.requiresChannel().anyRequest().requiresSecure();
+
         //Доступ только для не зарегистрированных пользователей
         httpSecurity.authorizeRequests().antMatchers("/registration").not().fullyAuthenticated();
         //Доступ только для пользователей с ролью Администратор

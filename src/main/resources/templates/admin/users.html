@@ -30,7 +30,7 @@
     </div>
     <div class="row">
       <div class="col g-3 text-center">
-        <table class="table table-striped align-middle table-responsive">
+        <div class="table-responsive"><table class="table table-striped align-middle">
           <thead><tr>
             <th th:with="currentColumn='id'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort='id')}"><span th:text="#{user.id}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
             <th th:with="currentColumn='username'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.username}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
@@ -65,7 +65,7 @@
               </form>
             </td>
           </tr>
-        </table>
+        </table></div>
       </div>
       <div class="row" th:if="${itemsPage.totalPages > 0}">
         <div class="col g-3">

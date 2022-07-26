@@ -37,6 +37,12 @@ logging:
     com: info
     web: debug
 server:
+  ssl:
+    key-store-type: pkcs12
+    key-store: classpath:ssl/springboot.p12
+    key-store-password: 1234567
+    key-alias: springboot
+    enabled: true
   servlet:
     session:
       timeout: 720m

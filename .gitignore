@@ -111,3 +111,4 @@ out/
 gen/
 target/
 src/main/resources/application-dev.yml
+## src/main/resources/ssl/*.p12
