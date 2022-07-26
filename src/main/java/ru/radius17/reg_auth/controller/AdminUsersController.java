@@ -89,8 +89,8 @@ public class AdminUsersController {
             if (isNewUser) {
                 // One of passwords is empty
                 String errMess = ms.getMessage("user.passwordCannotBeEmpty", null, LocaleContextHolder.getLocale());
-                bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, errMess));
-                bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, errMess));
+                bindingResult.rejectValue("password", null, errMess);
+                bindingResult.rejectValue("passwordConfirm", null, errMess);
             } else {
                 // Password was not changed
                 userForm.setPassword(mySelf.getPassword());
@@ -99,8 +99,8 @@ public class AdminUsersController {
         } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
             // Passwords not equal
             String errMess = ms.getMessage("user.passwordsNotMatch", null, LocaleContextHolder.getLocale());
-            bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, errMess));
-            bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, errMess));
+            bindingResult.rejectValue("password", null, errMess);
+            bindingResult.rejectValue("passwordConfirm", null, errMess);
         }
 
         if (bindingResult.hasErrors()) {

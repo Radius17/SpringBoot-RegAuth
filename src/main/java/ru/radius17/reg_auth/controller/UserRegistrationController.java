@@ -47,6 +47,9 @@ public class UserRegistrationController {
         // =========================================================
         // Environment use example
         // =========================================================
+        if(Boolean.parseBoolean(env.getProperty("spring.application.registration.disabled"))==true){
+            return "redirect:/";
+        }
         String app_name = env.getProperty("spring.application.name");
         if (app_name != null) {
             System.out.println("=========================================================");
@@ -58,16 +61,26 @@ public class UserRegistrationController {
     }
 
     @PostMapping("/registration")
-    public String addUser(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
-        // System.out.println("BINDING " + bindingResult);
+    public String addUser(@ModelAttribute("userForm") @Valid User userForm,
+                          BindingResult bindingResult,
+                          RedirectAttributes redirectAttributes,
+                          Model model) {
+        if(Boolean.parseBoolean(env.getProperty("spring.application.registration.disabled"))==true){
+            return "redirect:/";
+        }
         if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()) {
             String errMess = ms.getMessage("user.passwordCannotBeEmpty", null, LocaleContextHolder.getLocale());
-            bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, errMess));
-            bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, errMess));
+            bindingResult.rejectValue("password", null, errMess);
+            bindingResult.rejectValue("passwordConfirm", null, errMess);
+            // =========================================================
+            // Another variant
+            // =========================================================
+            // bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, errMess));
+            // bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, errMess));
         } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
             String errMess = ms.getMessage("user.passwordsNotMatch", null, LocaleContextHolder.getLocale());
-            bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, errMess));
-            bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, errMess));
+            bindingResult.rejectValue("password", null, errMess);
+            bindingResult.rejectValue("passwordConfirm", null, errMess);
         }
 
         if (bindingResult.hasErrors()) {
