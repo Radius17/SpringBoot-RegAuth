@@ -1,8 +1,13 @@
 spring:
   application:
     name: Reg and auth example
+    copyright:
+      name: Moya firma
+      year-start: 2015
+      year-stop: 2022
+      designed-by: Radius17
     registration:
-      disabled: true
+      disabled: false
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/my_database

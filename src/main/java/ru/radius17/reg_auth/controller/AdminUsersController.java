@@ -9,7 +9,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.radius17.reg_auth.entity.Role;
@@ -25,6 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
+@SessionAttributes("userListPageRequest")
 public class AdminUsersController {
     @Autowired
     ReloadableResourceBundleMessageSource ms;
@@ -45,14 +45,7 @@ public class AdminUsersController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/admin/users/modify/{id}")
     public String modifyUserProfile(@PathVariable("id") UUID id,
-                                    @RequestParam(name = "page", defaultValue = "1") Integer pageNo,
-                                    @RequestParam(name = "limit", defaultValue = "10") Integer pageSize,
-                                    @RequestParam(name = "sort", defaultValue = "username") String sortBy,
                                     Model model) {
-        model.addAttribute("pageNo", pageNo);
-        model.addAttribute("pageSize", pageSize);
-        model.addAttribute("sortBy", sortBy);
-
         User user = userService.getUserById(id);
         model.addAttribute("userForm", user);
         List<Role> listRoles = roleService.getAllRoles();
@@ -66,15 +59,8 @@ public class AdminUsersController {
     @RequestMapping(method = RequestMethod.POST, value = "/admin/users/save")
     public String saveUserProfile(@ModelAttribute("userForm") @Valid User userForm,
                                   BindingResult bindingResult,
-                                  @RequestParam(name = "page", defaultValue = "1") Integer pageNo,
-                                  @RequestParam(name = "limit", defaultValue = "10") Integer pageSize,
-                                  @RequestParam(name = "sort", defaultValue = "username") String sortBy,
                                   RedirectAttributes redirectAttributes,
                                   Model model) {
-        model.addAttribute("pageNo", pageNo);
-        model.addAttribute("pageSize", pageSize);
-        model.addAttribute("sortBy", sortBy);
-
         List<Role> listRoles = roleService.getAllRoles();
         model.addAttribute("listRoles", listRoles);
 
@@ -118,22 +104,27 @@ public class AdminUsersController {
             model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
             return "admin/profile";
         }
-
-        redirectAttributes.addAttribute("page", pageNo);
-        redirectAttributes.addAttribute("limit", pageSize);
-        redirectAttributes.addAttribute("sort", sortBy);
         redirectAttributes.addAttribute("infoMessage", ms.getMessage(isNewUser ? "user.addedSuccessfully" : "user.savedSuccessfully", null, LocaleContextHolder.getLocale()));
 
         return "redirect:/admin/users";
     }
 
+    @ModelAttribute("userListPageRequest")
+    public PageRequest getDefaultUserListPageRequest() {
+        return PageRequest.of(0, 10, Sort.by("username"));
+    }
     @GetMapping("/admin/users")
-    public String userList(@RequestParam(name = "page", defaultValue = "1") Integer pageNo,
-                           @RequestParam(name = "limit", defaultValue = "10") Integer pageSize,
-                           @RequestParam(name = "sort", defaultValue = "username") String sortBy,
+    public String userList(@RequestParam(name = "page", defaultValue = "-1") Integer pageNo,
+                           @RequestParam(name = "limit", defaultValue = "-1") Integer pageSize,
+                           @RequestParam(name = "sort", defaultValue = "") String sortBy,
                            @RequestParam(name = "infoMessage", required = false) String infoMessage,
                            @RequestParam(name = "errorMessage", required = false) String errorMessage,
+                           @ModelAttribute("userListPageRequest") PageRequest pageRequest,
                            Model model) {
+
+        if (pageNo < 1) pageNo = pageRequest.getPageNumber() + 1;
+        if (pageSize < 1) pageSize = pageRequest.getPageSize();
+        if (sortBy.isEmpty()) sortBy = pageRequest.getSort().toString().split(":")[0];
 
         model.addAttribute("infoMessage", infoMessage);
         model.addAttribute("errorMessage", errorMessage);
@@ -151,15 +142,13 @@ public class AdminUsersController {
             model.addAttribute("pageNumbers", pageNumbers);
         }
 
+        model.addAttribute("userListPageRequest", PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy)));
         return "admin/users";
     }
 
     @PostMapping("/admin/users")
     public String deleteUser(@RequestParam(required = true, defaultValue = "") UUID userId,
                              @RequestParam(required = true, defaultValue = "") String action,
-                             @RequestParam(name = "page", defaultValue = "1") Integer pageNo,
-                             @RequestParam(name = "limit", defaultValue = "10") Integer pageSize,
-                             @RequestParam(name = "sort", defaultValue = "username") String sortBy,
                              RedirectAttributes redirectAttributes) {
 
         if (action.equals("delete")) {
@@ -176,9 +165,6 @@ public class AdminUsersController {
                 }
             }
         }
-        redirectAttributes.addAttribute("page", pageNo);
-        redirectAttributes.addAttribute("limit", pageSize);
-        redirectAttributes.addAttribute("sort", sortBy);
         return "redirect:/admin/users";
     }
 }

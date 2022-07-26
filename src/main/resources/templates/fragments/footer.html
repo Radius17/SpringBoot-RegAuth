@@ -2,7 +2,11 @@
     <footer class="mt-auto">
       <div class="container">
          <div class="row">
-            <div class="col-12 text-center py-3" th:text="'&copy; ' + ${#dates.format(#dates.createNow(), 'YYYY')} + ' My firm'"></div>
+            <div class="col-12 text-center py-3" th:text="
+            (${@environment.getProperty('spring.application.copyright.designed-by')} ? 'Designed by ' + ${@environment.getProperty('spring.application.copyright.designed-by')} + ' ' : '')
+            + '&copy; ' + ${@environment.getProperty('spring.application.copyright.year-start')}
+            + '-' + ${@environment.getProperty('spring.application.copyright.year-stop')}
+            + ' ' + ${@environment.getProperty('spring.application.copyright.name')}">&copy; 2022 My Firm</div>
           </div>
         </div>
     </footer>

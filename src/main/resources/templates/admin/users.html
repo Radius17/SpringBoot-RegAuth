@@ -60,9 +60,6 @@
                     th:onsubmit="'return confirm(\'' + #{confirm.delete} + ' \' + this.getAttribute(\'data-username\')+\'?\');'">
                 <input type="hidden" name="userId" th:value="${user.id}"/>
                 <input type="hidden" name="action" value="delete"/>
-                <input type="hidden" name="page" th:value="${itemsPage.number + 1}"/>
-                <input type="hidden" name="limit" th:value="${itemsPage.size}"/>
-                <input type="hidden" name="sort" th:value="${sortBy}"/>
                 <a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="@{'/admin/users/modify/'+${user.id}(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${sortBy})}"><i class="bi-pen"></i></a>
                 <button th:title="#{submit.delete}" class="btn btn-danger btn-block" type="submit"><i class="bi-trash"></i></button>
               </form>

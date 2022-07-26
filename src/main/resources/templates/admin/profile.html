@@ -69,9 +69,6 @@
           </div>
           <div class="col text-center form-buttons">
             <input type="hidden" th:field="*{id}" />
-            <input type="hidden" name="page" th:value="${pageNo}"/>
-            <input type="hidden" name="limit" th:value="${pageSize}"/>
-            <input type="hidden" name="sort" th:value="${sortBy}"/>
             <button class="btn btn-primary btn-block" type="submit" th:text="#{submit.save}"></button>
           </div>
         </div>
