@@ -4,7 +4,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.thymeleaf.org
-          http://www.ultraq.net.nz/thymeleaf/layout
+
           http://www.ultraq.net.nz/thymeleaf/layout"
       th:with="pageHeader=#{title.usersmanagement},
       appName=${@environment.getProperty('spring.application.name')},
@@ -20,72 +20,82 @@
 <div class="main-wrapper">
   <div class="container">
     <div class="row">
-      <div class="col-12 g-3">
+      <div class="col-12 gy-3">
         <h1 class="h3" th:text="${pageHeader}"></h1>
       </div>
-    </div>
-    <div th:replace="fragments/header :: messageBlock"></div>
-    <div class="col-12 text-end">
-      <a th:title="#{link.add}" class="btn btn-success btn-block" th:href="'/admin/users/add'"><i class="bi-plus"></i></a>
+      <div th:replace="fragments/header :: messageBlock"></div>
+      <div class="col-12 text-end">
+        <a th:title="#{link.add}" class="btn btn-success btn-block" th:href="'/admin/users/add'"><i class="bi-plus"></i></a>
+      </div>
     </div>
     <div class="row">
-      <div class="col g-3 text-center">
-        <div class="table-responsive"><table class="table table-striped align-middle">
-          <thead><tr>
-            <th th:with="currentColumn='id'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort='id')}"><span th:text="#{user.id}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-            <th th:with="currentColumn='username'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.username}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-            <th th:with="currentColumn='nickname'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.nickname}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-            <th th:with="currentColumn='email'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.email}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-            <th th:with="currentColumn='phone'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.phone}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-            <th th:text="#{user.roles}"></th>
-            <th th:with="currentColumn='enabled'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.enabled}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-            <th th:text="#{user.actions}"></th>
-          </tr></thead>
-          <tr th:each="user: ${itemsPage}">
-            <td th:text="${user.id}" />
-            <td th:text="${user.username}" />
-            <td th:text="${user.nickname}" />
-            <td th:text="${user.email}" />
-            <td th:text="${user.phone}" />
-            <td>
-              <!-- <span th:each="role: ${user.roles}" th:text="${role.label}+';'" /> -->
-              <!-- <span th:with="userRoles=${user.roles}" th:utext="${#strings.arrayJoin(userRoles.![label], '<br />')}" th:remove="tag" /> -->
-              <span th:utext="${#strings.arrayJoin(user.roles.![label], ',<br />')}" th:remove="tag"></span>
-            </td>
-            <td th:text="${user.enabled} ? #{user.enabled.yes} : #{user.enabled.no}" />
-            <td>
-              <form action="/admin/users/delete"
-                    method="post"
-                    th:data-username="${user.username}"
-                    th:onsubmit="'return confirm(\'' + #{confirm.delete} + ' \' + this.getAttribute(\'data-username\')+\'?\');'">
-                <input type="hidden" name="userId" th:value="${user.id}"/>
-                <a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="@{'/admin/users/modify/'+${user.id}}"><i class="bi-pen"></i></a>
-                <button th:title="#{submit.delete}" class="btn btn-danger btn-block" type="submit"><i class="bi-trash"></i></button>
-              </form>
-            </td>
-          </tr>
-        </table></div>
-      </div>
-      <div class="row" th:if="${itemsPage.totalPages > 0}">
-        <div class="col g-3">
-          <ul class="pagination justify-content-center">
-            <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
-              <a th:text="#{link.first}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=1, sort=${sortBy})}"></a>
-            </li>
-            <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
-              <a th:text="#{link.prev}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number}, sort=${sortBy})}"></a>
-            </li>
-            <li th:class="${pageNumber==itemsPage.number + 1} ? 'page-item active' : 'page-item'" th:each="pageNumber : ${pageNumbers}">
-              <a th:text="${pageNumber}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${pageNumber}, sort=${sortBy})}"></a>
-            </li>
-            <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
-              <a th:text="#{link.next}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number}+2, sort=${sortBy})}"></a>
-            </li>
-            <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
-              <a th:text="#{link.last}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.totalPages}, sort=${sortBy})}"></a>
-            </li>
-          </ul>
+      <div class="col gy-3 text-center">
+        <div class="table-responsive">
+          <table class="table table-striped align-middle">
+            <thead>
+              <tr>
+                <th th:with="currentColumn='id'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort='id')}"><span th:text="#{user.id}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="currentColumn='username'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.username}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="currentColumn='nickname'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.nickname}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="currentColumn='email'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.email}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="currentColumn='phone'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.phone}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:text="#{user.roles}"></th>
+                <th th:with="currentColumn='enabled'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.enabled}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:text="#{user.actions}"></th>
+              </tr>
+            </thead>
+            <tr th:each="user: ${itemsPage}">
+              <td th:text="${user.id}" />
+              <td th:text="${user.username}" />
+              <td th:text="${user.nickname}" />
+              <td th:text="${user.email}" />
+              <td th:text="${user.phone}" />
+              <td>
+                <!-- <span th:each="role: ${user.roles}" th:text="${role.label}+';'" /> -->
+                <!-- <span th:with="userRoles=${user.roles}" th:utext="${#strings.arrayJoin(userRoles.![label], '<br />')}" th:remove="tag" /> -->
+                <span th:utext="${#strings.arrayJoin(user.roles.![label], ',<br />')}" th:remove="tag"></span>
+              </td>
+              <td th:text="${user.enabled} ? #{user.enabled.yes} : #{user.enabled.no}" />
+              <td>
+                <form action="/admin/users/delete"
+                      method="post"
+                      th:data-username="${user.username}"
+                      th:onsubmit="'return confirm(\'' + #{confirm.delete} + ' \' + this.getAttribute(\'data-username\')+\'?\');'">
+                  <input type="hidden" name="userId" th:value="${user.id}"/>
+                  <a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="@{'/admin/users/modify/'+${user.id}}"><i class="bi-pen"></i></a>
+                  <button th:title="#{submit.delete}" class="btn btn-danger btn-block" type="submit"><i class="bi-trash"></i></button>
+                </form>
+              </td>
+            </tr>
+          </table>
         </div>
+      </div>
+    </div>
+    <div class="row" th:if="${itemsPage.totalPages > 0}">
+      <div class="col-12 gy-3">
+        <ul class="pagination justify-content-center">
+          <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
+            <a th:text="#{link.first}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=1, sort=${sortBy})}"></a>
+          </li>
+          <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
+            <a th:text="#{link.prev}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number}, sort=${sortBy})}"></a>
+          </li>
+          <li th:class="${pageNumber==itemsPage.number + 1} ? 'page-item active' : 'page-item'" th:each="pageNumber : ${pageNumbers}">
+            <a th:text="${pageNumber}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${pageNumber}, sort=${sortBy})}"></a>
+          </li>
+          <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
+            <a th:text="#{link.next}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number}+2, sort=${sortBy})}"></a>
+          </li>
+          <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
+            <a th:text="#{link.last}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.totalPages}, sort=${sortBy})}"></a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-12 text-center" th:text="#{list.records.of.total(
+          ${itemsPage.number} * ${itemsPage.size} +1,
+          ${itemsPage.number} * ${itemsPage.size} +10 > ${itemsPage.getTotalElements()} ? ${itemsPage.getTotalElements()} : ${itemsPage.number} * ${itemsPage.size} +10,
+          ${itemsPage.getTotalElements()}
+          )}">
       </div>
     </div>
   </div>
