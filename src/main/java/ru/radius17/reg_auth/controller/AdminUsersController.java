@@ -41,7 +41,7 @@ public class AdminUsersController {
         model.addAttribute("listRoles", listRoles);
         model.addAttribute("isNewUser", true);
         model.addAttribute("isMySelf", false);
-        return "admin/profile";
+        return "admin/users/profile";
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/modify/{id}")
@@ -54,7 +54,7 @@ public class AdminUsersController {
         model.addAttribute("isNewUser", false);
         User mySelf = userService.getMySelf();
         model.addAttribute("isMySelf", mySelf.getId().equals(id));
-        return "admin/profile";
+        return "admin/users/profile";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/save")
@@ -91,7 +91,7 @@ public class AdminUsersController {
         }
 
         if (bindingResult.hasErrors()) {
-            return "admin/profile";
+            return "admin/users/profile";
         }
 
         try {
@@ -100,10 +100,10 @@ public class AdminUsersController {
             if (!e.getConstraintRejectedFieldName().isEmpty())
                 bindingResult.rejectValue(e.getConstraintRejectedFieldName(), null, ms.getMessage(e.getConstraintRejectedFieldMessage(), null, LocaleContextHolder.getLocale()));
             model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
-            return "admin/profile";
+            return "admin/users/profile";
         } catch (Exception e) {
             model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
-            return "admin/profile";
+            return "admin/users/profile";
         }
         redirectAttributes.addAttribute("infoMessage", ms.getMessage(isNewUser ? "user.addedSuccessfully" : "user.savedSuccessfully", null, LocaleContextHolder.getLocale()));
 
@@ -150,7 +150,7 @@ public class AdminUsersController {
         }
 
         model.addAttribute("userListPageRequest", PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy)));
-        return "admin/users";
+        return "admin/users/list";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/delete")
