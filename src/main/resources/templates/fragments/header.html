@@ -41,7 +41,7 @@
                   </ul>
                 </li>
                 <li sec:authorize="!isAuthenticated()" class="nav-item">
-                  <a class="nav-link" href="/registration" th:text="#{link.registration}"></a>
+                  <a class="nav-link" href="/register" th:text="#{link.registration}"></a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
                   <a class="nav-link" href="/profile" th:text="#{link.profile}"></a>

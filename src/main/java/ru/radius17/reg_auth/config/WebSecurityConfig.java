@@ -22,7 +22,7 @@ public class WebSecurityConfig {
         httpSecurity.requiresChannel().anyRequest().requiresSecure();
 
         //Доступ только для не зарегистрированных пользователей
-        httpSecurity.authorizeRequests().antMatchers("/registration").not().fullyAuthenticated();
+        httpSecurity.authorizeRequests().antMatchers("/register").not().fullyAuthenticated();
         //Доступ только для пользователей с ролью Администратор
         httpSecurity.authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN");
         //Доступ только для пользователей с ролью Пользователь

@@ -60,13 +60,13 @@ public class UserService implements UserDetailsService {
     }
 
     public void saveUser(User user) throws UserServiceException {
-        User mySelf = this.getMySelf();
 
         if (user.getId() == null) {
             // It is new user
             user.setRoles(Collections.singleton(roleService.getDefaultRole()));
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         } else {
+            User mySelf = this.getMySelf();
             if (mySelf.getId().equals(user.getId())) {
                 // It is myself
                 // Restrict to change roles

@@ -4,34 +4,45 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.radius17.reg_auth.entity.User;
-import ru.radius17.reg_auth.service.RoleService;
 import ru.radius17.reg_auth.service.UserService;
+import ru.radius17.reg_auth.service.UserServiceException;
 
 import javax.validation.Valid;
 
 @Controller
-public class UserRegistrationController {
+public class UserController {
 
     @Autowired
     ReloadableResourceBundleMessageSource ms;
     @Autowired
     private UserService userService;
-    @Autowired
-    private RoleService roleService;
 
     @Autowired
     private Environment env;
 
-    @GetMapping("/registration")
-    public String registration(Model model) {
+    @RequestMapping("/login")
+    public String loginForm(Model model) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return "redirect:/";
+        }
+        return "user/login";
+    }
+
+    @GetMapping("/register")
+    public String registrationForm(Model model) {
         // =========================================================
         // Variant 1 (Required Autowired ApplicationContext appContext;)
         // =========================================================
@@ -56,17 +67,19 @@ public class UserRegistrationController {
             System.out.println("=========================================================");
         }
         model.addAttribute("userForm", userService.getEmptyUser());
-        return "registration";
+        return "user/register";
     }
 
-    @PostMapping("/registration")
-    public String addUser(@ModelAttribute("userForm") @Valid User userForm,
+    @PostMapping("/register")
+    public String addProfile(@ModelAttribute("userForm") @Valid User userForm,
                           BindingResult bindingResult,
                           RedirectAttributes redirectAttributes,
                           Model model) {
+
         if(Boolean.parseBoolean(env.getProperty("spring.application.registration.disabled"))==true){
             return "redirect:/";
         }
+
         if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()) {
             String errMess = ms.getMessage("user.passwordCannotBeEmpty", null, LocaleContextHolder.getLocale());
             bindingResult.rejectValue("password", null, errMess);
@@ -83,7 +96,7 @@ public class UserRegistrationController {
         }
 
         if (bindingResult.hasErrors()) {
-            return "registration";
+            return "user/register";
         }
 
         // Always new user
@@ -95,12 +108,74 @@ public class UserRegistrationController {
 
         try {
             userService.saveUser(userForm);
+        } catch (UserServiceException e) {
+            if (!e.getConstraintRejectedFieldName().isEmpty())
+                bindingResult.rejectValue(e.getConstraintRejectedFieldName(), null, ms.getMessage(e.getConstraintRejectedFieldMessage(), null, LocaleContextHolder.getLocale()));
+            model.addAttribute("errorMessage", ms.getMessage("registration.error", null, LocaleContextHolder.getLocale()));
+            return "user/register";
         } catch (Exception e) {
             model.addAttribute("errorMessage", ms.getMessage("registration.error", null, LocaleContextHolder.getLocale()));
-            return "registration";
+            return "user/register";
         }
 
         redirectAttributes.addAttribute("infoMessage", ms.getMessage("user.registeredSuccessfully", null, LocaleContextHolder.getLocale()));
+        return "redirect:/";
+    }
+
+    @GetMapping("/profile")
+    public String modifyProfile(Model model) throws UsernameNotFoundException {
+        User user = userService.getMySelf();
+        user.setPassword(null);
+        user.setPasswordConfirm(null);
+        model.addAttribute("userForm", user);
+        return "user/profile";
+    }
+
+    @PostMapping("/profile")
+    public String saveProfile(@ModelAttribute("userForm") @Valid User userForm,
+                              BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes,
+                              Model model) {
+
+        User mySelf = userService.getMySelf();
+
+        if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()) {
+            userForm.setPassword(mySelf.getPassword());
+            userForm.setPasswordConfirm(null);
+        } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
+            String errMess = ms.getMessage("user.passwordsNotMatch", null, LocaleContextHolder.getLocale());
+            bindingResult.rejectValue("password", null, errMess);
+            bindingResult.rejectValue("passwordConfirm", null, errMess);
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "user/profile";
+        }
+
+        // Restrict to change UUID
+        userForm.setId(mySelf.getId());
+        // Restrict to change username
+        userForm.setUsername(mySelf.getUsername());
+        // Restrict to change description
+        userForm.setDescription(mySelf.getDescription());
+        // Restrict to change roles
+        userForm.setRoles(mySelf.getRoles());
+        // Restrict to change enabled
+        userForm.setEnabled(mySelf.getEnabled());
+
+        try {
+            userService.saveUser(userForm);
+        } catch (UserServiceException e) {
+            if (!e.getConstraintRejectedFieldName().isEmpty())
+                bindingResult.rejectValue(e.getConstraintRejectedFieldName(), null, ms.getMessage(e.getConstraintRejectedFieldMessage(), null, LocaleContextHolder.getLocale()));
+            model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
+            return "user/profile";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
+            return "user/profile";
+        }
+
+        redirectAttributes.addAttribute("infoMessage", ms.getMessage("user.profileSaved", null, LocaleContextHolder.getLocale()));
         return "redirect:/";
     }
 }
