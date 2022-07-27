@@ -34,13 +34,13 @@
           <table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th th:with="currentColumn='id'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort='id')}"><span th:text="#{user.id}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:with="currentColumn='username'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.username}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:with="currentColumn='nickname'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.nickname}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:with="currentColumn='email'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.email}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:with="currentColumn='phone'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.phone}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="currentColumn='id'"><a th:href="@{'/admin/users'(sort='id')}"><span th:text="#{user.id}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="currentColumn='username'"><a th:href="@{'/admin/users'(sort=${currentColumn})}"><span th:text="#{user.username}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="currentColumn='nickname'"><a th:href="@{'/admin/users'(sort=${currentColumn})}"><span th:text="#{user.nickname}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="currentColumn='email'"><a th:href="@{'/admin/users'(sort=${currentColumn})}"><span th:text="#{user.email}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="currentColumn='phone'"><a th:href="@{'/admin/users'(sort=${currentColumn})}"><span th:text="#{user.phone}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
                 <th th:text="#{user.roles}"></th>
-                <th th:with="currentColumn='enabled'"><a th:href="@{'/admin/users'(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${currentColumn})}"><span th:text="#{user.enabled}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="currentColumn='enabled'"><a th:href="@{'/admin/users'(sort=${currentColumn})}"><span th:text="#{user.enabled}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
                 <th th:text="#{user.actions}"></th>
               </tr>
             </thead>
@@ -75,19 +75,19 @@
       <div class="col-12 gy-3">
         <ul class="pagination justify-content-center">
           <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
-            <a th:text="#{link.first}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=1, sort=${sortBy})}"></a>
+            <a th:text="#{link.first}" th:class="page-link" th:href="@{/admin/users(page=1)}"></a>
           </li>
           <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
-            <a th:text="#{link.prev}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number}, sort=${sortBy})}"></a>
+            <a th:text="#{link.prev}" th:class="page-link" th:href="@{/admin/users(page=${itemsPage.number})}"></a>
           </li>
           <li th:class="${pageNumber==itemsPage.number + 1} ? 'page-item active' : 'page-item'" th:each="pageNumber : ${pageNumbers}">
-            <a th:text="${pageNumber}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${pageNumber}, sort=${sortBy})}"></a>
+            <a th:text="${pageNumber}" th:class="page-link" th:href="@{/admin/users(page=${pageNumber})}"></a>
           </li>
           <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
-            <a th:text="#{link.next}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.number}+2, sort=${sortBy})}"></a>
+            <a th:text="#{link.next}" th:class="page-link" th:href="@{/admin/users(page=${itemsPage.number}+2)}"></a>
           </li>
           <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
-            <a th:text="#{link.last}" th:class="page-link" th:href="@{/admin/users(limit=${itemsPage.size}, page=${itemsPage.totalPages}, sort=${sortBy})}"></a>
+            <a th:text="#{link.last}" th:class="page-link" th:href="@{/admin/users(page=${itemsPage.totalPages})}"></a>
           </li>
         </ul>
       </div>
