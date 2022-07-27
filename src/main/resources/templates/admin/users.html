@@ -54,13 +54,12 @@
             </td>
             <td th:text="${user.enabled} ? #{user.enabled.yes} : #{user.enabled.no}" />
             <td>
-              <form action="/admin/users"
+              <form action="/admin/users/delete"
                     method="post"
                     th:data-username="${user.username}"
                     th:onsubmit="'return confirm(\'' + #{confirm.delete} + ' \' + this.getAttribute(\'data-username\')+\'?\');'">
                 <input type="hidden" name="userId" th:value="${user.id}"/>
-                <input type="hidden" name="action" value="delete"/>
-                <a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="@{'/admin/users/modify/'+${user.id}(limit=${itemsPage.size}, page=${itemsPage.number + 1}, sort=${sortBy})}"><i class="bi-pen"></i></a>
+                <a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="@{'/admin/users/modify/'+${user.id}}"><i class="bi-pen"></i></a>
                 <button th:title="#{submit.delete}" class="btn btn-danger btn-block" type="submit"><i class="bi-trash"></i></button>
               </form>
             </td>

@@ -25,6 +25,7 @@ import java.util.stream.IntStream;
 
 @Controller
 @SessionAttributes("userListPageRequest")
+@RequestMapping(value = "/admin/users")
 public class AdminUsersController {
     @Autowired
     ReloadableResourceBundleMessageSource ms;
@@ -33,7 +34,7 @@ public class AdminUsersController {
     @Autowired
     private RoleService roleService;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/admin/users/add")
+    @RequestMapping(method = RequestMethod.GET, value = "/add")
     public String addUserProfile(Model model) {
         model.addAttribute("userForm", userService.getEmptyUser());
         List<Role> listRoles = roleService.getAllRoles();
@@ -43,7 +44,7 @@ public class AdminUsersController {
         return "admin/profile";
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/admin/users/modify/{id}")
+    @RequestMapping(method = RequestMethod.GET, value = "/modify/{id}")
     public String modifyUserProfile(@PathVariable("id") UUID id,
                                     Model model) {
         User user = userService.getUserById(id);
@@ -56,7 +57,7 @@ public class AdminUsersController {
         return "admin/profile";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/admin/users/save")
+    @RequestMapping(method = RequestMethod.POST, value = "/save")
     public String saveUserProfile(@ModelAttribute("userForm") @Valid User userForm,
                                   BindingResult bindingResult,
                                   RedirectAttributes redirectAttributes,
@@ -113,7 +114,7 @@ public class AdminUsersController {
     public PageRequest getDefaultUserListPageRequest() {
         return PageRequest.of(0, 10, Sort.by("username"));
     }
-    @GetMapping("/admin/users")
+    @RequestMapping(method = RequestMethod.GET, value = "")
     public String userList(@RequestParam(name = "page", defaultValue = "-1") Integer pageNo,
                            @RequestParam(name = "limit", defaultValue = "-1") Integer pageSize,
                            @RequestParam(name = "sort", defaultValue = "") String sortBy,
@@ -152,23 +153,20 @@ public class AdminUsersController {
         return "admin/users";
     }
 
-    @PostMapping("/admin/users")
+    @RequestMapping(method = RequestMethod.POST, value = "/delete")
     public String deleteUser(@RequestParam(required = true, defaultValue = "") UUID userId,
-                             @RequestParam(required = true, defaultValue = "") String action,
                              RedirectAttributes redirectAttributes) {
 
-        if (action.equals("delete")) {
-            User mySelf = userService.getMySelf();
-            if (mySelf.getId().equals(userId)) {
-                redirectAttributes.addAttribute("errorMessage", ms.getMessage("user.youCannotDeleteYourSelf", null, LocaleContextHolder.getLocale()));
-            } else {
-                try {
-                    userService.deleteUser(userId);
-                    redirectAttributes.addAttribute("infoMessage", ms.getMessage("user.deletedSuccessfully", null, LocaleContextHolder.getLocale()));
-                } catch (Exception e) {
-                    System.out.print(e);
-                    redirectAttributes.addAttribute("errorMessage", ms.getMessage("delete.error", null, LocaleContextHolder.getLocale()));
-                }
+        User mySelf = userService.getMySelf();
+        if (mySelf.getId().equals(userId)) {
+            redirectAttributes.addAttribute("errorMessage", ms.getMessage("user.youCannotDeleteYourSelf", null, LocaleContextHolder.getLocale()));
+        } else {
+            try {
+                userService.deleteUser(userId);
+                redirectAttributes.addAttribute("infoMessage", ms.getMessage("user.deletedSuccessfully", null, LocaleContextHolder.getLocale()));
+            } catch (Exception e) {
+                System.out.print(e);
+                redirectAttributes.addAttribute("errorMessage", ms.getMessage("delete.error", null, LocaleContextHolder.getLocale()));
             }
         }
         return "redirect:/admin/users";
