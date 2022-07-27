@@ -35,18 +35,28 @@ public class Role implements GrantedAuthority {
     public String getAuthority() {
         return getName();
     }
-
+    /*
     @Override
     public boolean equals(Object object) {
-        Boolean result = false;
+        // if (this == object) return true;
+
         if (object == null || object.getClass() != getClass()) {
-            result = false;
+            return false;
         } else {
             Role role = (Role) object;
             if (this.id.equals(role.getId())) {
-                result = true;
+                return true;
             }
         }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         return result;
     }
+    */
 }

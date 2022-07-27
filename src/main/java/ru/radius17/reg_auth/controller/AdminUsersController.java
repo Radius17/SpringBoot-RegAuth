@@ -18,6 +18,7 @@ import ru.radius17.reg_auth.service.UserService;
 import ru.radius17.reg_auth.service.UserServiceException;
 
 import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -51,6 +52,16 @@ public class AdminUsersController {
         model.addAttribute("userForm", user);
         List<Role> listRoles = roleService.getAllRoles();
         model.addAttribute("listRoles", listRoles);
+        HashSet<UUID> selectedRoles = new HashSet<>();
+        for(Role userRole: user.getRoles()){
+            for (Role existingRole: listRoles) {
+                if(existingRole.getId().equals(userRole.getId())){
+                    selectedRoles.add(userRole.getId());
+                    System.out.println(existingRole.getId());
+                }
+            }
+        }
+        model.addAttribute("selectedRoles", selectedRoles);
         model.addAttribute("isNewUser", false);
         User mySelf = userService.getMySelf();
         model.addAttribute("isMySelf", mySelf.getId().equals(id));

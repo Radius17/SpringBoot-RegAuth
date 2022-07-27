@@ -49,7 +49,7 @@
       </div>
       <div class="col-12" th:if="!${isMySelf}">
         <div th:each="role: ${listRoles}" class="form-check">
-          <input type="checkbox" class="form-check-input" th:id="${{role}}" th:value="${{role}}" th:field="*{roles}" />
+          <input type="checkbox" class="form-check-input" th:checked="${selectedRoles.contains(role.getId())}" th:id="${{role}}" th:value="${{role}}" name="roles[]" th:field_tag_not_working="*{roles}" />
           <label class="form-check-label" th:for="${{role}}" th:text="${role.label}"></label>
         </div>
       </div>
