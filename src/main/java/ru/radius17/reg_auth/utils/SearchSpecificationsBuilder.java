@@ -1,7 +1,6 @@
-package ru.radius17.reg_auth.service;
+package ru.radius17.reg_auth.utils;
 
 import org.springframework.data.jpa.domain.Specification;
-import ru.radius17.reg_auth.entity.User;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -11,32 +10,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UserSpecificationsBuilder {
+public class SearchSpecificationsBuilder {
     private final List<SearchCriteria> params;
     private final boolean orPredicate;
 
-    public UserSpecificationsBuilder(boolean orPredicate) {
+    public SearchSpecificationsBuilder(boolean orPredicate) {
         this.orPredicate = orPredicate;
         params = new ArrayList<>();
     }
 
-    public UserSpecificationsBuilder() {
+    public SearchSpecificationsBuilder() {
         this.orPredicate = false;
         params = new ArrayList<>();
     }
 
-    public UserSpecificationsBuilder with(String key, String operation, Object value) {
+    public SearchSpecificationsBuilder with(String key, String operation, Object value) {
         params.add(new SearchCriteria(key, operation, value, this.orPredicate));
         return this;
     }
 
-    public Specification<User> build() {
+    public Specification<Object> build() {
         if (params.size() == 0) {
             return null;
         }
 
         List<Specification> specs = params.stream()
-                .map(CustomSpecification::new)
+                .map(SearchSpecification::new)
                 .collect(Collectors.toList());
 
         Specification result = specs.get(0);
@@ -50,16 +49,16 @@ public class UserSpecificationsBuilder {
         return result;
     }
 
-    private class CustomSpecification implements Specification<User> {
+    private class SearchSpecification implements Specification<Object> {
 
         private final SearchCriteria criteria;
 
-        public CustomSpecification(SearchCriteria searchCriteria) {
+        public SearchSpecification(SearchCriteria searchCriteria) {
             this.criteria = searchCriteria;
         }
 
         @Override
-        public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        public Predicate toPredicate(Root<Object> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             if (criteria.getOperation().equalsIgnoreCase(">")) {
                 return criteriaBuilder.greaterThanOrEqualTo(
                         root.get(criteria.getKey()), criteria.getValue().toString());

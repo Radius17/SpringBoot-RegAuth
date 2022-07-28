@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.radius17.reg_auth.entity.Role;
 import ru.radius17.reg_auth.entity.User;
 import ru.radius17.reg_auth.service.*;
+import ru.radius17.reg_auth.utils.*;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -156,7 +157,7 @@ public class AdminUsersController {
         }
 
         boolean userListInSearch = false;
-        UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
+        SearchSpecificationsBuilder builder = new SearchSpecificationsBuilder(false);
         for (SearchCriteria searchCriteria: searchCriterias){
             if(searchCriteria.getValue() != "") {
                 builder.with(searchCriteria.getKey(), searchCriteria.getOperation(), searchCriteria.getValue());

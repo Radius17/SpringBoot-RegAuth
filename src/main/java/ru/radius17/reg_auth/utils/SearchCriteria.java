@@ -1,4 +1,4 @@
-package ru.radius17.reg_auth.service;
+package ru.radius17.reg_auth.utils;
 
 import lombok.Getter;
 
