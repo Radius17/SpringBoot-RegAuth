@@ -3,14 +3,11 @@
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.thymeleaf.org
-
-          http://www.ultraq.net.nz/thymeleaf/layout"
+      xsi:schemaLocation="http://www.thymeleaf.org http://www.ultraq.net.nz/thymeleaf/layout"
       th:with="pageHeader=#{title.usersmanagement},
       appName=${@environment.getProperty('spring.application.name')},
       pageTitle=${(appName!=null ? appName + ' - ' : '') + pageHeader}
       ">
-
 <head>
   <th:block th:replace="fragments/header :: commonHead"></th:block>
   <!-- other elements you want to reference in your layout -->
@@ -27,7 +24,15 @@
       <div th:class="(${userListSearchCriterias} ? 'col-3' : 'col-12') + ' text-start gy-3'">
         <a th:title="#{link.add}" class="btn btn-success btn-block" th:href="'/admin/users/add'"><i class="bi-plus"></i></a>
       </div>
-      <div class="col-6 text-center gy-3" th:if="${userListSearchCriterias}" th:text="${userListInSearch} ? #{message.filtered} : ''"></div>
+      <div class="filter-criterias col-6 text-center gy-3" th:if="${userListSearchCriterias}">
+        <span th:text="${userListInSearch} ? #{message.filtered} + ':' : ''">
+        </span><span class="ps-1 filter-criteria"
+              th:each="searchCriteria: ${userListSearchCriterias}"
+              th:if="${searchCriteria.getValue() != ''}"
+              th:with="filterFieldNamePostfix=${searchCriteria.getKey()}, filterFieldNamePrefix='user'"
+              th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}} + '=' + ${searchCriteria.getValue()}">
+        </span>
+      </div>
       <div class="col-3 text-end gy-3" th:if="${userListSearchCriterias}">
         <!-- Modal filter start -->
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:title="#{link.filter}" th:data-bs-target="'#' + ${idsPrefix} + 'FilterFormWrapper'"><i class="bi-filter-circle-fill"></i></button>
@@ -64,28 +69,28 @@
           <table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th th:with="currentColumn='id'"><a th:href="@{'/admin/users'(sort='id')}"><span th:text="#{user.id}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:with="currentColumn='username'"><a th:href="@{'/admin/users'(sort=${currentColumn})}"><span th:text="#{user.username}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:with="currentColumn='nickname'"><a th:href="@{'/admin/users'(sort=${currentColumn})}"><span th:text="#{user.nickname}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:with="currentColumn='email'"><a th:href="@{'/admin/users'(sort=${currentColumn})}"><span th:text="#{user.email}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:with="currentColumn='phone'"><a th:href="@{'/admin/users'(sort=${currentColumn})}"><span th:text="#{user.phone}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:text="#{user.roles}"></th>
-                <th th:with="currentColumn='enabled'"><a th:href="@{'/admin/users'(sort=${currentColumn})}"><span th:text="#{user.enabled}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th></th>
-                <th></th>
+                <th th:with="curColumn='id'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort='id')}"><span th:text="#{user.id}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='username'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn})}"><span th:text="#{user.username}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='nickname'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn})}"><span th:text="#{user.nickname}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='email'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn})}"><span th:text="#{user.email}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='phone'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn})}"><span th:text="#{user.phone}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='roles'" th:class="'t-col-user-' + ${curColumn}" th:text="#{user.roles}"></th>
+                <th th:with="curColumn='enabled'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn})}"><span th:text="#{user.enabled}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th class="t-col-user-modify"></th>
+                <th class="t-col-user-delete"></th>
               </tr>
             </thead>
-            <tr th:if="${itemsPage.totalPages == 0}"><td colspan="8" th:text="#{message.data.absent}" /></tr>
+            <tr th:if="${itemsPage.totalPages == 0}"><td colspan="9" th:text="#{message.data.absent}" /></tr>
             <tr th:if="${itemsPage.totalPages > 0}" th:each="user: ${itemsPage}">
-              <td th:text="${user.id}" />
-              <td th:text="${user.username}" />
-              <td th:text="${user.nickname}" />
-              <td th:text="${user.email}" />
-              <td th:text="${user.phone}" />
-              <td><span th:utext="${#strings.arrayJoin(user.roles.![label], ',<br />')}" th:remove="tag"></span></td>
-              <td th:text="${user.enabled} ? #{user.enabled.yes} : #{user.enabled.no}" />
-              <td class="pe-0 text-end"><a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="@{'/admin/users/modify/'+${user.id}}"><i class="bi-pen"></i></a></td>
-              <td class="text-start">
+              <td th:class="'t-col-user-id'" th:text="${user.id}" />
+              <td th:class="'t-col-user-username'" th:text="${user.username}" />
+              <td th:class="'t-col-user-nickname'" th:text="${user.nickname}" />
+              <td th:class="'t-col-user-email'" th:text="${user.email}" />
+              <td th:class="'t-col-user-phone'" th:text="${user.phone}" />
+              <td th:class="'t-col-user-roles'"><span th:utext="${#strings.arrayJoin(user.roles.![label], ',<br />')}" th:remove="tag"></span></td>
+              <td th:class="'t-col-user-enabled'" th:text="${user.enabled} ? #{user.enabled.yes} : #{user.enabled.no}" />
+              <td class="t-col-user-modify pe-0 text-end"><a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="@{'/admin/users/modify/'+${user.id}}"><i class="bi-pen"></i></a></td>
+              <td class="t-col-user-delete text-start">
                 <form action="/admin/users/delete"
                       method="post"
                       th:data-username="${user.username}"
