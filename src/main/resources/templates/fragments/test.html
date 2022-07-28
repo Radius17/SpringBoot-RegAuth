@@ -8,5 +8,6 @@
         <h4><a href="/profile" th:text="#{example.link.profile}"></a></h4>
         <h4><a href="/admin/users" th:text="#{example.link.users}"></a></h4>
         <h4><a href="/?lang=ru">RUS</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/?lang=en">ENG</a></h4>
+        <h4 th:text="#{message.current.locale} + ': ' + ${#locale}"></h4>
     </fieldset>
 </th:block>
