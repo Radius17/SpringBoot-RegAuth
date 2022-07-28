@@ -53,10 +53,7 @@ public class Role implements GrantedAuthority {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        return result;
+        return Objects.hash(getId());
     }
     */
 }

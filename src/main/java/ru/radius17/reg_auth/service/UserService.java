@@ -5,6 +5,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,12 +13,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.radius17.reg_auth.entity.Role;
 import ru.radius17.reg_auth.entity.User;
 import ru.radius17.reg_auth.repository.UserRepository;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -57,6 +57,21 @@ public class UserService implements UserDetailsService {
         } else {
             throw new UsernameNotFoundException("User absent...");
         }
+    }
+
+    public HashSet<UUID> getSelectedRoles(List<Role> listRoles, User user){
+        HashSet<UUID> selectedRoles = new HashSet<>();
+        if(user!=null && user.getRoles() != null ) {
+            for (Role userRole : user.getRoles()) {
+                for (Role existingRole : listRoles) {
+                    if (existingRole.getId().equals(userRole.getId())) {
+                        selectedRoles.add(userRole.getId());
+                        System.out.println(existingRole.getId());
+                    }
+                }
+            }
+        }
+        return selectedRoles;
     }
 
     public void saveUser(User user) throws UserServiceException {
@@ -100,8 +115,8 @@ public class UserService implements UserDetailsService {
         Page<User> pagedResult = userRepository.findAll(pageable);
         return pagedResult;
     }
-    public Page<User> getUsersFilteredByUsernameAndPaginated(String username, Pageable pageable) {
-        Page<User> pagedResult = userRepository.findByUsernameContaining(username, pageable);
+    public Page<User> getUsersFilteredAndPaginated(Specification specification, Pageable pageable) {
+        Page<User> pagedResult = userRepository.findAll(specification, pageable);
         return pagedResult;
     }
 }

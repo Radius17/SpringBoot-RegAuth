@@ -13,19 +13,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.radius17.reg_auth.entity.Role;
 import ru.radius17.reg_auth.entity.User;
-import ru.radius17.reg_auth.service.RoleService;
-import ru.radius17.reg_auth.service.UserService;
-import ru.radius17.reg_auth.service.UserServiceException;
+import ru.radius17.reg_auth.service.*;
 
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
-@SessionAttributes("userListPageRequest")
+@SessionAttributes({"userListPageRequest", "userListSearchCriterias"})
 @RequestMapping(value = "/admin/users")
 public class AdminUsersController {
     @Autowired
@@ -40,6 +36,7 @@ public class AdminUsersController {
         model.addAttribute("userForm", userService.getEmptyUser());
         List<Role> listRoles = roleService.getAllRoles();
         model.addAttribute("listRoles", listRoles);
+        model.addAttribute("selectedRoles", userService.getSelectedRoles(listRoles, userService.getEmptyUser()));
         model.addAttribute("isNewUser", true);
         model.addAttribute("isMySelf", false);
         return "admin/users/profile";
@@ -52,16 +49,7 @@ public class AdminUsersController {
         model.addAttribute("userForm", user);
         List<Role> listRoles = roleService.getAllRoles();
         model.addAttribute("listRoles", listRoles);
-        HashSet<UUID> selectedRoles = new HashSet<>();
-        for(Role userRole: user.getRoles()){
-            for (Role existingRole: listRoles) {
-                if(existingRole.getId().equals(userRole.getId())){
-                    selectedRoles.add(userRole.getId());
-                    System.out.println(existingRole.getId());
-                }
-            }
-        }
-        model.addAttribute("selectedRoles", selectedRoles);
+        model.addAttribute("selectedRoles", userService.getSelectedRoles(listRoles, user));
         model.addAttribute("isNewUser", false);
         User mySelf = userService.getMySelf();
         model.addAttribute("isMySelf", mySelf.getId().equals(id));
@@ -75,6 +63,7 @@ public class AdminUsersController {
                                   Model model) {
         List<Role> listRoles = roleService.getAllRoles();
         model.addAttribute("listRoles", listRoles);
+        model.addAttribute("selectedRoles", userService.getSelectedRoles(listRoles, userForm));
 
         Boolean isNewUser = userForm.getId() == null;
         model.addAttribute("isNewUser", isNewUser);
@@ -125,13 +114,25 @@ public class AdminUsersController {
     public PageRequest getDefaultUserListPageRequest() {
         return PageRequest.of(0, 10, Sort.by("username"));
     }
+
+    @ModelAttribute("userListSearchCriterias")
+    public ArrayList<SearchCriteria> getDefaultsearchCriterias() {
+        ArrayList<SearchCriteria> searchCriterias = new ArrayList<>();
+        searchCriterias.add(new SearchCriteria("username",":", ""));
+        searchCriterias.add(new SearchCriteria("nickname",":", ""));
+        searchCriterias.add(new SearchCriteria("email",":", ""));
+        searchCriterias.add(new SearchCriteria("phone",":", ""));
+        return searchCriterias;
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "")
     public String userList(@RequestParam(name = "page", defaultValue = "-1") Integer pageNo,
                            @RequestParam(name = "limit", defaultValue = "-1") Integer pageSize,
                            @RequestParam(name = "sort", defaultValue = "") String sortBy,
-                           @RequestParam(name = "username", defaultValue = "") String username,
                            @RequestParam(name = "infoMessage", required = false) String infoMessage,
                            @RequestParam(name = "errorMessage", required = false) String errorMessage,
+                           @RequestParam Map<String,String> allRequestParams,
+                           @ModelAttribute("userListSearchCriterias") ArrayList<SearchCriteria> searchCriterias,
                            @ModelAttribute("userListPageRequest") PageRequest pageRequest,
                            Model model) {
 
@@ -143,12 +144,31 @@ public class AdminUsersController {
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("sortBy", sortBy);
 
-        Page<User> itemsPage;
-        if(username.isEmpty()){
-            itemsPage = userService.getUsersPaginated(PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy)));
-        } else {
-            itemsPage = userService.getUsersFilteredByUsernameAndPaginated(username, PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy)));
+        if(!allRequestParams.isEmpty()){
+            String buttonPressed = allRequestParams.get("filter-user-submit");
+            for (ListIterator iter = searchCriterias.listIterator();iter.hasNext();) {
+                SearchCriteria baseSearchCriteria = (SearchCriteria) iter.next();
+                String searchCriteriaInRequest = "reset".equals(buttonPressed) ? "" : allRequestParams.get("filter-user-" + baseSearchCriteria.getKey());
+                if(searchCriteriaInRequest != null){
+                    searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), searchCriteriaInRequest));
+                }
+            }
         }
+
+        boolean userListInSearch = false;
+        UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
+        for (SearchCriteria searchCriteria: searchCriterias){
+            if(searchCriteria.getValue() != "") {
+                builder.with(searchCriteria.getKey(), searchCriteria.getOperation(), searchCriteria.getValue());
+                userListInSearch = true;
+            }
+        }
+
+        model.addAttribute("userListInSearch", userListInSearch);
+        model.addAttribute("userListSearchCriterias", searchCriterias);
+
+        Page<User> itemsPage = userService.getUsersFilteredAndPaginated(builder.build(), PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy)));
+
         model.addAttribute("itemsPage", itemsPage);
 
         int totalPages = itemsPage.getTotalPages();

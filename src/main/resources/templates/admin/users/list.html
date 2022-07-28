@@ -17,20 +17,50 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 <div th:replace="fragments/header :: commonHeader"></div>
-<div class="main-wrapper">
+<div class="main-wrapper" th:with="idsPrefix='adminUsersList'">
   <div class="container">
     <div class="row">
       <div class="col-12 gy-3">
         <h1 class="h3" th:text="${pageHeader}"></h1>
       </div>
       <div th:replace="fragments/header :: messageBlock"></div>
-      <div class="col-12 text-end">
+      <div th:class="(${userListSearchCriterias} ? 'col-3' : 'col-12') + ' text-start gy-3'">
         <a th:title="#{link.add}" class="btn btn-success btn-block" th:href="'/admin/users/add'"><i class="bi-plus"></i></a>
+      </div>
+      <div class="col-6 text-center gy-3" th:if="${userListSearchCriterias}" th:text="${userListInSearch} ? #{message.filtered} : ''"></div>
+      <div class="col-3 text-end gy-3" th:if="${userListSearchCriterias}">
+        <!-- Modal filter start -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:title="#{link.filter}" th:data-bs-target="'#' + ${idsPrefix} + 'FilterFormWrapper'"><i class="bi-filter-circle-fill"></i></button>
+        <div class="modal fade" th:id="${idsPrefix} + 'FilterFormWrapper'" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" th:aria-labelledby="${idsPrefix} + 'FilterFormWrapperLabel'" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form action="/admin/users/" method="get" th:id="${idsPrefix} + 'FilterForm'" th:with="filterFieldNamePrefix='user'">
+                <div class="modal-header">
+                  <h5 class="modal-title" th:id="${idsPrefix} + 'FilterFormWrapperLabel'" th:text="#{title.filter}">My title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{link.close}"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div th:each="searchCriteria: ${userListSearchCriterias}" class="col-12 mb-2 text-start" th:with="filterFieldNamePostfix=${searchCriteria.getKey()}">
+                      <label class="form-label" th:for="'filter-' + ${filterFieldNamePrefix} + '-' + ${filterFieldNamePostfix}" th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}"></label>
+                      <input class="form-control" th:value="${searchCriteria.getValue()}" th:name="'filter-' + ${filterFieldNamePrefix} + '-' + ${filterFieldNamePostfix}" th:id="'filter-' + ${filterFieldNamePrefix} + '-' + ${filterFieldNamePostfix}" th:placeholder="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}" />
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                  <button type="submit" value="reset" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-secondary" th:text="#{link.reset}">Reset</button>
+                  <button type="submit" value="submit" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-primary" th:text="#{link.apply}">Apply</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Modal filter stop -->
       </div>
     </div>
     <div class="row">
-      <div class="col gy-3 text-center">
-        <div class="table-responsive">
+      <div class="col gy-0 text-center">
+        <div th:id="${idsPrefix} + 'Wrapper'" class="table-responsive">
           <table class="table table-striped align-middle">
             <thead>
               <tr>
@@ -41,28 +71,26 @@
                 <th th:with="currentColumn='phone'"><a th:href="@{'/admin/users'(sort=${currentColumn})}"><span th:text="#{user.phone}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
                 <th th:text="#{user.roles}"></th>
                 <th th:with="currentColumn='enabled'"><a th:href="@{'/admin/users'(sort=${currentColumn})}"><span th:text="#{user.enabled}"></span><i th:class="(${sortBy}==${currentColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:text="#{user.actions}"></th>
+                <th></th>
+                <th></th>
               </tr>
             </thead>
-            <tr th:each="user: ${itemsPage}">
+            <tr th:if="${itemsPage.totalPages == 0}"><td colspan="8" th:text="#{message.data.absent}" /></tr>
+            <tr th:if="${itemsPage.totalPages > 0}" th:each="user: ${itemsPage}">
               <td th:text="${user.id}" />
               <td th:text="${user.username}" />
               <td th:text="${user.nickname}" />
               <td th:text="${user.email}" />
               <td th:text="${user.phone}" />
-              <td>
-                <!-- <span th:each="role: ${user.roles}" th:text="${role.label}+';'" /> -->
-                <!-- <span th:with="userRoles=${user.roles}" th:utext="${#strings.arrayJoin(userRoles.![label], '<br />')}" th:remove="tag" /> -->
-                <span th:utext="${#strings.arrayJoin(user.roles.![label], ',<br />')}" th:remove="tag"></span>
-              </td>
+              <td><span th:utext="${#strings.arrayJoin(user.roles.![label], ',<br />')}" th:remove="tag"></span></td>
               <td th:text="${user.enabled} ? #{user.enabled.yes} : #{user.enabled.no}" />
-              <td>
+              <td class="pe-0 text-end"><a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="@{'/admin/users/modify/'+${user.id}}"><i class="bi-pen"></i></a></td>
+              <td class="text-start">
                 <form action="/admin/users/delete"
                       method="post"
                       th:data-username="${user.username}"
                       th:onsubmit="'return confirm(\'' + #{confirm.delete} + ' \' + this.getAttribute(\'data-username\')+\'?\');'">
                   <input type="hidden" name="userId" th:value="${user.id}"/>
-                  <a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="@{'/admin/users/modify/'+${user.id}}"><i class="bi-pen"></i></a>
                   <button th:title="#{submit.delete}" class="btn btn-danger btn-block" type="submit"><i class="bi-trash"></i></button>
                 </form>
               </td>
@@ -73,7 +101,7 @@
     </div>
     <div class="row" th:if="${itemsPage.totalPages > 0}">
       <div class="col-12 gy-3">
-        <ul class="pagination justify-content-center">
+        <ul class="pagination pagination-sm justify-content-center flex-wrap">
           <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
             <a th:text="#{link.first}" th:class="page-link" th:href="@{/admin/users(page=1)}"></a>
           </li>
