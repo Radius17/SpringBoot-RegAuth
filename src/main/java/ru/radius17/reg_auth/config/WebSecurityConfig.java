@@ -25,10 +25,11 @@ public class WebSecurityConfig {
         httpSecurity.authorizeRequests().antMatchers("/register").not().fullyAuthenticated();
         //Доступ только для пользователей с ролью Администратор
         httpSecurity.authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN");
+        httpSecurity.authorizeRequests().antMatchers("/notifications/**").hasRole("ADMIN");
         //Доступ только для пользователей с ролью Пользователь
         httpSecurity.authorizeRequests().antMatchers("/profile").hasRole("USER");
         //Доступ разрешен всем подряд
-        httpSecurity.authorizeRequests().antMatchers("/", "/css/**", "/js/**", "/images/**").permitAll();
+        httpSecurity.authorizeRequests().antMatchers("/", "/css/**", "/js/**", "/sw.js", "/images/**").permitAll();
         //Все остальные страницы требуют аутентификации
         httpSecurity.authorizeRequests().anyRequest().authenticated();
         //Настройка для входа в систему и перенарпавление на главную страницу после успешного входа

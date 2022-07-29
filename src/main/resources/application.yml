@@ -8,6 +8,10 @@ spring:
       designed-by: Radius17
     registration:
       disabled: false
+    notifications:
+      keys:
+        public: YOUR_PUBLIC_KEY_FOR_NOTIFICATIONS
+        private: YOUR_PRIVATE_KEY_FOR_NOTIFICATIONS
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/my_database

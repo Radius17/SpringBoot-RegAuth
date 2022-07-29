@@ -52,6 +52,10 @@ public class User implements UserDetails {
     @Builder.Default
     private Boolean enabled = false;
 
+
+    @Column(name="web_push_subscription")
+    private String webPushSubscription;
+
     public User() {
     }
 

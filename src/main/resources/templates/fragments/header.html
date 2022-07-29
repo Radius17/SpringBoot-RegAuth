@@ -17,6 +17,12 @@
   <link rel="stylesheet" type="text/css" href="/css/bootstrap-icons.css" />
   <link rel="stylesheet" type="text/css" href="/css/style.css" />
   <script type="text/javascript" src="/js/bootstrap.bundle.min.js"></script>
+  <script sec:authorize="isAuthenticated()" th:inline="javascript">
+      const WebPushServiceKey = new Uint8Array([[${@publicKeyUint8Array}]]);
+      // console.log(WebPushServiceKey);
+  </script>
+  <script sec:authorize="isAuthenticated()" type="text/javascript" src="/sw.js"></script>
+  <script sec:authorize="isAuthenticated()" type="text/javascript" src="/js/web-push.js"></script>
   <script type="text/javascript" src="/js/main.js"></script>
   <!-- metas, link and scripts -->
 </th:block>
@@ -44,7 +50,7 @@
                   <a class="nav-link" href="/register" th:text="#{link.registration}"></a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
-                  <a class="nav-link" href="/profile" th:text="#{link.profile}"></a>
+                  <a class="nav-link" href="/profile/modify" th:text="#{link.profile}"></a>
                 </li>
                 <li sec:authorize="!isAuthenticated()" class="nav-item">
                   <a class="nav-link" href="/login" th:text="#{link.login}"></a>

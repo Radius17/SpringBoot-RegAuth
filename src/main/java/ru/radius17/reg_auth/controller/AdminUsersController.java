@@ -95,6 +95,11 @@ public class AdminUsersController {
             return "admin/users/profile";
         }
 
+        if(!isNewUser){
+            User oldUser = userService.getUserById(userForm.getId());
+            userForm.setWebPushSubscription(oldUser.getWebPushSubscription());
+        }
+
         try {
             userService.saveUser(userForm);
         } catch (UserServiceException e) {

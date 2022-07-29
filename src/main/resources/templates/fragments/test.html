@@ -5,9 +5,32 @@
     </div>
     <fieldset class="border p-2 my-3">
         <legend th:text="#{example.links.title}"></legend>
-        <h4><a href="/profile" th:text="#{example.link.profile}"></a></h4>
+        <h4><a href="/profile/modify" th:text="#{example.link.profile}"></a></h4>
         <h4><a href="/admin/users" th:text="#{example.link.users}"></a></h4>
         <h4><a href="/?lang=ru">RUS</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/?lang=en">ENG</a></h4>
         <h4 th:text="#{message.current.locale} + ': ' + ${#locale}"></h4>
     </fieldset>
+    <form sec:authorize="hasRole('ADMIN')" target="_blank" action="/notifications/send" method="get">
+        <div class="row">
+            <div class="col-12">User:</div>
+            <div class="col-12">
+                <input id="username" name="username" class="form-control" />
+            </div>
+        </div>
+        <div class="row py-3">
+            <div class="col-12">Subject:</div>
+            <div class="col-12">
+                <input id="subject" name="subject" class="form-control" />
+            </div>
+        </div>
+        <div class="row py-3">
+            <div class="col-12">Message:</div>
+            <div class="col-12">
+                <input  id="subscription" name="message" class="form-control" />
+            </div>
+        </div>
+        <div class="row py-3">
+            <div class="col-12"><button type="submit" id="send">Send</button></div>
+        </div>
+    </form>
 </th:block>

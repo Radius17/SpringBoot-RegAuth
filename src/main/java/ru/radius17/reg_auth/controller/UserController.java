@@ -10,16 +10,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.radius17.reg_auth.entity.User;
 import ru.radius17.reg_auth.service.UserService;
 import ru.radius17.reg_auth.service.UserServiceException;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 @Controller
 public class UserController {
@@ -105,6 +103,8 @@ public class UserController {
         userForm.setDescription("");
         // Enable by default
         userForm.setEnabled(true);
+        // Empty by default
+        userForm.setWebPushSubscription("");
 
         try {
             userService.saveUser(userForm);
@@ -122,7 +122,7 @@ public class UserController {
         return "redirect:/";
     }
 
-    @GetMapping("/profile")
+    @GetMapping("/profile/modify")
     public String modifyProfile(Model model) throws UsernameNotFoundException {
         User user = userService.getMySelf();
         user.setPassword(null);
@@ -131,7 +131,7 @@ public class UserController {
         return "user/profile";
     }
 
-    @PostMapping("/profile")
+    @PostMapping("/profile/save")
     public String saveProfile(@ModelAttribute("userForm") @Valid User userForm,
                               BindingResult bindingResult,
                               RedirectAttributes redirectAttributes,
@@ -162,6 +162,8 @@ public class UserController {
         userForm.setRoles(mySelf.getRoles());
         // Restrict to change enabled
         userForm.setEnabled(mySelf.getEnabled());
+        // Restrict to change PushSubscription
+        userForm.setWebPushSubscription(mySelf.getWebPushSubscription());
 
         try {
             userService.saveUser(userForm);
