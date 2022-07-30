@@ -11,8 +11,16 @@
 <div th:replace="fragments/header :: commonHeader"></div>
 <div class="main-wrapper">
     <div class="container">
-        <div class="row g-3">
-            <div class="col-12">
+        <div class="row">
+            <div class="col-12 my-5 text-center" th:if="${status}==403">
+                <i style="font-size:144pt; color:red;" class="bi bi-sign-stop-fill"></i>
+                <h3>Forbidden</h3>
+            </div>
+            <div class="col-12 my-5 text-center" th:if="${status}==404">
+                <i style="font-size:144pt; color:red;" class="bi bi-emoji-frown-fill"></i>
+                <h3>Not found</h3>
+            </div>
+            <div class="col-12 my-3" th:if="${status!=403 and status !=404}">
                 <table class="table my-3">
                     <tr><th>Error Message</th><td th:text="${message}"></td></tr>
                     <tr><th>Status Code</th><td th:text="${status}"></td></tr>
