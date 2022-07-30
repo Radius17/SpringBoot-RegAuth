@@ -37,9 +37,10 @@ spring:
 logging:
   level:
     org:
-      springframework: info
-    com: info
-    web: debug
+      springframework:
+        security: warn
+    com: warn
+    web: warn
 server:
   ssl:
     key-store-type: pkcs12
