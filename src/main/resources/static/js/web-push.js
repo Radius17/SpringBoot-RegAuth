@@ -6,7 +6,7 @@ var WebPushService = {
         }
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker
-                .register('/sw.js')
+                .register('/web-push-sw.js')
                 .then(WebPushService.initWorker())
                 .catch(function (err) {
                     WebPushService.warningMessage('Error while service worker registration !!!', err);
