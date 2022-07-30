@@ -17,7 +17,6 @@ import ru.radius17.reg_auth.service.UserService;
 import ru.radius17.reg_auth.service.UserServiceException;
 
 import javax.validation.Valid;
-import java.util.Map;
 
 @Controller
 public class UserController {
