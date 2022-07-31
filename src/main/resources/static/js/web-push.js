@@ -60,7 +60,7 @@ var WebPushService = {
                 })
                 .catch(function (e) {
                     if (Notification.permission === 'denied') {
-                        WebPushService.warningMessage('Permission for notifications denied !!!');
+                        WebPushService.errorMessage('Permission for notifications denied !!!');
                     } else {
                         WebPushService.errorMessage('Unable to subscribe to push messages !!!', e);
                     }
@@ -87,7 +87,7 @@ var WebPushService = {
             body: JSON.stringify(jsonSubscription)
         });
     },
-    infoMessage: function (mess) {
+    infoMessage: function (mess, obj) {
         if(typeof(obj) == 'undefined' ) console.log(mess);
         else console.log(mess, obj);
     },
@@ -95,7 +95,7 @@ var WebPushService = {
         if(typeof(obj) == 'undefined' ) console.warn(mess);
         else console.warn(mess, obj);
     },
-    errorMessage: function (message) {
+    errorMessage: function (mess) {
         if(typeof(obj) == 'undefined' ) console.error(mess);
         else console.error(mess, obj);
     }

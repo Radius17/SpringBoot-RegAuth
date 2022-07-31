@@ -19,7 +19,7 @@ public class NotificationSender {
 
     @Autowired
     private Environment env;
-    /*
+
     public int[] getUint8Key(){
         String public_key = env.getProperty("spring.application.notifications.keys.public");
         byte[] byteArrray = Base64.getUrlDecoder().decode(public_key);
@@ -29,7 +29,7 @@ public class NotificationSender {
         }
         return buffer;
     }
-    */
+
     public String send(User user, String subject, String message) {
         Security.addProvider(new BouncyCastleProvider());
 
