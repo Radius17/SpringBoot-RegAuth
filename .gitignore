@@ -110,5 +110,5 @@ hs_err_pid*
 out/
 gen/
 target/
-src/main/resources/application-dev.yml
+.docker/.env
 ## src/main/resources/ssl/*.p12
