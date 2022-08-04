@@ -13,6 +13,11 @@
                 <constraints foreignKeyName="user_roles_role_id" references="t_role(id)"/>
             </column>
         </createTable>
+
+        <rollback>
+            <dropTable tableName="t_user_roles"/>
+        </rollback>
+
     </changeSet>
 
     <changeSet id="1_addPrimaryKey_user_roles" author="Radius17">
@@ -21,6 +26,9 @@
                        schemaName="public"
                        tableName="t_user_roles"
                        validate="true"/>
+        <rollback>
+            <dropPrimaryKey tableName="t_user_roles_pkey" />
+        </rollback>
     </changeSet>
 
 </databaseChangeLog>

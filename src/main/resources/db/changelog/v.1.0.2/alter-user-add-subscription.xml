@@ -13,6 +13,10 @@
                 <constraints nullable="false" />
             </column>
         </addColumn>
+
+        <rollback>
+            <dropColumn tableName="t_user" columnName="web_push_subscription" />
+        </rollback>
     </changeSet>
 
 </databaseChangeLog>

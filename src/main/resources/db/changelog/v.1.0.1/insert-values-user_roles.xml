@@ -17,7 +17,6 @@
                 DELETE FROM t_user_roles WHERE user_id IN (SELECT tu.id FROM t_user tu WHERE tu.username='admin' OR tu.username='user')
             </sql>
         </rollback>
-
     </changeSet>
 
 

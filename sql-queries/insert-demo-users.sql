@@ -28,4 +28,4 @@ INSERT INTO t_user (username, "password", nickname, phone, email, description) V
 INSERT INTO t_user (username, "password", nickname, phone, email, description) VALUES('user_48', '111111', 'User_48', '+71234567848', 'user_48@localhost', '');
 INSERT INTO t_user (username, "password", nickname, phone, email, description) VALUES('user_49', '111111', 'User_49', '+71234567849', 'user_49@localhost', '');
 INSERT INTO t_user (username, "password", nickname, phone, email, description) VALUES('user_50', '111111', 'User_50', '+71234567850', 'user_50@localhost', '');
-UPDATE t_user SET description = CONCAT('No comments for ', nickname);
+UPDATE t_user SET description = CONCAT('No comments for ', nickname) WHERE id IS NOT NULL;
