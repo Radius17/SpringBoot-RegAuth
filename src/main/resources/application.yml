@@ -44,7 +44,7 @@ logging:
 server:
   ssl:
     key-store-type: pkcs12
-    key-store: classpath:ssl/springboot.p12
+    key-store: ${REG_AUTH_PKCS12_PATH:classpath:ssl/springboot.p12}
     key-store-password: 1234567
     key-alias: springboot
     enabled: true
