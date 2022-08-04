@@ -6,3 +6,4 @@ RUN keytool -noprompt -genkeypair -alias springboot -keyalg RSA -keysize 4096 \
     -dname CN=LocalDevelopment,OU=,O=Developer,L=,ST=,C=RU
 RUN keytool -list -storetype pkcs12 -keystore springboot.p12 -storepass 1234567
 #####################################################################################
+ENV TZ=Europe/Moscow
