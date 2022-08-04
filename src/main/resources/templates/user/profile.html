@@ -47,7 +47,13 @@
         <input class="form-control" th:errorclass="is-invalid" type="email" th:field="*{email}" th:placeholder="#{user.email}" />
         <span th:if="${#fields.hasErrors('email')}" th:errorclass="invalid-feedback" th:errors="*{email}" />
       </div>
-      <div class="col-12 text-center form-buttons">
+      <div class="col-4 text-center form-buttons">
+        <a class="btn btn-primary btn-block" th:href="@{/}" th:text="#{link.cancel}"></a>
+      </div>
+      <div class="col-4 text-center form-buttons">
+        <a class="btn btn-success btn-block" th:href="@{#}" th:onclick="WebPushService.testMySubscription()" th:text="#{link.subscription.test}"></a>
+      </div>
+      <div class="col-4 text-center form-buttons">
         <button class="btn btn-primary btn-block" type="submit" th:text="#{submit.save}"></button>
       </div>
     </form>

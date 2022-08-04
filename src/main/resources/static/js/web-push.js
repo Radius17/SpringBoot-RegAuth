@@ -87,6 +87,43 @@ var WebPushService = {
             body: JSON.stringify(jsonSubscription)
         });
     },
+    testMySubscription: function () {
+        fetch('/profile/subscribe-test' )
+        .then((response) => {
+            WebPushService.infoMessage(response);
+            return response.json();
+        })
+        .then((data) => {
+            if(data != 201) {
+                WebPushService.errorMessage(data);
+                alert('Failed !!!');
+            } else {
+                alert('OK !!!');
+            }
+        });
+    },
+    testUserSubscription: function (username) {
+        let data = new FormData()
+        data.append( "username", username );
+        fetch('/admin/users/subscribe-test',
+            {
+            credentials: 'include',
+            method: 'POST',
+            body: data
+            })
+            .then((response) => {
+                WebPushService.infoMessage(response);
+                return response.json();
+            })
+            .then((data) => {
+                if(data != 201) {
+                    WebPushService.errorMessage(data);
+                    alert('Failed !!!');
+                } else {
+                    alert('OK !!!');
+                }
+            });
+    },
     infoMessage: function (mess, obj) {
         if(typeof(obj) == 'undefined' ) console.log(mess);
         else console.log(mess, obj);

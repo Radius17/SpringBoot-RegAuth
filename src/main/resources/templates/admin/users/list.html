@@ -69,6 +69,7 @@
           <table class="table table-striped align-middle">
             <thead>
               <tr>
+                <th class="t-col-user-test-message"></th>
                 <th th:with="curColumn='id'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort='id')}"><span th:text="#{user.id}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
                 <th th:with="curColumn='username'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn})}"><span th:text="#{user.username}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
                 <th th:with="curColumn='nickname'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn})}"><span th:text="#{user.nickname}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
@@ -80,8 +81,9 @@
                 <th class="t-col-user-delete"></th>
               </tr>
             </thead>
-            <tr th:if="${itemsPage.totalPages == 0}"><td colspan="9" th:text="#{message.data.absent}" /></tr>
+            <tr th:if="${itemsPage.totalPages == 0}"><td colspan="10" th:text="#{message.data.absent}" /></tr>
             <tr th:if="${itemsPage.totalPages > 0}" th:each="user: ${itemsPage}">
+              <td class="t-col-user-test-message text-center"><a th:title="#{link.subscription.test}" class="btn btn-primary btn-block" th:attr="onclick=${'WebPushService.testUserSubscription(''' + user.username + ''')'}" th:href="@{#}"><i class="bi-chat-left-text-fill"></i></a></td>
               <td th:class="'t-col-user-id'" th:text="${user.id}" />
               <td th:class="'t-col-user-username'" th:text="${user.username}" />
               <td th:class="'t-col-user-nickname'" th:text="${user.nickname}" />
