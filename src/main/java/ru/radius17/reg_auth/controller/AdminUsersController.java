@@ -118,7 +118,7 @@ public class AdminUsersController {
 
     @ModelAttribute("userListPageRequest")
     public PageRequest getDefaultUserListPageRequest() {
-        return PageRequest.of(0, 10, Sort.by("username"));
+        return PageRequest.of(0, 10, Sort.by(Sort.DEFAULT_DIRECTION,"username"));
     }
 
     @ModelAttribute("userListSearchCriterias")
@@ -135,6 +135,7 @@ public class AdminUsersController {
     public String userList(@RequestParam(name = "page", defaultValue = "-1") Integer pageNo,
                            @RequestParam(name = "limit", defaultValue = "-1") Integer pageSize,
                            @RequestParam(name = "sort", defaultValue = "") String sortBy,
+                           @RequestParam(name = "direction", defaultValue = "") String sortDir,
                            @RequestParam(name = "infoMessage", required = false) String infoMessage,
                            @RequestParam(name = "errorMessage", required = false) String errorMessage,
                            @RequestParam Map<String,String> allRequestParams,
@@ -142,13 +143,31 @@ public class AdminUsersController {
                            @ModelAttribute("userListPageRequest") PageRequest pageRequest,
                            Model model) {
 
+        // --------------------------------------------------------
+
         if (pageNo < 1) pageNo = pageRequest.getPageNumber() + 1;
         if (pageSize < 1) pageSize = pageRequest.getPageSize();
-        if (sortBy.isEmpty()) sortBy = pageRequest.getSort().toString().split(":")[0];
+        if (sortBy.isEmpty()) {
+            sortBy = pageRequest.getSort().toString().split(":")[0];
+            sortDir = pageRequest.getSort().toString().split(":")[1];
+        }
+        if (sortDir.isEmpty()){
+            sortDir = pageRequest.getSort().toString().split(":")[1];
+        }
+
+        Sort.Direction sortDirection;
+        try {
+            sortDirection = Sort.Direction.fromString(sortDir);
+        } catch (Exception e){
+            sortDirection = Sort.DEFAULT_DIRECTION;
+        }
+
+        // --------------------------------------------------------
 
         model.addAttribute("infoMessage", infoMessage);
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortDir", sortDirection.toString());
 
         if(!allRequestParams.isEmpty()){
             String buttonPressed = allRequestParams.get("filter-user-submit");
@@ -173,7 +192,7 @@ public class AdminUsersController {
         model.addAttribute("userListInSearch", userListInSearch);
         model.addAttribute("userListSearchCriterias", searchCriterias);
 
-        Page<User> itemsPage = userService.getUsersFilteredAndPaginated(builder.build(), PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy)));
+        Page<User> itemsPage = userService.getUsersFilteredAndPaginated(builder.build(), PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortBy)));
 
         model.addAttribute("itemsPage", itemsPage);
 
@@ -186,7 +205,7 @@ public class AdminUsersController {
             model.addAttribute("pageNumbers", pageNumbers);
         }
 
-        model.addAttribute("userListPageRequest", PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy)));
+        model.addAttribute("userListPageRequest", PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortBy)));
         return "admin/users/list";
     }
 

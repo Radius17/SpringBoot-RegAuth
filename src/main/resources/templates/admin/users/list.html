@@ -70,13 +70,18 @@
             <thead>
               <tr>
                 <th class="t-col-user-test-message"></th>
-                <th th:with="curColumn='id'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort='id')}"><span th:text="#{user.id}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:with="curColumn='username'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn})}"><span th:text="#{user.username}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:with="curColumn='nickname'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn})}"><span th:text="#{user.nickname}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:with="curColumn='email'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn})}"><span th:text="#{user.email}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
-                <th th:with="curColumn='phone'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn})}"><span th:text="#{user.phone}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='id'" th:class="'t-col-user-' + ${curColumn}">
+                  <a th:href="@{'/admin/users'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}">
+                    <span th:text="#{user.id}"></span>
+                    <i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i>
+                  </a>
+                </th>
+                <th th:with="curColumn='username'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{user.username}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='nickname'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{user.nickname}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='email'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{user.email}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='phone'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{user.phone}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
                 <th th:with="curColumn='roles'" th:class="'t-col-user-' + ${curColumn}" th:text="#{user.roles}"></th>
-                <th th:with="curColumn='enabled'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn})}"><span th:text="#{user.enabled}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi bi-sort-down ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='enabled'" th:class="'t-col-user-' + ${curColumn}"><a th:href="@{'/admin/users'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{user.enabled}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
                 <th class="t-col-user-modify"></th>
                 <th class="t-col-user-delete"></th>
               </tr>
@@ -90,7 +95,7 @@
               <td th:class="'t-col-user-email'" th:text="${user.email}" />
               <td th:class="'t-col-user-phone'" th:text="${user.phone}" />
               <td th:class="'t-col-user-roles'"><span th:utext="${#strings.arrayJoin(user.roles.![label], ',<br />')}" th:remove="tag"></span></td>
-              <td th:class="'t-col-user-enabled'" th:text="${user.enabled} ? #{user.enabled.yes} : #{user.enabled.no}" />
+              <td th:class="'t-col-user-enabled'"><i th:title="${user.enabled} ? #{user.enabled.yes} : #{user.enabled.no}" th:class="'bi ' + (${user.enabled} ? 'bi-lightbulb-fill text-success' : 'bi-lightbulb-fill text-danger') + ' ms-2'"></i></td>
               <td class="t-col-user-modify pe-0 text-end"><a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="@{'/admin/users/modify/'+${user.id}}"><i class="bi-pen"></i></a></td>
               <td class="t-col-user-delete text-start">
                 <form action="/admin/users/delete"
