@@ -4,7 +4,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.thymeleaf.org http://www.ultraq.net.nz/thymeleaf/layout"
-      th:with="pageHeader=#{title.usersmanagement},
+      th:with="pageHeader=#{title.notifications.log},
       appName=${@environment.getProperty('spring.application.name')},
       pageTitle=${(appName!=null ? appName + ' - ' : '') + pageHeader}
       ">
@@ -50,7 +50,7 @@
                   </div>
                 </div>
                 <div class="modal-footer justify-content-between">
-                  <button type="submit" value="submit" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-primary order-10" th:text="#{link.apply}">Apply</button>
+                  <button type="submit" value="submit" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-primary order-1" th:text="#{link.apply}">Apply</button>
                   <button type="submit" value="reset" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-secondary order-0" th:text="#{link.reset}">Reset</button>
                 </div>
               </form>
@@ -74,14 +74,14 @@
                 </th>
                 <th th:with="curColumn='user'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.username}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
                 <th th:with="curColumn='status'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.status}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
-                <th th:with="curColumn='dateTime'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.datetime}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='dateTime'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.dateTime}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
                 <th th:with="curColumn='subject'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.subject}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
                 <th th:with="curColumn='message'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.message}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
               </tr>
             </thead>
             <tr th:if="${itemsPage.totalPages == 0}"><td colspan="8" th:text="#{message.data.absent}" /></tr>
             <tr th:if="${itemsPage.totalPages > 0}" th:each="notification: ${itemsPage}">
-              <td th:class="'t-col-notification-id'" th:text="${notification.id}" />
+              <td th:class="'t-col-notification-id'"><i th:title="${notification.id}" th:class="'bi bi-info-square text-primary fs-2 ms-2'"></i></td>
               <td th:class="'t-col-notification-user'" th:text="${notification.user.getUsername()}" />
               <td th:class="'t-col-notification-status'" th:text="${notification.status}" />
               <td th:class="'t-col-notification-datetime'" th:text="${#temporals.format(notification.dateTime, 'dd-MM-yyyy HH:mm:ss')}" />

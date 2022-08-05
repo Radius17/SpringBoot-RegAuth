@@ -53,7 +53,7 @@
                   </div>
                 </div>
                 <div class="modal-footer justify-content-between">
-                  <button type="submit" value="submit" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-primary order-10" th:text="#{link.apply}">Apply</button>
+                  <button type="submit" value="submit" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-primary order-1" th:text="#{link.apply}">Apply</button>
                   <button type="submit" value="reset" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-secondary order-0" th:text="#{link.reset}">Reset</button>
                 </div>
               </form>
@@ -89,7 +89,7 @@
             <tr th:if="${itemsPage.totalPages == 0}"><td colspan="10" th:text="#{message.data.absent}" /></tr>
             <tr th:if="${itemsPage.totalPages > 0}" th:each="user: ${itemsPage}">
               <td class="t-col-user-test-message text-center"><a th:title="#{link.subscription.test}" class="btn btn-primary btn-block" th:attr="onclick=${'WebPushService.testUserSubscription(''' + user.username + ''')'}" th:href="@{#}"><i class="bi-chat-left-text-fill"></i></a></td>
-              <td th:class="'t-col-user-id'" th:text="${user.id}" />
+              <td th:class="'t-col-user-id'"><i th:title="${user.id}" th:class="'bi bi-info-square text-primary fs-2 ms-2'"></i></td>
               <td th:class="'t-col-user-username'" th:text="${user.username}" />
               <td th:class="'t-col-user-nickname'" th:text="${user.nickname}" />
               <td th:class="'t-col-user-email'" th:text="${user.email}" />

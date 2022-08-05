@@ -144,7 +144,12 @@ public class AdminUsersController {
                            Model model) {
 
         // --------------------------------------------------------
+        // Messages from Request
+        model.addAttribute("infoMessage", infoMessage);
+        model.addAttribute("errorMessage", errorMessage);
 
+        // --------------------------------------------------------
+        // Check vars for pageRequest
         if (pageNo < 1) pageNo = pageRequest.getPageNumber() + 1;
         if (pageSize < 1) pageSize = pageRequest.getPageSize();
         if (sortBy.isEmpty()) {
@@ -163,12 +168,16 @@ public class AdminUsersController {
         }
 
         // --------------------------------------------------------
-
-        model.addAttribute("infoMessage", infoMessage);
-        model.addAttribute("errorMessage", errorMessage);
+        // Adding sort data to model
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortDir", sortDirection.toString());
 
+        // --------------------------------------------------------
+        // Now substitute real sort field to sortByFieldName if need
+        String sortByFieldName = sortBy;
+
+        // --------------------------------------------------------
+        // Filters
         if(!allRequestParams.isEmpty()){
             String buttonPressed = allRequestParams.get("filter-user-submit");
             for (ListIterator iter = searchCriterias.listIterator();iter.hasNext();) {
@@ -192,10 +201,13 @@ public class AdminUsersController {
         model.addAttribute("userListInSearch", userListInSearch);
         model.addAttribute("userListSearchCriterias", searchCriterias);
 
-        Page<User> itemsPage = userService.getUsersFilteredAndPaginated(builder.build(), PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortBy)));
-
+        // --------------------------------------------------------
+        // Get items
+        Page<User> itemsPage = userService.getUsersFilteredAndPaginated(builder.build(), PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortByFieldName)));
         model.addAttribute("itemsPage", itemsPage);
 
+        // --------------------------------------------------------
+        // Prepare pageNumbers
         int totalPages = itemsPage.getTotalPages();
         if (totalPages > 0) {
             if (totalPages < pageNo) {
@@ -205,6 +217,8 @@ public class AdminUsersController {
             model.addAttribute("pageNumbers", pageNumbers);
         }
 
+        // --------------------------------------------------------
+        // Save page and sort attributes between page calls
         model.addAttribute("userListPageRequest", PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortBy)));
         return "admin/users/list";
     }

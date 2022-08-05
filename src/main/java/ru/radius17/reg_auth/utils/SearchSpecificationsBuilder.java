@@ -2,10 +2,7 @@ package ru.radius17.reg_auth.utils;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,18 +56,31 @@ public class SearchSpecificationsBuilder {
 
         @Override
         public Predicate toPredicate(Root<Object> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-            if (criteria.getOperation().equalsIgnoreCase(">")) {
+            String criteriaOperation = criteria.getOperation();
+            String criteriaKey = criteria.getKey();
+
+            // --------------------------------------------------------
+            // Check for path like user.username
+            String[] criteriaKeys = criteria.getKey().split("\\.");
+            Path criteriaPath;
+            if(criteriaKeys.length == 2) {
+                criteriaPath = root.get(criteriaKeys[0]).get(criteriaKeys[1]);
+            } else {
+                criteriaPath = root.get(criteriaKeys[0]);
+            }
+
+            if (criteriaOperation.equalsIgnoreCase(">")) {
                 return criteriaBuilder.greaterThanOrEqualTo(
-                        root.get(criteria.getKey()), criteria.getValue().toString());
-            } else if (criteria.getOperation().equalsIgnoreCase("<")) {
+                        criteriaPath, criteria.getValue().toString());
+            } else if (criteriaOperation.equalsIgnoreCase("<")) {
                 return criteriaBuilder.lessThanOrEqualTo(
-                        root.get(criteria.getKey()), criteria.getValue().toString());
-            } else if (criteria.getOperation().equalsIgnoreCase(":")) {
-                if (root.get(criteria.getKey()).getJavaType() == String.class) {
+                        criteriaPath, criteria.getValue().toString());
+            } else if (criteriaOperation.equalsIgnoreCase(":")) {
+                if (criteriaPath.getJavaType() == String.class) {
                     return criteriaBuilder.like(
-                            root.get(criteria.getKey()), "%" + criteria.getValue() + "%");
+                            criteriaPath, "%" + criteria.getValue() + "%");
                 } else {
-                    return criteriaBuilder.equal(root.get(criteria.getKey()), criteria.getValue());
+                    return criteriaBuilder.equal(criteriaPath, criteria.getValue());
                 }
             }
             return null;

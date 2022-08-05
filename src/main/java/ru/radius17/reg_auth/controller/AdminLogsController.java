@@ -51,8 +51,12 @@ public class AdminLogsController {
                            @ModelAttribute("notificationListPageRequest") PageRequest pageRequest,
                            Model model) {
 
-        // --------------------------------------------------------
+        // Messages from Request
+        model.addAttribute("infoMessage", infoMessage);
+        model.addAttribute("errorMessage", errorMessage);
 
+        // --------------------------------------------------------
+        // Check vars for pageRequest
         if (pageNo < 1) pageNo = pageRequest.getPageNumber() + 1;
         if (pageSize < 1) pageSize = pageRequest.getPageSize();
         if (sortBy.isEmpty()) {
@@ -71,12 +75,17 @@ public class AdminLogsController {
         }
 
         // --------------------------------------------------------
-
-        model.addAttribute("infoMessage", infoMessage);
-        model.addAttribute("errorMessage", errorMessage);
+        // Adding sort data to model
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortDir", sortDirection.toString());
 
+        // --------------------------------------------------------
+        // Now substitute real sort field to sortByFieldName if need
+        String sortByFieldName = sortBy;
+        if(sortByFieldName.equals("user")) sortByFieldName = "user.username";
+
+        // --------------------------------------------------------
+        // Filters
         if(!allRequestParams.isEmpty()){
             String buttonPressed = allRequestParams.get("filter-notification-submit");
             for (ListIterator iter = searchCriterias.listIterator();iter.hasNext();) {
@@ -92,7 +101,12 @@ public class AdminLogsController {
         SearchSpecificationsBuilder builder = new SearchSpecificationsBuilder(false);
         for (SearchCriteria searchCriteria: searchCriterias){
             if(searchCriteria.getValue() != "") {
-                builder.with(searchCriteria.getKey(), searchCriteria.getOperation(), searchCriteria.getValue());
+                // --------------------------------------------------------
+                // Now substitute real filter field to filterByFieldName if need
+                String filterByFieldName = searchCriteria.getKey();
+                if(filterByFieldName.equals("user")) filterByFieldName = "user.username";
+                // --------------------------------------------------------
+                builder.with(filterByFieldName, searchCriteria.getOperation(), searchCriteria.getValue());
                 notificationListInSearch = true;
             }
         }
@@ -100,10 +114,13 @@ public class AdminLogsController {
         model.addAttribute("notificationListInSearch", notificationListInSearch);
         model.addAttribute("notificationListSearchCriterias", searchCriterias);
 
-        Page<Notification> itemsPage = notificationService.getNotificationsFilteredAndPaginated(builder.build(), PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortBy)));
-
+        // --------------------------------------------------------
+        // Get items
+        Page<Notification> itemsPage = notificationService.getNotificationsFilteredAndPaginated(builder.build(), PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortByFieldName)));
         model.addAttribute("itemsPage", itemsPage);
 
+        // --------------------------------------------------------
+        // Prepare pageNumbers
         int totalPages = itemsPage.getTotalPages();
         if (totalPages > 0) {
             if (totalPages < pageNo) {
@@ -113,6 +130,8 @@ public class AdminLogsController {
             model.addAttribute("pageNumbers", pageNumbers);
         }
 
+        // --------------------------------------------------------
+        // Save page and sort attributes between page calls
         model.addAttribute("notificationListPageRequest", PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortBy)));
         return "admin/logs/notifications/list";
     }
