@@ -6,13 +6,17 @@ import nl.martijndwars.webpush.PushService;
 import nl.martijndwars.webpush.Subscription;
 import org.apache.http.HttpResponse;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import ru.radius17.reg_auth.entity.User;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.Security;
 import java.util.Base64;
+import java.util.concurrent.ExecutionException;
 
 @Component
 public class NotificationSender {
@@ -30,24 +34,18 @@ public class NotificationSender {
         return buffer;
     }
 
-    public String send(User user, String subject, String message) {
+    public int send(User user, String subject, String message) throws GeneralSecurityException, JoseException, IOException, ExecutionException, InterruptedException {
         Security.addProvider(new BouncyCastleProvider());
 
-        try {
-            String subscriptionJson = user.getWebPushSubscription();
-            String public_key = env.getProperty("spring.application.notifications.keys.public");
-            String private_key = env.getProperty("spring.application.notifications.keys.private");
-            PushService pushService = new PushService(public_key, private_key, subject);
-            Subscription subscription = new Gson().fromJson(subscriptionJson, Subscription.class);
-            Notification notification = new Notification(subscription, message);
-            HttpResponse httpResponse = pushService.send(notification);
-            int statusCode = httpResponse.getStatusLine().getStatusCode();
+        String subscriptionJson = user.getWebPushSubscription();
+        String public_key = env.getProperty("spring.application.notifications.keys.public");
+        String private_key = env.getProperty("spring.application.notifications.keys.private");
+        PushService pushService = new PushService(public_key, private_key, subject);
+        Subscription subscription = new Gson().fromJson(subscriptionJson, Subscription.class);
+        Notification notification = new Notification(subscription, message);
+        HttpResponse httpResponse = pushService.send(notification);
 
-            return String.valueOf(statusCode);
-        } catch (Exception e) {
-            return String.valueOf(500);
-            // return ExceptionUtils.getStackTrace(e);
-        }
+        return httpResponse.getStatusLine().getStatusCode();
     }
 
 }

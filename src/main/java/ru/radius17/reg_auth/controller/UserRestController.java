@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.radius17.reg_auth.entity.User;
+import ru.radius17.reg_auth.service.NotifyService;
 import ru.radius17.reg_auth.service.UserService;
 import ru.radius17.reg_auth.utils.NotificationSender;
 
@@ -22,7 +23,7 @@ public class UserRestController {
     @Autowired
     UserService userService;
     @Autowired
-    NotificationSender notificationSender;
+    NotifyService notifyService;
 
     @PostMapping("/profile/subscribe")
     public String subscribeWebPush(@RequestBody String subscriptionString){
@@ -44,6 +45,6 @@ public class UserRestController {
         User mySelf = userService.getMySelf();
         String subject = ms.getMessage("message.test.subscription.subject", null, LocaleContextHolder.getLocale());
         String text = ms.getMessage("message.test.subscription.text", null, LocaleContextHolder.getLocale());
-        return notificationSender.send(mySelf, subject, text);
+        return notifyService.send(mySelf, subject, text);
     }
 }

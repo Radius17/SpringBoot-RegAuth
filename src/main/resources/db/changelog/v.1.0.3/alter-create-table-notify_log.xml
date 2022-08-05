@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="create-table-notify_log" author="Radius17">
+        <createTable tableName="t_notify_log">
+            <column name="id" type="uuid" defaultValue="uuid_generate_v4()">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="status" type="int(5)">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="local_date_time" type="DATETIME">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="subject" type="varchar(255)">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="message" type="varchar(255)">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="description" type="varchar(255)" defaultValue="">
+                <constraints nullable="false" unique="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint  baseColumnNames="user_id"
+                                  baseTableName="t_notify_log"
+                                  constraintName="fk_notify_user"
+                                  deferrable="true"
+                                  initiallyDeferred="true"
+                                  onDelete="CASCADE"
+                                  onUpdate="RESTRICT"
+                                  referencedColumnNames="id"
+                                  referencedTableName="t_user"
+                                  validate="true"/>
+        <rollback>
+            <dropForeignKeyConstraint baseTableName="t_notify_log" constraintName="fk_notify_user" />
+            <dropTable tableName="t_notify_log" />
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>
