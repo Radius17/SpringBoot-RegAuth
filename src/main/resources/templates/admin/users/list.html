@@ -53,8 +53,8 @@
                   </div>
                 </div>
                 <div class="modal-footer justify-content-between">
-                  <button type="submit" value="reset" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-secondary" th:text="#{link.reset}">Reset</button>
-                  <button type="submit" value="submit" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-primary" th:text="#{link.apply}">Apply</button>
+                  <button type="submit" value="submit" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-primary order-10" th:text="#{link.apply}">Apply</button>
+                  <button type="submit" value="reset" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-secondary order-0" th:text="#{link.reset}">Reset</button>
                 </div>
               </form>
             </div>

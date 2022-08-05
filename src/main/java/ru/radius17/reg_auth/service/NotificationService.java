@@ -3,23 +3,25 @@ package ru.radius17.reg_auth.service;
 import liquibase.repackaged.org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.radius17.reg_auth.entity.Notify;
+import ru.radius17.reg_auth.entity.Notification;
 import ru.radius17.reg_auth.entity.User;
-import ru.radius17.reg_auth.repository.NotifyRepository;
+import ru.radius17.reg_auth.repository.NotificationRepository;
 import ru.radius17.reg_auth.utils.NotificationSender;
 
 import java.time.*;
-import java.util.SimpleTimeZone;
 
 @Service
-public class NotifyService {
+public class NotificationService {
     @Autowired
     private Environment env;
     @Autowired
     NotificationSender notificationSender;
     @Autowired
-    NotifyRepository notifyRepository;
+    NotificationRepository notificationRepository;
 
     public int[] getUint8Key(){
         return notificationSender.getUint8Key();
@@ -37,13 +39,13 @@ public class NotifyService {
 
         System.out.print("Status: " + statusCode);
 
-        Notify notify = new Notify();
-        notify.setUser(user);
-        notify.setStatus(statusCode);
-        notify.setLocalDateTime(ZonedDateTime.now(ZoneId.of(ZoneId.systemDefault().getId())));
-        notify.setSubject(subject);
-        notify.setMessage(message);
-        notify.setDescription(statusMessage);
+        Notification notification = new Notification();
+        notification.setUser(user);
+        notification.setStatus(statusCode);
+        notification.setDateTime(ZonedDateTime.now(ZoneId.of(ZoneId.systemDefault().getId())));
+        notification.setSubject(subject);
+        notification.setMessage(message);
+        notification.setDescription(statusMessage);
 
         String logging_level = env.getProperty("spring.application.notifications.logging.level");
 
@@ -51,7 +53,7 @@ public class NotifyService {
             case "error":
                 if(statusCode != 201){
                     try {
-                        notifyRepository.save(notify);
+                        notificationRepository.save(notification);
                     } catch (Exception e){
                         System.out.print(ExceptionUtils.getStackTrace(e));
                     }
@@ -59,7 +61,7 @@ public class NotifyService {
                 break;
             case "debug":
                 try {
-                    notifyRepository.save(notify);
+                    notificationRepository.save(notification);
                 } catch (Exception e){
                     System.out.print(ExceptionUtils.getStackTrace(e));
                 }
@@ -69,4 +71,10 @@ public class NotifyService {
         }
         return String.valueOf(statusCode);
     }
+
+    public Page<Notification> getNotificationsFilteredAndPaginated(Specification specification, Pageable pageable) {
+        Page<Notification> pagedResult = notificationRepository.findAll(specification, pageable);
+        return pagedResult;
+    }
+
 }

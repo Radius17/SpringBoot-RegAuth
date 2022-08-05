@@ -148,11 +148,11 @@ public class AdminUsersController {
         if (pageNo < 1) pageNo = pageRequest.getPageNumber() + 1;
         if (pageSize < 1) pageSize = pageRequest.getPageSize();
         if (sortBy.isEmpty()) {
-            sortBy = pageRequest.getSort().toString().split(":")[0];
-            sortDir = pageRequest.getSort().toString().split(":")[1];
+            sortBy = pageRequest.getSort().toString().split(":")[0].trim();
+            sortDir = pageRequest.getSort().toString().split(":")[1].trim();
         }
         if (sortDir.isEmpty()){
-            sortDir = pageRequest.getSort().toString().split(":")[1];
+            sortDir = pageRequest.getSort().toString().split(":")[1].trim();
         }
 
         Sort.Direction sortDirection;

@@ -44,6 +44,7 @@
                      href="#" id="navbarAdminDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false"></a>
                   <ul class="dropdown-menu" aria-labelledby="navbarAdminDropdownMenuLink">
                     <li><a class="dropdown-item" href="/admin/users" th:text="#{link.users}"></a></li>
+                    <li><a class="dropdown-item" href="/admin/logs/notifications" th:text="#{link.logs.notifications}"></a></li>
                   </ul>
                 </li>
                 <li sec:authorize="!isAuthenticated()" class="nav-item">

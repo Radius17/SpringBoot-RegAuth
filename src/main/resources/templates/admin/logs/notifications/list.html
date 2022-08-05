@@ -1,0 +1,126 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org http://www.ultraq.net.nz/thymeleaf/layout"
+      th:with="pageHeader=#{title.usersmanagement},
+      appName=${@environment.getProperty('spring.application.name')},
+      pageTitle=${(appName!=null ? appName + ' - ' : '') + pageHeader}
+      ">
+<head>
+  <th:block th:replace="fragments/header :: commonHead"></th:block>
+  <!-- other elements you want to reference in your layout -->
+</head>
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/header :: commonHeader"></div>
+<div class="main-wrapper" th:with="idsPrefix='adminNotificationsList'">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 gy-3">
+        <h1 class="h3" th:text="${pageHeader}"></h1>
+      </div>
+      <div th:replace="fragments/header :: messageBlock"></div>
+      <div class="filter-criterias col-9 text-start gy-3" th:if="${notificationListSearchCriterias}">
+        <span th:text="${notificationListInSearch} ? #{message.filtered} + ':' : ''">
+        </span><span class="ps-1 filter-criteria"
+              th:each="searchCriteria: ${notificationListSearchCriterias}"
+              th:if="${searchCriteria.getValue() != ''}"
+              th:with="filterFieldNamePostfix=${searchCriteria.getKey()}, filterFieldNamePrefix='notification'"
+              th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}} + '=' + ${searchCriteria.getValue()}">
+        </span>
+      </div>
+      <div class="col-3 text-end gy-3" th:if="${notificationListSearchCriterias}">
+        <!-- Modal filter start -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:title="#{link.filter}" th:data-bs-target="'#' + ${idsPrefix} + 'FilterFormWrapper'"><i class="bi-filter-circle-fill"></i></button>
+        <div class="modal fade" th:id="${idsPrefix} + 'FilterFormWrapper'" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" th:aria-labelledby="${idsPrefix} + 'FilterFormWrapperLabel'" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form action="/admin/logs/notifications/" method="get" th:id="${idsPrefix} + 'FilterForm'" th:with="filterFieldNamePrefix='notification'">
+                <div class="modal-header">
+                  <h5 class="modal-title" th:id="${idsPrefix} + 'FilterFormWrapperLabel'" th:text="#{title.filter}">My title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{link.close}"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div th:each="searchCriteria: ${notificationListSearchCriterias}" class="col-12 mb-2 text-start" th:with="filterFieldNamePostfix=${searchCriteria.getKey()}">
+                      <label class="form-label" th:for="'filter-' + ${filterFieldNamePrefix} + '-' + ${filterFieldNamePostfix}" th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}"></label>
+                      <input class="form-control" th:value="${searchCriteria.getValue()}" th:name="'filter-' + ${filterFieldNamePrefix} + '-' + ${filterFieldNamePostfix}" th:id="'filter-' + ${filterFieldNamePrefix} + '-' + ${filterFieldNamePostfix}" th:placeholder="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}" />
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                  <button type="submit" value="submit" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-primary order-10" th:text="#{link.apply}">Apply</button>
+                  <button type="submit" value="reset" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-secondary order-0" th:text="#{link.reset}">Reset</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Modal filter stop -->
+      </div>
+    </div>
+    <div class="row">
+      <div class="col gy-0 text-center">
+        <div th:id="${idsPrefix} + 'Wrapper'" class="table-responsive">
+          <table class="table table-striped align-middle">
+            <thead>
+              <tr>
+                <th th:with="curColumn='id'" th:class="'t-col-notification-' + ${curColumn}">
+                  <a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}">
+                    <span th:text="#{notification.id}"></span>
+                    <i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i>
+                  </a>
+                </th>
+                <th th:with="curColumn='user'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.username}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='status'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.status}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='dateTime'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.datetime}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='subject'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.subject}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='message'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.message}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+              </tr>
+            </thead>
+            <tr th:if="${itemsPage.totalPages == 0}"><td colspan="8" th:text="#{message.data.absent}" /></tr>
+            <tr th:if="${itemsPage.totalPages > 0}" th:each="notification: ${itemsPage}">
+              <td th:class="'t-col-notification-id'" th:text="${notification.id}" />
+              <td th:class="'t-col-notification-user'" th:text="${notification.user.getUsername()}" />
+              <td th:class="'t-col-notification-status'" th:text="${notification.status}" />
+              <td th:class="'t-col-notification-datetime'" th:text="${#temporals.format(notification.dateTime, 'dd-MM-yyyy HH:mm:ss')}" />
+              <td th:class="'t-col-notification-subject'" th:text="${notification.subject}" />
+              <td th:class="'t-col-notification-message'" th:text="${notification.message}" />
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row" th:if="${itemsPage.totalPages > 0}">
+      <div class="col-12 gy-3">
+        <ul class="pagination pagination-sm justify-content-center flex-wrap">
+          <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
+            <a th:text="#{link.first}" th:class="page-link" th:href="@{/admin/logs/notifications(page=1)}"></a>
+          </li>
+          <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
+            <a th:text="#{link.prev}" th:class="page-link" th:href="@{/admin/logs/notifications(page=${itemsPage.number})}"></a>
+          </li>
+          <li th:class="${pageNumber==itemsPage.number + 1} ? 'page-item active' : 'page-item'" th:each="pageNumber : ${pageNumbers}">
+            <a th:text="${pageNumber}" th:class="page-link" th:href="@{/admin/logs/notifications(page=${pageNumber})}"></a>
+          </li>
+          <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
+            <a th:text="#{link.next}" th:class="page-link" th:href="@{/admin/logs/notifications(page=${itemsPage.number}+2)}"></a>
+          </li>
+          <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
+            <a th:text="#{link.last}" th:class="page-link" th:href="@{/admin/logs/notifications(page=${itemsPage.totalPages})}"></a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-12 text-center" th:text="#{list.records.of.total(
+          ${itemsPage.number} * ${itemsPage.size} +1,
+          ${itemsPage.number} * ${itemsPage.size} +10 > ${itemsPage.getTotalElements()} ? ${itemsPage.getTotalElements()} : ${itemsPage.number} * ${itemsPage.size} +10,
+          ${itemsPage.getTotalElements()}
+          )}">
+      </div>
+    </div>
+  </div>
+</div>
+<div th:replace="fragments/footer :: commonFooter"></div>
+</body>
+</html>

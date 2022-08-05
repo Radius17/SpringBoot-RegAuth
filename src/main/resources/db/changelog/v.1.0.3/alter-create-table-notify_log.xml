@@ -15,7 +15,7 @@
             <column name="status" type="int(5)">
                 <constraints nullable="false" unique="false"/>
             </column>
-            <column name="local_date_time" type="DATETIME">
+            <column name="date_time" type="DATETIME">
                 <constraints nullable="false" unique="false"/>
             </column>
             <column name="subject" type="varchar(255)">

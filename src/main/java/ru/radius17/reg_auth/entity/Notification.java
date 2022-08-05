@@ -3,8 +3,6 @@ package ru.radius17.reg_auth.entity;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -14,19 +12,19 @@ import java.util.UUID;
 @Table(name = "t_notify_log")
 @Getter
 @Setter
-public class Notify {
+public class Notification {
     @Id
     @GeneratedValue(generator = "uuid4")
     @GenericGenerator(name = "uuid4", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
     private Integer status;
 
-    @Column(name = "local_date_time", columnDefinition = "TIMESTAMP")
-    private ZonedDateTime localDateTime;
+    @Column(name = "date_time", columnDefinition = "TIMESTAMP")
+    private ZonedDateTime dateTime;
 
     private String subject;
 
