@@ -33,9 +33,9 @@ public class AdminLogsController {
     @ModelAttribute("notificationListSearchCriterias")
     public ArrayList<SearchCriteria> getDefaultsearchCriterias() {
         ArrayList<SearchCriteria> searchCriterias = new ArrayList<>();
-        searchCriterias.add(new SearchCriteria("user",":", ""));
-        searchCriterias.add(new SearchCriteria("dateTime",":", ""));
-        searchCriterias.add(new SearchCriteria("status",":", ""));
+        searchCriterias.add(new SearchCriteria("user",":", "", "user.username", null));
+        searchCriterias.add(new SearchCriteria("dateTime",":", "", null, "datetime"));
+        searchCriterias.add(new SearchCriteria("status",":", "","", null));
         return searchCriterias;
     }
 
@@ -85,34 +85,10 @@ public class AdminLogsController {
         if(sortByFieldName.equals("user")) sortByFieldName = "user.username";
 
         // --------------------------------------------------------
-        // Filters
-        if(!allRequestParams.isEmpty()){
-            String buttonPressed = allRequestParams.get("filter-notification-submit");
-            for (ListIterator iter = searchCriterias.listIterator();iter.hasNext();) {
-                SearchCriteria baseSearchCriteria = (SearchCriteria) iter.next();
-                String searchCriteriaInRequest = "reset".equals(buttonPressed) ? "" : allRequestParams.get("filter-notification-" + baseSearchCriteria.getKey());
-                if(searchCriteriaInRequest != null){
-                    searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), searchCriteriaInRequest));
-                }
-            }
-        }
-
-        boolean notificationListInSearch = false;
-        SearchSpecificationsBuilder builder = new SearchSpecificationsBuilder(false);
-        for (SearchCriteria searchCriteria: searchCriterias){
-            if(searchCriteria.getValue() != "") {
-                // --------------------------------------------------------
-                // Now substitute real filter field to filterByFieldName if need
-                String filterByFieldName = searchCriteria.getKey();
-                if(filterByFieldName.equals("user")) filterByFieldName = "user.username";
-                // --------------------------------------------------------
-                builder.with(filterByFieldName, searchCriteria.getOperation(), searchCriteria.getValue());
-                notificationListInSearch = true;
-            }
-        }
-
-        model.addAttribute("notificationListInSearch", notificationListInSearch);
-        model.addAttribute("notificationListSearchCriterias", searchCriterias);
+        // Build filter
+        SearchSpecificationsBuilder builder = new SearchSpecificationsBuilder(allRequestParams, searchCriterias, false);
+        model.addAttribute("notificationListInSearch", builder.isListInSearch());
+        model.addAttribute("notificationListSearchCriterias", builder.getSearchCriterias());
 
         // --------------------------------------------------------
         // Get items

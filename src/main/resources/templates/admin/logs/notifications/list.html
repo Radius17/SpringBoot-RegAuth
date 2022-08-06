@@ -14,7 +14,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 <div th:replace="fragments/header :: commonHeader"></div>
-<div class="main-wrapper" th:with="idsPrefix='adminNotificationsList'">
+<div class="main-wrapper" th:with="idsPrefix='adminNotificationsList', filterFieldNamePrefix='notification'">
   <div class="container">
     <div class="row">
       <div class="col-12 gy-3">
@@ -26,7 +26,7 @@
         </span><span class="ps-1 filter-criteria"
               th:each="searchCriteria: ${notificationListSearchCriterias}"
               th:if="${searchCriteria.getValue() != ''}"
-              th:with="filterFieldNamePostfix=${searchCriteria.getKey()}, filterFieldNamePrefix='notification'"
+              th:with="filterFieldNamePostfix=${searchCriteria.getKey()}"
               th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}} + '=' + ${searchCriteria.getValue()}">
         </span>
       </div>
@@ -36,7 +36,7 @@
         <div class="modal fade" th:id="${idsPrefix} + 'FilterFormWrapper'" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" th:aria-labelledby="${idsPrefix} + 'FilterFormWrapperLabel'" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
-              <form action="/admin/logs/notifications/" method="get" th:id="${idsPrefix} + 'FilterForm'" th:with="filterFieldNamePrefix='notification'">
+              <form action="/admin/logs/notifications/" method="get" th:id="${idsPrefix} + 'FilterForm'">
                 <div class="modal-header">
                   <h5 class="modal-title" th:id="${idsPrefix} + 'FilterFormWrapperLabel'" th:text="#{title.filter}">My title</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{link.close}"></button>
@@ -44,14 +44,17 @@
                 <div class="modal-body">
                   <div class="row">
                     <div th:each="searchCriteria: ${notificationListSearchCriterias}" class="col-12 mb-2 text-start" th:with="filterFieldNamePostfix=${searchCriteria.getKey()}">
-                      <label class="form-label" th:for="'filter-' + ${filterFieldNamePrefix} + '-' + ${filterFieldNamePostfix}" th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}"></label>
-                      <input class="form-control" th:value="${searchCriteria.getValue()}" th:name="'filter-' + ${filterFieldNamePrefix} + '-' + ${filterFieldNamePostfix}" th:id="'filter-' + ${filterFieldNamePrefix} + '-' + ${filterFieldNamePostfix}" th:placeholder="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}" />
+                      <label class="form-label" th:for="'filter-form-' + ${filterFieldNamePostfix}" th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}"></label>
+                      <div th:switch="${searchCriteria.getFieldType()}" th:remove="tag">
+                        <input th:case="'datetime'" th:type="'date'" class="form-control" th:value="${searchCriteria.getValue()}" th:name="'filter-form-' + ${filterFieldNamePostfix}" th:id="'filter-form-' + ${filterFieldNamePostfix}" th:placeholder="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}" />
+                        <input th:case="*" class="form-control" th:value="${searchCriteria.getValue()}" th:name="'filter-form-' + ${filterFieldNamePostfix}" th:id="'filter-form-' + ${filterFieldNamePostfix}" th:placeholder="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}" />
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div class="modal-footer justify-content-between">
-                  <button type="submit" value="submit" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-primary order-1" th:text="#{link.apply}">Apply</button>
-                  <button type="submit" value="reset" th:name="'filter-' + ${filterFieldNamePrefix} + '-submit'" class="btn btn-secondary order-0" th:text="#{link.reset}">Reset</button>
+                  <button type="submit" value="submit" th:name="'filter-form-submit'" class="btn btn-primary order-1" th:text="#{link.apply}">Apply</button>
+                  <button type="submit" value="reset" th:name="'filter-form-submit'" class="btn btn-secondary order-0" th:text="#{link.reset}">Reset</button>
                 </div>
               </form>
             </div>

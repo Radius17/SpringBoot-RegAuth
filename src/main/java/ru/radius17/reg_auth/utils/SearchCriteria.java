@@ -5,21 +5,30 @@ import lombok.Getter;
 @Getter
 public class SearchCriteria {
     private final String key;
+    private final String substituteField;
+    private final String fieldType;
     private final String operation;
     private final Object value;
     private final boolean orPredicate;
 
-    public SearchCriteria(String key, String operation, Object value, boolean orPredicate) {
+    public SearchCriteria(String key, String operation, Object value, String substituteField, String fieldType) {
         this.key = key;
         this.operation = operation;
         this.value = value;
-        this.orPredicate = orPredicate;
-    }
+        if(substituteField == null) this.substituteField = key;
+        else this.substituteField = substituteField;
+        this.fieldType = fieldType;
 
-    public SearchCriteria(String key, String operation, Object value) {
+        this.orPredicate = false;
+    }
+    public SearchCriteria(String key, String operation, Object value, String substituteField, String fieldType, boolean orPredicate) {
         this.key = key;
         this.operation = operation;
         this.value = value;
-        this.orPredicate = false;
+        if(substituteField == null) this.substituteField = key;
+        else this.substituteField = substituteField;
+        this.fieldType = fieldType;
+
+        this.orPredicate = orPredicate;
     }
 }

@@ -1,28 +1,73 @@
 package ru.radius17.reg_auth.utils;
 
+import lombok.Getter;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+@Getter
 public class SearchSpecificationsBuilder {
     private final List<SearchCriteria> params;
+    private final List<SearchCriteria> searchCriterias;
     private final boolean orPredicate;
+    private final boolean listInSearch;
 
-    public SearchSpecificationsBuilder(boolean orPredicate) {
+    // May be useful for custom request parsing
+    public SearchSpecificationsBuilder(ArrayList<SearchCriteria> searchCriterias, boolean orPredicate) {
         this.orPredicate = orPredicate;
-        params = new ArrayList<>();
+        this.params = new ArrayList<>();
+        this.searchCriterias = searchCriterias;
+
+        boolean listInSearch = false;
+        for (SearchCriteria searchCriteria: searchCriterias){
+            if(searchCriteria.getValue() != "") {
+                this.with(searchCriteria.getSubstituteField(), searchCriteria.getOperation(), searchCriteria.getValue(), searchCriteria.getSubstituteField(), searchCriteria.getFieldType());
+                listInSearch = true;
+            }
+        }
+
+        this.listInSearch = listInSearch;
     }
 
-    public SearchSpecificationsBuilder() {
-        this.orPredicate = false;
-        params = new ArrayList<>();
+    public SearchSpecificationsBuilder(Map<String,String> allRequestParams, ArrayList<SearchCriteria> searchCriterias, boolean orPredicate) {
+        this.orPredicate = orPredicate;
+        this.params = new ArrayList<>();
+
+        // --------------------------------------------------------
+        // Parse request for standart form
+        if(!allRequestParams.isEmpty()){
+            String buttonPressed = allRequestParams.get("filter-form-submit");
+            for (ListIterator iter = searchCriterias.listIterator(); iter.hasNext();) {
+                SearchCriteria baseSearchCriteria = (SearchCriteria) iter.next();
+                String searchCriteriaInRequest = "reset".equals(buttonPressed) ? "" : allRequestParams.get("filter-form-" + baseSearchCriteria.getKey());
+                if(searchCriteriaInRequest != null){
+                    searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), searchCriteriaInRequest, baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
+                }
+            }
+        }
+
+        this.searchCriterias = searchCriterias;
+
+        // --------------------------------------------------------
+        // Build filter
+        boolean listInSearch = false;
+        for (SearchCriteria searchCriteria: searchCriterias){
+            if(searchCriteria.getValue() != "") {
+                this.with(searchCriteria.getSubstituteField(), searchCriteria.getOperation(), searchCriteria.getValue(), searchCriteria.getSubstituteField(), searchCriteria.getFieldType());
+                listInSearch = true;
+            }
+        }
+
+        this.listInSearch = listInSearch;
     }
 
-    public SearchSpecificationsBuilder with(String key, String operation, Object value) {
-        params.add(new SearchCriteria(key, operation, value, this.orPredicate));
+    public SearchSpecificationsBuilder with(String key, String operation, Object value, String substituteField, String fieldType) {
+        this.params.add(new SearchCriteria(key, operation, value, substituteField, fieldType, this.orPredicate));
         return this;
     }
 

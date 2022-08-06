@@ -124,10 +124,10 @@ public class AdminUsersController {
     @ModelAttribute("userListSearchCriterias")
     public ArrayList<SearchCriteria> getDefaultsearchCriterias() {
         ArrayList<SearchCriteria> searchCriterias = new ArrayList<>();
-        searchCriterias.add(new SearchCriteria("username",":", ""));
-        searchCriterias.add(new SearchCriteria("nickname",":", ""));
-        searchCriterias.add(new SearchCriteria("email",":", ""));
-        searchCriterias.add(new SearchCriteria("phone",":", ""));
+        searchCriterias.add(new SearchCriteria("username",":", "", null, null));
+        searchCriterias.add(new SearchCriteria("nickname",":", "", null, null));
+        searchCriterias.add(new SearchCriteria("email",":", "", null, null));
+        searchCriterias.add(new SearchCriteria("phone",":", "", null, null));
         return searchCriterias;
     }
 
@@ -177,33 +177,10 @@ public class AdminUsersController {
         String sortByFieldName = sortBy;
 
         // --------------------------------------------------------
-        // Filters
-        if(!allRequestParams.isEmpty()){
-            String buttonPressed = allRequestParams.get("filter-user-submit");
-            for (ListIterator iter = searchCriterias.listIterator();iter.hasNext();) {
-                SearchCriteria baseSearchCriteria = (SearchCriteria) iter.next();
-                String searchCriteriaInRequest = "reset".equals(buttonPressed) ? "" : allRequestParams.get("filter-user-" + baseSearchCriteria.getKey());
-                if(searchCriteriaInRequest != null){
-                    searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), searchCriteriaInRequest));
-                }
-            }
-        }
-
-        boolean userListInSearch = false;
-        SearchSpecificationsBuilder builder = new SearchSpecificationsBuilder(false);
-        for (SearchCriteria searchCriteria: searchCriterias){
-            if(searchCriteria.getValue() != "") {
-                // --------------------------------------------------------
-                // Now substitute real filter field to filterByFieldName if need
-                String filterByFieldName = searchCriteria.getKey();
-                // --------------------------------------------------------
-                builder.with(filterByFieldName, searchCriteria.getOperation(), searchCriteria.getValue());
-                userListInSearch = true;
-            }
-        }
-
-        model.addAttribute("userListInSearch", userListInSearch);
-        model.addAttribute("userListSearchCriterias", searchCriterias);
+        // Build filter
+        SearchSpecificationsBuilder builder = new SearchSpecificationsBuilder(allRequestParams, searchCriterias, false);
+        model.addAttribute("userListInSearch", builder.isListInSearch());
+        model.addAttribute("userListSearchCriterias", builder.getSearchCriterias());
 
         // --------------------------------------------------------
         // Get items
