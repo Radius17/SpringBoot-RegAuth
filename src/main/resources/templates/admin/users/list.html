@@ -25,7 +25,7 @@
         <a th:title="#{link.add}" class="btn btn-success btn-block" th:href="'/admin/users/add'"><i class="bi-plus"></i></a>
       </div>
       <div class="filter-criterias col-6 text-center gy-3" th:if="${userListSearchCriterias}">
-        <span th:text="${userListInSearch} ? #{message.filtered} + ':' : ''">
+        <span th:text="${listInSearch} ? #{message.filtered} + ':' : ''">
         </span><span class="ps-1 filter-criteria"
               th:each="searchCriteria: ${userListSearchCriterias}"
               th:if="${searchCriteria.getValue() != ''}"

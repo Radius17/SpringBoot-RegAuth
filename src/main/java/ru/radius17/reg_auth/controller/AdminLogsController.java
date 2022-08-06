@@ -89,7 +89,7 @@ public class AdminLogsController {
         // --------------------------------------------------------
         // Build filter
         SearchSpecificationsBuilder builder = new SearchSpecificationsBuilder(allRequestParams, searchCriterias, false);
-        model.addAttribute("notificationListInSearch", builder.isListInSearch());
+        model.addAttribute("listInSearch", builder.isListInSearch());
         model.addAttribute("notificationListSearchCriterias", builder.getSearchCriterias());
 
         // --------------------------------------------------------

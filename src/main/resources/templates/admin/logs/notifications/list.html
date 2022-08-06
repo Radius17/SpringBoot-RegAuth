@@ -22,7 +22,7 @@
       </div>
       <div th:replace="fragments/header :: messageBlock"></div>
       <div class="filter-criterias col-9 text-start gy-3" th:if="${notificationListSearchCriterias}">
-        <span th:text="${notificationListInSearch} ? #{message.filtered} + ':' : ''">
+        <span th:text="${listInSearch} ? #{message.filtered} + ':' : ''">
         </span><span class="ps-1 filter-criteria"
               th:each="searchCriteria: ${notificationListSearchCriterias}"
               th:if="${searchCriteria.getValue() != ''}"

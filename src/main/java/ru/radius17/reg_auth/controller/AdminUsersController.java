@@ -179,7 +179,7 @@ public class AdminUsersController {
         // --------------------------------------------------------
         // Build filter
         SearchSpecificationsBuilder builder = new SearchSpecificationsBuilder(allRequestParams, searchCriterias, false);
-        model.addAttribute("userListInSearch", builder.isListInSearch());
+        model.addAttribute("listInSearch", builder.isListInSearch());
         model.addAttribute("userListSearchCriterias", builder.getSearchCriterias());
 
         // --------------------------------------------------------
