@@ -19,7 +19,7 @@ import java.util.stream.IntStream;
 @Controller
 @SessionAttributes({"notificationListPageRequest", "notificationListSearchCriterias"})
 @RequestMapping(value = "/admin/logs/notifications")
-public class AdminLogsController {
+public class AdminLogsNotificationsController {
     @Autowired
     ReloadableResourceBundleMessageSource ms;
     @Autowired
