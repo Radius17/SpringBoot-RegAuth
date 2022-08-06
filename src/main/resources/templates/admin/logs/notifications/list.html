@@ -21,10 +21,12 @@
         <h1 class="h3" th:text="${pageHeader}"></h1>
       </div>
       <div th:replace="fragments/header :: messageBlock"></div>
-      <div th:class="(${listInSearch} ? 'col-2' : 'col-10') + ' text-start gy-3'">
+    </div>
+    <div class="row">
+      <div th:class="(${listInSearch} ? 'col-sm-2' : 'col-sm-10') + ' col-6 order-1 text-start gy-3'">
         <!-- -->
       </div>
-      <div class="filter-criterias col-8 text-center gy-3" th:if="${listInSearch}">
+      <div class="filter-criterias col-sm-8 order-sm-2 order-3 col-12 text-center gy-3" th:if="${listInSearch}">
         <span class="filter-criterias-title" th:text="${listInSearch} ? #{message.filtered} + ':' : ''">
         </span><span class="ps-1 filter-criteria"
               th:each="searchCriteria: ${notificationListSearchCriterias}"
@@ -33,7 +35,7 @@
               th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}} + ' ' + (${searchCriteria.getOperation}==':' ? '=' : ${searchCriteria.getOperation}) + ' ' + ${searchCriteria.getValue()}">
         </span>
       </div>
-      <div class="col-2 text-end gy-3" th:if="${notificationListSearchCriterias}">
+      <div class="col-sm-2 col-6  order-sm-3 order-2 text-end gy-3" th:if="${notificationListSearchCriterias}">
         <!-- Modal filter start -->
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:title="#{link.filter}" th:data-bs-target="'#' + ${idsPrefix} + 'FilterFormWrapper'"><i class="bi-filter-circle-fill"></i></button>
         <div class="modal fade" th:id="${idsPrefix} + 'FilterFormWrapper'" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" th:aria-labelledby="${idsPrefix} + 'FilterFormWrapperLabel'" aria-hidden="true">
