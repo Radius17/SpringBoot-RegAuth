@@ -193,7 +193,11 @@ public class AdminUsersController {
         SearchSpecificationsBuilder builder = new SearchSpecificationsBuilder(false);
         for (SearchCriteria searchCriteria: searchCriterias){
             if(searchCriteria.getValue() != "") {
-                builder.with(searchCriteria.getKey(), searchCriteria.getOperation(), searchCriteria.getValue());
+                // --------------------------------------------------------
+                // Now substitute real filter field to filterByFieldName if need
+                String filterByFieldName = searchCriteria.getKey();
+                // --------------------------------------------------------
+                builder.with(filterByFieldName, searchCriteria.getOperation(), searchCriteria.getValue());
                 userListInSearch = true;
             }
         }
