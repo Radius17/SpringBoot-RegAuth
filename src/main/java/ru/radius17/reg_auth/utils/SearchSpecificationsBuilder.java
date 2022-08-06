@@ -4,10 +4,9 @@ import lombok.Getter;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -46,7 +45,22 @@ public class SearchSpecificationsBuilder {
                 SearchCriteria baseSearchCriteria = (SearchCriteria) iter.next();
                 String searchCriteriaInRequest = "reset".equals(buttonPressed) ? "" : allRequestParams.get("filter-form-" + baseSearchCriteria.getKey());
                 if(searchCriteriaInRequest != null){
-                    searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), searchCriteriaInRequest, baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
+                    if(baseSearchCriteria.getFieldType() == "date") {
+                        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("uuuu-MM-dd");
+                        LocalDateTime localDateTime;
+                        try {
+                            if (baseSearchCriteria.getOperation().equalsIgnoreCase("<")) {
+                                localDateTime = LocalDateTime.from(LocalDate.parse(searchCriteriaInRequest, dateTimeFormatter).atStartOfDay());
+                            } else {
+                                localDateTime = LocalDateTime.from(LocalDate.parse(searchCriteriaInRequest, dateTimeFormatter).atStartOfDay());
+                            }
+                            searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), localDateTime, baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
+                        } catch (Exception e){
+                            searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), "", baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
+                        }
+                    } else {
+                        searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), searchCriteriaInRequest, baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
+                    }
                 }
             }
         }
@@ -102,7 +116,6 @@ public class SearchSpecificationsBuilder {
         @Override
         public Predicate toPredicate(Root<Object> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             String criteriaOperation = criteria.getOperation();
-            String criteriaKey = criteria.getKey();
 
             // --------------------------------------------------------
             // Check for path like user.username
@@ -115,17 +128,34 @@ public class SearchSpecificationsBuilder {
             }
 
             if (criteriaOperation.equalsIgnoreCase(">")) {
-                return criteriaBuilder.greaterThanOrEqualTo(
-                        criteriaPath, criteria.getValue().toString());
+                if (criteriaPath.getJavaType() == LocalDateTime.class) {
+                    return criteriaBuilder.greaterThanOrEqualTo(
+                            criteriaPath,
+                            (LocalDateTime) criteria.getValue()
+                    );
+                } else {
+                    return criteriaBuilder.greaterThanOrEqualTo( criteriaPath, criteria.getValue().toString() );
+                }
             } else if (criteriaOperation.equalsIgnoreCase("<")) {
-                return criteriaBuilder.lessThanOrEqualTo(
-                        criteriaPath, criteria.getValue().toString());
+                if (criteriaPath.getJavaType() == LocalDateTime.class) {
+                    return criteriaBuilder.lessThanOrEqualTo(
+                            criteriaPath,
+                            (LocalDateTime) criteria.getValue()
+                    );
+                } else {
+                    return criteriaBuilder.lessThanOrEqualTo( criteriaPath, criteria.getValue().toString() );
+                }
             } else if (criteriaOperation.equalsIgnoreCase(":")) {
                 if (criteriaPath.getJavaType() == String.class) {
                     return criteriaBuilder.like(
-                            criteriaPath, "%" + criteria.getValue() + "%");
+                            criteriaPath,
+                            "%" + criteria.getValue() + "%"
+                    );
                 } else {
-                    return criteriaBuilder.equal(criteriaPath, criteria.getValue());
+                    return criteriaBuilder.equal(
+                            criteriaPath,
+                            criteria.getValue()
+                    );
                 }
             }
             return null;

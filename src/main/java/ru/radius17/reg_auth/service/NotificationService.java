@@ -42,7 +42,7 @@ public class NotificationService {
         Notification notification = new Notification();
         notification.setUser(user);
         notification.setStatus(statusCode);
-        notification.setDateTime(ZonedDateTime.now(ZoneId.of(ZoneId.systemDefault().getId())));
+        notification.setDateTime(LocalDateTime.now());
         notification.setSubject(subject);
         notification.setMessage(message);
         notification.setDescription(statusMessage);

@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -23,8 +23,8 @@ public class Notification {
 
     private Integer status;
 
-    @Column(name = "date_time", columnDefinition = "TIMESTAMP")
-    private ZonedDateTime dateTime;
+    @Column(name = "date_time")
+    private LocalDateTime dateTime;
 
     private String subject;
 
