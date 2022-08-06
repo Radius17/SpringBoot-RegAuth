@@ -15,7 +15,7 @@ public class SearchCriteria {
         this.key = key;
         this.operation = operation;
         this.value = value;
-        if(substituteField == null) this.substituteField = key;
+        if(substituteField == null || substituteField.isEmpty()) this.substituteField = key;
         else this.substituteField = substituteField;
         this.fieldType = fieldType;
 
@@ -25,7 +25,7 @@ public class SearchCriteria {
         this.key = key;
         this.operation = operation;
         this.value = value;
-        if(substituteField == null) this.substituteField = key;
+        if(substituteField == null || substituteField.isEmpty()) this.substituteField = key;
         else this.substituteField = substituteField;
         this.fieldType = fieldType;
 

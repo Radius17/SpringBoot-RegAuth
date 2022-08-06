@@ -47,15 +47,10 @@ public class SearchSpecificationsBuilder {
                 if(searchCriteriaInRequest != null){
                     if(baseSearchCriteria.getFieldType() == "date") {
                         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("uuuu-MM-dd");
-                        LocalDateTime localDateTime;
                         try {
-                            if (baseSearchCriteria.getOperation().equalsIgnoreCase("<")) {
-                                localDateTime = LocalDateTime.from(LocalDate.parse(searchCriteriaInRequest, dateTimeFormatter).atStartOfDay());
-                            } else {
-                                localDateTime = LocalDateTime.from(LocalDate.parse(searchCriteriaInRequest, dateTimeFormatter).atStartOfDay());
-                            }
-                            searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), localDateTime, baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
-                        } catch (Exception e){
+                            LocalDate localDate = LocalDate.parse(searchCriteriaInRequest, dateTimeFormatter);
+                            searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), localDate, baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
+                        } catch (Exception e) {
                             searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), "", baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
                         }
                     } else {
@@ -127,21 +122,37 @@ public class SearchSpecificationsBuilder {
                 criteriaPath = root.get(criteriaKeys[0]);
             }
 
+            // For LocalDateTime > or >= is 1 second different
             if (criteriaOperation.equalsIgnoreCase(">")) {
                 if (criteriaPath.getJavaType() == LocalDateTime.class) {
-                    return criteriaBuilder.greaterThanOrEqualTo(
-                            criteriaPath,
-                            (LocalDateTime) criteria.getValue()
-                    );
+                    // // End of day
+                    LocalDateTime criteriaValue = LocalDateTime.from(((LocalDate) criteria.getValue()).atTime(LocalTime.MAX));
+                    return criteriaBuilder.greaterThan( criteriaPath, criteriaValue );
+                } else {
+                    return criteriaBuilder.greaterThan( criteriaPath, criteria.getValue().toString() );
+                }
+            } else if (criteriaOperation.equalsIgnoreCase(">=")) {
+                if (criteriaPath.getJavaType() == LocalDateTime.class) {
+                    // Start of day
+                    LocalDateTime criteriaValue = LocalDateTime.from(((LocalDate) criteria.getValue()).atStartOfDay());
+                    return criteriaBuilder.greaterThanOrEqualTo( criteriaPath, criteriaValue );
                 } else {
                     return criteriaBuilder.greaterThanOrEqualTo( criteriaPath, criteria.getValue().toString() );
                 }
             } else if (criteriaOperation.equalsIgnoreCase("<")) {
                 if (criteriaPath.getJavaType() == LocalDateTime.class) {
-                    return criteriaBuilder.lessThanOrEqualTo(
-                            criteriaPath,
-                            (LocalDateTime) criteria.getValue()
-                    );
+                    // Start of day
+                    LocalDateTime criteriaValue = LocalDateTime.from(((LocalDate) criteria.getValue()).atStartOfDay());
+                    return criteriaBuilder.lessThan( criteriaPath, criteriaValue );
+                } else {
+                    return criteriaBuilder.lessThan( criteriaPath, criteria.getValue().toString() );
+                }
+            } else if (criteriaOperation.equalsIgnoreCase("<=")) {
+                if (criteriaPath.getJavaType() == LocalDateTime.class) {
+                    // End of day
+                    LocalDateTime criteriaValue = LocalDateTime.from(((LocalDate) criteria.getValue()).atTime(LocalTime.MAX));
+                    // LocalDateTime criteriaValue = LocalDateTime.from(((LocalDate) criteria.getValue()).atStartOfDay());
+                    return criteriaBuilder.lessThanOrEqualTo( criteriaPath, criteriaValue );
                 } else {
                     return criteriaBuilder.lessThanOrEqualTo( criteriaPath, criteria.getValue().toString() );
                 }
