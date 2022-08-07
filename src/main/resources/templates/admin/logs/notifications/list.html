@@ -74,7 +74,7 @@
           <table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th th:with="curColumn='id'" th:class="${colPrefix} + ${curColumn}"><span th:text="#{notification.id}"></span></th>
+                <th th:with="curColumn='id'" th:class="${colPrefix} + ${curColumn} + ' fit-content'"><span th:text="#{notification.id}"></span></th>
                 <th th:with="curColumn='user'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.username}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
                 <th th:with="curColumn='status'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.status}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
                 <th th:with="curColumn='dateTime'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.dateTime}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
@@ -84,7 +84,7 @@
             </thead>
             <tr th:if="${itemsPage.totalPages == 0}"><td colspan="8" th:text="#{message.data.absent}" /></tr>
             <tr th:if="${itemsPage.totalPages > 0}" th:each="notification: ${itemsPage}">
-              <td th:class="${colPrefix} + 'id'"><i th:title="${notification.id}" th:class="'bi bi-info-square text-primary fs-2 ms-2'"></i></td>
+              <td th:class="${colPrefix} + 'id fit-content'"><i th:title="${notification.id}" th:class="'bi bi-info-square text-primary fs-2 ms-2'"></i></td>
               <td th:class="${colPrefix} + 'user'" th:text="${notification.user.getUsername()}" />
               <td th:class="${colPrefix} + 'status'" th:text="${notification.status}" />
               <td th:class="${colPrefix} + 'datetime'" th:text="${#temporals.format(notification.dateTime, 'dd-MM-yyyy HH:mm:ss')}" />

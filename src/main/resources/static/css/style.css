@@ -17,3 +17,8 @@ header{
 .filter-criteria:not(:last-child):after{
     content: ","
 }
+.table td.fit-content,
+.table th.fit-content {
+    white-space: nowrap;
+    width: 1%;
+}
