@@ -14,7 +14,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 <div th:replace="fragments/header :: commonHeader"></div>
-<div class="main-wrapper" th:with="idsPrefix='adminNotificationsList', filterFieldNamePrefix='notification'">
+<div class="main-wrapper" th:with="idsPrefix='adminNotificationsList', filterFieldNamePrefix='notification', mainLink='/admin/logs/notifications', colPrefix='t-col-notification-'">
   <div class="container">
     <div class="row">
       <div class="col-12 gy-3">
@@ -41,7 +41,7 @@
         <div class="modal fade" th:id="${idsPrefix} + 'FilterFormWrapper'" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" th:aria-labelledby="${idsPrefix} + 'FilterFormWrapperLabel'" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
-              <form action="/admin/logs/notifications/" method="get" th:id="${idsPrefix} + 'FilterForm'">
+              <form th:action="${mainLink} + '/'" method="get" th:id="${idsPrefix} + 'FilterForm'">
                 <div class="modal-header">
                   <h5 class="modal-title" th:id="${idsPrefix} + 'FilterFormWrapperLabel'" th:text="#{title.filter}">My title</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{link.close}"></button>
@@ -74,27 +74,22 @@
           <table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th th:with="curColumn='id'" th:class="'t-col-notification-' + ${curColumn}">
-                  <a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}">
-                    <span th:text="#{notification.id}"></span>
-                    <i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i>
-                  </a>
-                </th>
-                <th th:with="curColumn='user'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.username}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
-                <th th:with="curColumn='status'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.status}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
-                <th th:with="curColumn='dateTime'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.dateTime}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
-                <th th:with="curColumn='subject'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.subject}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
-                <th th:with="curColumn='message'" th:class="'t-col-notification-' + ${curColumn}"><a th:href="@{'/admin/logs/notifications'(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.message}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='id'" th:class="${colPrefix} + ${curColumn}"><span th:text="#{notification.id}"></span></th>
+                <th th:with="curColumn='user'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.username}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='status'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.status}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='dateTime'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.dateTime}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='subject'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.subject}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='message'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{notification.message}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
               </tr>
             </thead>
             <tr th:if="${itemsPage.totalPages == 0}"><td colspan="8" th:text="#{message.data.absent}" /></tr>
             <tr th:if="${itemsPage.totalPages > 0}" th:each="notification: ${itemsPage}">
-              <td th:class="'t-col-notification-id'"><i th:title="${notification.id}" th:class="'bi bi-info-square text-primary fs-2 ms-2'"></i></td>
-              <td th:class="'t-col-notification-user'" th:text="${notification.user.getUsername()}" />
-              <td th:class="'t-col-notification-status'" th:text="${notification.status}" />
-              <td th:class="'t-col-notification-datetime'" th:text="${#temporals.format(notification.dateTime, 'dd-MM-yyyy HH:mm:ss')}" />
-              <td th:class="'t-col-notification-subject'" th:text="${notification.subject}" />
-              <td th:class="'t-col-notification-message'" th:text="${notification.message}" />
+              <td th:class="${colPrefix} + 'id'"><i th:title="${notification.id}" th:class="'bi bi-info-square text-primary fs-2 ms-2'"></i></td>
+              <td th:class="${colPrefix} + 'user'" th:text="${notification.user.getUsername()}" />
+              <td th:class="${colPrefix} + 'status'" th:text="${notification.status}" />
+              <td th:class="${colPrefix} + 'datetime'" th:text="${#temporals.format(notification.dateTime, 'dd-MM-yyyy HH:mm:ss')}" />
+              <td th:class="${colPrefix} + 'subject'" th:text="${notification.subject}" />
+              <td th:class="${colPrefix} + 'message'" th:text="${notification.message}" />
             </tr>
           </table>
         </div>
@@ -104,19 +99,19 @@
       <div class="col-12 gy-3">
         <ul class="pagination pagination-sm justify-content-center flex-wrap">
           <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
-            <a th:text="#{link.first}" th:class="page-link" th:href="@{/admin/logs/notifications(page=1)}"></a>
+            <a th:text="#{link.first}" th:class="page-link" th:href="@{${mainLink}(page=1)}"></a>
           </li>
           <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
-            <a th:text="#{link.prev}" th:class="page-link" th:href="@{/admin/logs/notifications(page=${itemsPage.number})}"></a>
+            <a th:text="#{link.prev}" th:class="page-link" th:href="@{${mainLink}(page=${itemsPage.number})}"></a>
           </li>
           <li th:class="${pageNumber==itemsPage.number + 1} ? 'page-item active' : 'page-item'" th:each="pageNumber : ${pageNumbers}">
-            <a th:text="${pageNumber}" th:class="page-link" th:href="@{/admin/logs/notifications(page=${pageNumber})}"></a>
+            <a th:text="${pageNumber}" th:class="page-link" th:href="@{${mainLink}(page=${pageNumber})}"></a>
           </li>
           <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
-            <a th:text="#{link.next}" th:class="page-link" th:href="@{/admin/logs/notifications(page=${itemsPage.number}+2)}"></a>
+            <a th:text="#{link.next}" th:class="page-link" th:href="@{${mainLink}(page=${itemsPage.number}+2)}"></a>
           </li>
           <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
-            <a th:text="#{link.last}" th:class="page-link" th:href="@{/admin/logs/notifications(page=${itemsPage.totalPages})}"></a>
+            <a th:text="#{link.last}" th:class="page-link" th:href="@{${mainLink}(page=${itemsPage.totalPages})}"></a>
           </li>
         </ul>
       </div>
