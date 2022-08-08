@@ -68,7 +68,7 @@
             <a class="btn btn-primary btn-block" th:href="@{/admin/users}" th:text="#{link.cancel}"></a>
           </div>
           <div class="col text-center form-buttons">
-            <input type="hidden" th:field="*{id}" />
+            <input th:if="${not isNewUser}" type="hidden" th:field="*{id}" />
             <button class="btn btn-primary btn-block" type="submit" th:text="#{submit.save}"></button>
           </div>
         </div>
