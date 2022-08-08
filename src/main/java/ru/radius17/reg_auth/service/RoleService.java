@@ -11,13 +11,13 @@ import java.util.List;
 public class RoleService {
 
     @Autowired
-    RoleRepository roleRepository;
+    RoleRepository mainRepository;
 
-    public Role getDefaultRole() {
-        return roleRepository.findByName("ROLE_USER").orElse(new Role());
+    public Role getDefaultObject() {
+        return mainRepository.findByName("ROLE_USER").orElse(new Role());
     }
 
-    public List<Role> getAllRoles() {
-        return roleRepository.findAll();
+    public List<Role> getAll() {
+        return mainRepository.findAll();
     }
 }

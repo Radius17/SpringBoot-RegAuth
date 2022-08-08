@@ -19,9 +19,9 @@ public class NotificationService {
     @Autowired
     private Environment env;
     @Autowired
-    NotificationSender notificationSender;
+    NotificationRepository mainRepository;
     @Autowired
-    NotificationRepository notificationRepository;
+    NotificationSender notificationSender;
 
     public int[] getUint8Key(){
         return notificationSender.getUint8Key();
@@ -53,7 +53,7 @@ public class NotificationService {
             case "error":
                 if(statusCode != 201){
                     try {
-                        notificationRepository.save(notification);
+                        mainRepository.save(notification);
                     } catch (Exception e){
                         System.out.print(ExceptionUtils.getStackTrace(e));
                     }
@@ -61,7 +61,7 @@ public class NotificationService {
                 break;
             case "debug":
                 try {
-                    notificationRepository.save(notification);
+                    mainRepository.save(notification);
                 } catch (Exception e){
                     System.out.print(ExceptionUtils.getStackTrace(e));
                 }
@@ -72,9 +72,8 @@ public class NotificationService {
         return String.valueOf(statusCode);
     }
 
-    public Page<Notification> getNotificationsFilteredAndPaginated(Specification specification, Pageable pageable) {
-        Page<Notification> pagedResult = notificationRepository.findAll(specification, pageable);
-        return pagedResult;
+    public Page<Notification> getAllFilteredAndPaginated(Specification specification, Pageable pageable) {
+        return mainRepository.findAll(specification, pageable);
     }
 
 }

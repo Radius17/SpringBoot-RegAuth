@@ -13,10 +13,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.radius17.reg_auth.entity.User;
+import ru.radius17.reg_auth.service.RoleService;
 import ru.radius17.reg_auth.service.UserService;
-import ru.radius17.reg_auth.service.UserServiceException;
+import ru.radius17.reg_auth.service.BaseServiceException;
 
 import javax.validation.Valid;
+import java.util.Collections;
 
 @Controller
 public class UserController {
@@ -24,8 +26,9 @@ public class UserController {
     @Autowired
     ReloadableResourceBundleMessageSource ms;
     @Autowired
-    private UserService userService;
-
+    private UserService mainService;
+    @Autowired
+    private RoleService roleService;
     @Autowired
     private Environment env;
 
@@ -63,7 +66,7 @@ public class UserController {
             System.out.println(app_name);
             System.out.println("=========================================================");
         }
-        model.addAttribute("userForm", userService.getEmptyUser());
+        model.addAttribute("userForm", mainService.getEmptyObject());
         return "user/register";
     }
 
@@ -96,18 +99,21 @@ public class UserController {
             return "user/register";
         }
 
+        // --------------------------------------------------------
         // Always new user
         userForm.setId(null);
         // Empty by default
         userForm.setDescription("");
+        // Default role
+        userForm.setRoles(Collections.singleton(roleService.getDefaultObject()));
         // Enable by default
         userForm.setEnabled(true);
         // Empty by default
         userForm.setWebPushSubscription("");
 
         try {
-            userService.saveUser(userForm);
-        } catch (UserServiceException e) {
+            mainService.saveObject(userForm);
+        } catch (BaseServiceException e) {
             if (!e.getConstraintRejectedFieldName().isEmpty())
                 bindingResult.rejectValue(e.getConstraintRejectedFieldName(), null, ms.getMessage(e.getConstraintRejectedFieldMessage(), null, LocaleContextHolder.getLocale()));
             model.addAttribute("errorMessage", ms.getMessage("registration.error", null, LocaleContextHolder.getLocale()));
@@ -123,7 +129,7 @@ public class UserController {
 
     @GetMapping("/profile/modify")
     public String modifyProfile(Model model) throws UsernameNotFoundException {
-        User user = userService.getMySelf();
+        User user = mainService.getMySelf();
         user.setPassword(null);
         user.setPasswordConfirm(null);
         model.addAttribute("userForm", user);
@@ -136,12 +142,15 @@ public class UserController {
                               RedirectAttributes redirectAttributes,
                               Model model) {
 
-        User mySelf = userService.getMySelf();
-
+        User mySelf = mainService.getMySelf();
         if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()) {
+            // --------------------------------------------------------
+            // One or both of passwords are empty
             userForm.setPassword(mySelf.getPassword());
             userForm.setPasswordConfirm(null);
         } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
+            // --------------------------------------------------------
+            // Passwords not equal
             String errMess = ms.getMessage("user.passwordsNotMatch", null, LocaleContextHolder.getLocale());
             bindingResult.rejectValue("password", null, errMess);
             bindingResult.rejectValue("passwordConfirm", null, errMess);
@@ -165,8 +174,8 @@ public class UserController {
         userForm.setWebPushSubscription(mySelf.getWebPushSubscription());
 
         try {
-            userService.saveUser(userForm);
-        } catch (UserServiceException e) {
+            mainService.saveObject(userForm);
+        } catch (BaseServiceException e) {
             if (!e.getConstraintRejectedFieldName().isEmpty())
                 bindingResult.rejectValue(e.getConstraintRejectedFieldName(), null, ms.getMessage(e.getConstraintRejectedFieldMessage(), null, LocaleContextHolder.getLocale()));
             model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));

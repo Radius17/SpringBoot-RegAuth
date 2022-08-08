@@ -3,13 +3,13 @@ package ru.radius17.reg_auth.service;
 import lombok.Getter;
 import org.springframework.dao.DataIntegrityViolationException;
 
-public class UserServiceException extends Exception{
+public class BaseServiceException extends Exception{
     @Getter
     String constraintRejectedFieldName = "";
     @Getter
     String constraintRejectedFieldMessage = "";
 
-    public UserServiceException(DataIntegrityViolationException e) {
+    public BaseServiceException(DataIntegrityViolationException e) {
         org.hibernate.exception.ConstraintViolationException exDetail = (org.hibernate.exception.ConstraintViolationException) e.getCause();
         String constraintName = exDetail.getConstraintName();
         switch (constraintName) {

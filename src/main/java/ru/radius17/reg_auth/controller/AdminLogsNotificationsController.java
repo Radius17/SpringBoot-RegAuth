@@ -20,10 +20,16 @@ import java.util.stream.IntStream;
 @SessionAttributes({"notificationListPageRequest", "notificationListSearchCriterias"})
 @RequestMapping(value = "/admin/logs/notifications")
 public class AdminLogsNotificationsController {
+
+    private final String modifyTemplate = "admin/logs/notifications/modify";
+    private final String listTemplate = "admin/logs/notifications/list";
+    private final String redirectToList = "redirect:/admin/logs/notifications";
+    private final String redirectToListPage = "redirect:/admin/logs/notifications?page=";
+
     @Autowired
     ReloadableResourceBundleMessageSource ms;
     @Autowired
-    private NotificationService notificationService;
+    private NotificationService mainService;
 
     @ModelAttribute("notificationListPageRequest")
     public PageRequest getDefaultNotificationListPageRequest() {
@@ -41,7 +47,7 @@ public class AdminLogsNotificationsController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "")
-    public String notificationsList(@RequestParam(name = "page", defaultValue = "-1") Integer pageNo,
+    public String listObjects(@RequestParam(name = "page", defaultValue = "-1") Integer pageNo,
                            @RequestParam(name = "limit", defaultValue = "-1") Integer pageSize,
                            @RequestParam(name = "sort", defaultValue = "") String sortBy,
                            @RequestParam(name = "direction", defaultValue = "") String sortDir,
@@ -93,7 +99,7 @@ public class AdminLogsNotificationsController {
 
         // --------------------------------------------------------
         // Get items
-        Page<Notification> itemsPage = notificationService.getNotificationsFilteredAndPaginated(builder.build(), PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortByFieldName)));
+        Page<Notification> itemsPage = mainService.getAllFilteredAndPaginated(builder.build(), PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortByFieldName)));
         model.addAttribute("itemsPage", itemsPage);
 
         // --------------------------------------------------------
@@ -101,7 +107,7 @@ public class AdminLogsNotificationsController {
         int totalPages = itemsPage.getTotalPages();
         if (totalPages > 0) {
             if (totalPages < pageNo) {
-                return "redirect:/admin/logs/notifications?page=" + totalPages;
+                return this.redirectToListPage + totalPages;
             }
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
@@ -110,6 +116,7 @@ public class AdminLogsNotificationsController {
         // --------------------------------------------------------
         // Save page and sort attributes between page calls
         model.addAttribute("notificationListPageRequest", PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortBy)));
-        return "admin/logs/notifications/list";
+
+        return this.listTemplate;
     }
 }

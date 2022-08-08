@@ -25,104 +25,134 @@ import java.util.stream.IntStream;
 @SessionAttributes({"userListPageRequest", "userListSearchCriterias"})
 @RequestMapping(value = "/admin/users")
 public class AdminUsersController {
+    private final String modifyTemplate = "admin/users/modify";
+    private final String listTemplate = "admin/users/list";
+    private final String redirectToList = "redirect:/admin/users";
+    private final String redirectToListPage = "redirect:/admin/users?page=";
     @Autowired
     ReloadableResourceBundleMessageSource ms;
     @Autowired
-    private UserService userService;
+    private UserService mainService;
     @Autowired
     private RoleService roleService;
 
     @RequestMapping(method = RequestMethod.GET, value = "/add")
-    public String addUserProfile(Model model) {
-        model.addAttribute("userForm", userService.getEmptyUser());
-        List<Role> listRoles = roleService.getAllRoles();
-        model.addAttribute("listRoles", listRoles);
-        model.addAttribute("selectedRoles", userService.getSelectedRoles(listRoles, userService.getEmptyUser()));
-        model.addAttribute("isNewUser", true);
+    public String addObject(Model model) {
+        model.addAttribute("objectForm", mainService.getEmptyObject());
+        model.addAttribute("isNewObject", true);
         model.addAttribute("isMySelf", false);
-        return "admin/users/profile";
+
+        // --------------------------------------------------------
+        // Here we can add some lists to model
+        List<Role> listRoles = roleService.getAll();
+        model.addAttribute("listRoles", listRoles);
+        model.addAttribute("selectedRoles", mainService.getSelectedRoles(listRoles, mainService.getEmptyObject()));
+        // --------------------------------------------------------
+
+        return this.modifyTemplate;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/modify/{id}")
-    public String modifyUserProfile(@PathVariable("id") UUID id,
-                                    Model model) {
-        User user = userService.getUserById(id);
-        model.addAttribute("userForm", user);
-        List<Role> listRoles = roleService.getAllRoles();
+    public String modifyObject(@PathVariable("id") UUID objId, Model model) {
+        User object = mainService.getById(objId);
+        model.addAttribute("objectForm", object);
+        model.addAttribute("isNewObject", false);
+        model.addAttribute("isMySelf", mainService.getMySelf().getId().equals(objId));
+
+        // --------------------------------------------------------
+        // Here we can add some lists to model
+        List<Role> listRoles = roleService.getAll();
         model.addAttribute("listRoles", listRoles);
-        model.addAttribute("selectedRoles", userService.getSelectedRoles(listRoles, user));
-        model.addAttribute("isNewUser", false);
-        User mySelf = userService.getMySelf();
-        model.addAttribute("isMySelf", mySelf.getId().equals(id));
-        return "admin/users/profile";
+        model.addAttribute("selectedRoles", mainService.getSelectedRoles(listRoles, object));
+        // --------------------------------------------------------
+
+        return this.modifyTemplate;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/save")
-    public String saveUserProfile(@ModelAttribute("userForm") @Valid User userForm,
+    public String saveObject(@ModelAttribute("objectForm") @Valid User objectForm,
                                   BindingResult bindingResult,
                                   RedirectAttributes redirectAttributes,
                                   Model model) {
-        List<Role> listRoles = roleService.getAllRoles();
+        Boolean isNewObject = objectForm.getId() == null;
+        model.addAttribute("isNewObject", isNewObject);
+
+        // --------------------------------------------------------
+        // Here we can add some lists to model
+        List<Role> listRoles = roleService.getAll();
         model.addAttribute("listRoles", listRoles);
-        model.addAttribute("selectedRoles", userService.getSelectedRoles(listRoles, userForm));
+        model.addAttribute("selectedRoles", mainService.getSelectedRoles(listRoles, objectForm));
+        // --------------------------------------------------------
 
-        Boolean isNewUser = userForm.getId() == null;
-        model.addAttribute("isNewUser", isNewUser);
+        User mySelf = mainService.getMySelf();
+        if (mySelf.getId().equals(objectForm.getId())) {
+            // --------------------------------------------------------
+            // It is myself !!! Restrict to change roles !!!
+            objectForm.setRoles(mySelf.getRoles());
+            // --------------------------------------------------------
+            // It is myself !!! Restrict to change enabled !!!
+            objectForm.setEnabled(mySelf.getEnabled());
+        }
 
-        User mySelf = userService.getMySelf();
-        Boolean isMySelf = mySelf.getId().equals(userForm.getId());
-        model.addAttribute("isMySelf", isMySelf);
+        model.addAttribute("isMySelf", mySelf.getId().equals(objectForm.getId()));
 
-        if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()) {
-            if (isNewUser) {
-                // One of passwords is empty
+        if (objectForm.getPassword().isEmpty() || objectForm.getPasswordConfirm().isEmpty()) {
+            // --------------------------------------------------------
+            // One or both of passwords are empty
+            if (isNewObject) {
                 String errMess = ms.getMessage("user.passwordCannotBeEmpty", null, LocaleContextHolder.getLocale());
                 bindingResult.rejectValue("password", null, errMess);
                 bindingResult.rejectValue("passwordConfirm", null, errMess);
             } else {
-                // Password was not changed
-                userForm.setPassword(mySelf.getPassword());
-                userForm.setPasswordConfirm(null);
+                // --------------------------------------------------------
+                // For existing object password was not changed
+                User oldObject = mainService.getById(objectForm.getId());
+                objectForm.setPassword(oldObject.getPassword());
+                objectForm.setPasswordConfirm(null);
             }
-        } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
+        } else if (!objectForm.getPassword().equals(objectForm.getPasswordConfirm())) {
+            // --------------------------------------------------------
             // Passwords not equal
             String errMess = ms.getMessage("user.passwordsNotMatch", null, LocaleContextHolder.getLocale());
             bindingResult.rejectValue("password", null, errMess);
             bindingResult.rejectValue("passwordConfirm", null, errMess);
         }
 
-        if (bindingResult.hasErrors()) {
-            return "admin/users/profile";
+        if(!isNewObject){
+            // --------------------------------------------------------
+            // Here we can reset some fields
+            User oldObject = mainService.getById(objectForm.getId());
+            objectForm.setWebPushSubscription(oldObject.getWebPushSubscription());
         }
 
-        if(!isNewUser){
-            User oldUser = userService.getUserById(userForm.getId());
-            userForm.setWebPushSubscription(oldUser.getWebPushSubscription());
+        if (bindingResult.hasErrors()) {
+            return this.modifyTemplate;
         }
 
         try {
-            userService.saveUser(userForm);
-        } catch (UserServiceException e) {
+            mainService.saveObject(objectForm);
+        } catch (BaseServiceException e) {
             if (!e.getConstraintRejectedFieldName().isEmpty())
                 bindingResult.rejectValue(e.getConstraintRejectedFieldName(), null, ms.getMessage(e.getConstraintRejectedFieldMessage(), null, LocaleContextHolder.getLocale()));
             model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
-            return "admin/users/profile";
+            return this.modifyTemplate;
         } catch (Exception e) {
             model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
-            return "admin/users/profile";
+            return this.modifyTemplate;
         }
-        redirectAttributes.addAttribute("infoMessage", ms.getMessage(isNewUser ? "user.addedSuccessfully" : "user.savedSuccessfully", null, LocaleContextHolder.getLocale()));
 
-        return "redirect:/admin/users";
+        redirectAttributes.addAttribute("infoMessage", ms.getMessage(isNewObject ? "user.addedSuccessfully" : "user.savedSuccessfully", null, LocaleContextHolder.getLocale()));
+
+        return this.redirectToList;
     }
 
     @ModelAttribute("userListPageRequest")
-    public PageRequest getDefaultUserListPageRequest() {
+    public PageRequest getDefaultListPageRequest() {
         return PageRequest.of(0, 10, Sort.by(Sort.DEFAULT_DIRECTION,"username"));
     }
 
     @ModelAttribute("userListSearchCriterias")
-    public ArrayList<SearchCriteria> getDefaultsearchCriterias() {
+    public ArrayList<SearchCriteria> getDefaultSearchCriterias() {
         ArrayList<SearchCriteria> searchCriterias = new ArrayList<>();
         searchCriterias.add(new SearchCriteria("username",":", "", null, null));
         searchCriterias.add(new SearchCriteria("nickname",":", "", null, null));
@@ -132,7 +162,7 @@ public class AdminUsersController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "")
-    public String userList(@RequestParam(name = "page", defaultValue = "-1") Integer pageNo,
+    public String listObjects(@RequestParam(name = "page", defaultValue = "-1") Integer pageNo,
                            @RequestParam(name = "limit", defaultValue = "-1") Integer pageSize,
                            @RequestParam(name = "sort", defaultValue = "") String sortBy,
                            @RequestParam(name = "direction", defaultValue = "") String sortDir,
@@ -184,7 +214,7 @@ public class AdminUsersController {
 
         // --------------------------------------------------------
         // Get items
-        Page<User> itemsPage = userService.getUsersFilteredAndPaginated(builder.build(), PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortByFieldName)));
+        Page<User> itemsPage = mainService.getAllFilteredAndPaginated(builder.build(), PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortByFieldName)));
         model.addAttribute("itemsPage", itemsPage);
 
         // --------------------------------------------------------
@@ -192,7 +222,7 @@ public class AdminUsersController {
         int totalPages = itemsPage.getTotalPages();
         if (totalPages > 0) {
             if (totalPages < pageNo) {
-                return "redirect:/admin/users?page=" + totalPages;
+                return this.redirectToListPage + totalPages;
             }
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
@@ -201,25 +231,27 @@ public class AdminUsersController {
         // --------------------------------------------------------
         // Save page and sort attributes between page calls
         model.addAttribute("userListPageRequest", PageRequest.of(pageNo - 1, pageSize, Sort.by(sortDirection, sortBy)));
-        return "admin/users/list";
+
+        return this.listTemplate;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/delete")
-    public String deleteUser(@RequestParam(required = true, defaultValue = "") UUID userId,
+    public String deleteObject(@RequestParam(name = "objId", required = true, defaultValue = "") UUID objId,
                              RedirectAttributes redirectAttributes) {
 
-        User mySelf = userService.getMySelf();
-        if (mySelf.getId().equals(userId)) {
+        User mySelf = mainService.getMySelf();
+        if (mySelf.getId().equals(objId)) {
             redirectAttributes.addAttribute("errorMessage", ms.getMessage("user.youCannotDeleteYourSelf", null, LocaleContextHolder.getLocale()));
         } else {
             try {
-                userService.deleteUser(userId);
+                mainService.deleteObject(objId);
                 redirectAttributes.addAttribute("infoMessage", ms.getMessage("user.deletedSuccessfully", null, LocaleContextHolder.getLocale()));
             } catch (Exception e) {
                 System.out.print(e);
                 redirectAttributes.addAttribute("errorMessage", ms.getMessage("delete.error", null, LocaleContextHolder.getLocale()));
             }
         }
-        return "redirect:/admin/users";
+
+        return this.redirectToList;
     }
 }

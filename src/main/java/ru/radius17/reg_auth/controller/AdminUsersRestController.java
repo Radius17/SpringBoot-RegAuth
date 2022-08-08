@@ -15,13 +15,13 @@ public class AdminUsersRestController {
     @Autowired
     ReloadableResourceBundleMessageSource ms;
     @Autowired
-    private UserService userService;
+    private UserService mainService;
     @Autowired
     NotificationService notificationService;
 
     @PostMapping("/admin/users/subscribe-test")
     public String sendTestWebPush( @RequestParam(name = "username") String username ) {
-        User user = (User) userService.loadUserByUsername(username);
+        User user = (User) mainService.loadUserByUsername(username);
         String subject = ms.getMessage("message.test.subscription.for.subject", null, LocaleContextHolder.getLocale()) + " " + user.getUsername();
         String text = ms.getMessage("message.test.subscription.for.text", null, LocaleContextHolder.getLocale()) + " " + user.getUsername();
         return notificationService.send(user, subject, text);

@@ -1,3 +1,15 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org http://www.ultraq.net.nz/thymeleaf/layout http://www.thymeleaf.org/extras/spring-security"
+>
+<head>
+</head>
+<body>
+
 <th:block th:fragment="simpleTest">
     <h1 class="h3" th:text="${pageHeader}"></h1>
     <div sec:authorize="isAuthenticated()" th:remove="tag">
@@ -11,3 +23,6 @@
         <h4 th:text="#{message.current.locale} + ': ' + ${#locale}"></h4>
     </fieldset>
 </th:block>
+
+</body>
+</html>

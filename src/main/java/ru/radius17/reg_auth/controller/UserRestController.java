@@ -20,7 +20,7 @@ public class UserRestController {
     @Autowired
     ReloadableResourceBundleMessageSource ms;
     @Autowired
-    UserService userService;
+    UserService mainService;
     @Autowired
     NotificationService notificationService;
 
@@ -29,10 +29,10 @@ public class UserRestController {
         JSONParser jsonParser = new JSONParser();
         try {
             JSONObject jsonObject = (JSONObject) jsonParser.parse(subscriptionString);
-            System.out.println(jsonObject);
-            User mySelf = userService.getMySelf();
+            // System.out.println(jsonObject);
+            User mySelf = mainService.getMySelf();
             mySelf.setWebPushSubscription(subscriptionString);
-            userService.saveUser(mySelf);
+            mainService.saveObject(mySelf);
         } catch (Exception e) {
             ExceptionUtils.getStackTrace(e);
         }
@@ -41,9 +41,10 @@ public class UserRestController {
 
     @GetMapping("/profile/subscribe-test")
     public String subscribeTestWebPush(){
-        User mySelf = userService.getMySelf();
+        User mySelf = mainService.getMySelf();
         String subject = ms.getMessage("message.test.subscription.subject", null, LocaleContextHolder.getLocale());
         String text = ms.getMessage("message.test.subscription.text", null, LocaleContextHolder.getLocale());
         return notificationService.send(mySelf, subject, text);
     }
+
 }

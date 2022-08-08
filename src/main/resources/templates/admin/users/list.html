@@ -1,12 +1,19 @@
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!DOCTYPE html>
 <html lang="en"
-      xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.thymeleaf.org http://www.ultraq.net.nz/thymeleaf/layout"
+      xsi:schemaLocation="http://www.thymeleaf.org http://www.ultraq.net.nz/thymeleaf/layout http://www.thymeleaf.org/extras/spring-security"
       th:with="pageHeader=#{title.usersmanagement},
       appName=${@environment.getProperty('spring.application.name')},
-      pageTitle=${(appName!=null ? appName + ' - ' : '') + pageHeader}
+      pageTitle=${(appName!=null ? appName + ' - ' : '') + pageHeader},
+      listSearchCriterias=${userListSearchCriterias},
+      idsPrefix='adminUsersList',
+      mainLink='/admin/users',
+      colPrefix='t-col-user-',
+      filterFieldNamePrefix='user',
+      messagePrefix = 'user.'
       ">
 <head>
   <th:block th:replace="fragments/header :: commonHead"></th:block>
@@ -14,7 +21,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 <div th:replace="fragments/header :: commonHeader"></div>
-<div class="main-wrapper" th:with="idsPrefix='adminUsersList', filterFieldNamePrefix='user', mainLink='/admin/users', colPrefix='t-col-user-'">
+<div class="main-wrapper">
   <div class="container">
     <div class="row">
       <div class="col-12 gy-3">
@@ -27,82 +34,52 @@
         <a th:title="#{link.add}" class="btn btn-success btn-block" th:href="${mainLink} + '/add'"><i class="bi-plus"></i></a>
       </div>
       <div class="filter-criterias col-sm-8 order-sm-2 order-3 col-12 text-center gy-3" th:if="${listInSearch}">
-        <span class="filter-criterias-title" th:text="${listInSearch} ? #{message.filtered} + ':' : ''">
-        </span><span class="ps-1 filter-criteria"
-              th:each="searchCriteria: ${userListSearchCriterias}"
-              th:if="${searchCriteria.getValue() != ''}"
-              th:with="filterFieldNamePostfix=${searchCriteria.getKey()}"
-              th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}} + ' ' + (${searchCriteria.getOperation}==':' ? '=' : ${searchCriteria.getOperation}) + ' ' + ${searchCriteria.getValue()}">
-        </span>
+        <!-- Filter message start -->
+        <div th:replace="fragments/list :: filter-message"></div>
+        <!-- Filter message stop -->
       </div>
-      <div class="col-sm-2 col-6  order-sm-3 order-2 text-end gy-3" th:if="${userListSearchCriterias}">
+      <div class="col-sm-2 col-6 order-sm-3 order-2 text-end gy-3" th:if="${listSearchCriterias}">
         <!-- Modal filter start -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:title="#{link.filter}" th:data-bs-target="'#' + ${idsPrefix} + 'FilterFormWrapper'"><i class="bi-filter-circle-fill"></i></button>
-        <div class="modal fade" th:id="${idsPrefix} + 'FilterFormWrapper'" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" th:aria-labelledby="${idsPrefix} + 'FilterFormWrapperLabel'" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <form th:action="${mainLink} + '/'" method="get" th:id="${idsPrefix} + 'FilterForm'">
-                <div class="modal-header">
-                  <h5 class="modal-title" th:id="${idsPrefix} + 'FilterFormWrapperLabel'" th:text="#{title.filter}">My title</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{link.close}"></button>
-                </div>
-                <div class="modal-body">
-                  <div class="row">
-                    <div th:each="searchCriteria: ${userListSearchCriterias}" class="col-12 mb-2 text-start" th:with="filterFieldNamePostfix=${searchCriteria.getKey()}">
-                      <label class="form-label" th:for="'filter-form-' + ${filterFieldNamePostfix}" th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}+ (${searchCriteria.getOperation}==':' ? '' : ' ' + ${searchCriteria.getOperation})"></label>
-                      <div th:switch="${searchCriteria.getFieldType()}" th:remove="tag">
-                        <input th:case="'date'" th:type="'date'" class="form-control" th:value="${searchCriteria.getValue()}" th:name="'filter-form-' + ${filterFieldNamePostfix}" th:id="'filter-form-' + ${filterFieldNamePostfix}" th:placeholder="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}" />
-                        <input th:case="*" class="form-control" th:value="${searchCriteria.getValue()}" th:name="'filter-form-' + ${filterFieldNamePostfix}" th:id="'filter-form-' + ${filterFieldNamePostfix}" th:placeholder="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                  <button type="submit" value="submit" th:name="'filter-form-submit'" class="btn btn-primary order-1" th:text="#{link.apply}">Apply</button>
-                  <button type="submit" value="reset" th:name="'filter-form-submit'" class="btn btn-secondary order-0" th:text="#{link.reset}">Reset</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+        <div th:replace="fragments/list :: filter-button"></div>
         <!-- Modal filter stop -->
       </div>
     </div>
+    <!-- Just table start -->
     <div class="row">
       <div class="col gy-0 text-center">
         <div th:id="${idsPrefix} + 'Wrapper'" class="table-responsive">
           <table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th th:class="${colPrefix} + 'test-message fit-content'"></th>
-                <th th:with="curColumn='id'" th:class="${colPrefix} + ${curColumn} + ' fit-content'"><span th:text="#{user.id}"></span></th>
-                <th th:with="curColumn='username'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{user.username}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
-                <th th:with="curColumn='nickname'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{user.nickname}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
-                <th th:with="curColumn='email'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{user.email}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
-                <th th:with="curColumn='phone'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{user.phone}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
-                <th th:with="curColumn='roles'" th:class="${colPrefix} + ${curColumn}" th:text="#{user.roles}"></th>
-                <th th:with="curColumn='enabled'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{user.enabled}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:class="${colPrefix} + 'test-message pe-0 fit-content'"></th>
+                <th th:with="curColumn='id'" th:class="${colPrefix} + ${curColumn} + ' fit-content'"><span th:text="#{${messagePrefix} + ${curColumn}}"></span></th>
+                <th th:with="curColumn='username'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{${messagePrefix} + ${curColumn}}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='nickname'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{${messagePrefix} + ${curColumn}}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='email'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{${messagePrefix} + ${curColumn}}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='phone'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{${messagePrefix} + ${curColumn}}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
+                <th th:with="curColumn='roles'" th:class="${colPrefix} + ${curColumn}" th:text="#{${messagePrefix} + ${curColumn}}"></th>
+                <th th:with="curColumn='enabled'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{${messagePrefix} + ${curColumn}}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
                 <th th:class="${colPrefix} + 'modify fit-content'"></th>
                 <th th:class="${colPrefix} + 'delete fit-content'"></th>
               </tr>
             </thead>
             <tr th:if="${itemsPage.totalPages == 0}"><td colspan="10" th:text="#{message.data.absent}" /></tr>
-            <tr th:if="${itemsPage.totalPages > 0}" th:each="user: ${itemsPage}">
-              <td th:class="${colPrefix} + 'test-message text-center fit-content'"><a th:title="#{link.subscription.test}" class="btn btn-primary btn-block" th:attr="onclick=${'WebPushService.testUserSubscription(''' + user.username + ''')'}" th:href="@{#}"><i class="bi-chat-left-text-fill"></i></a></td>
-              <td th:class="${colPrefix} + 'id fit-content ps-0'"><i th:title="${user.id}" th:class="'bi bi-info-square text-primary fs-2'"></i></td>
-              <td th:class="${colPrefix} + 'username'" th:text="${user.username}" />
-              <td th:class="${colPrefix} + 'nickname'" th:text="${user.nickname}" />
-              <td th:class="${colPrefix} + 'email'" th:text="${user.email}" />
-              <td th:class="${colPrefix} + 'phone'" th:text="${user.phone}" />
-              <td th:class="${colPrefix} + 'roles'"><span th:utext="${#strings.arrayJoin(user.roles.![label], ',<br />')}" th:remove="tag"></span></td>
-              <td th:class="${colPrefix} + 'enabled'"><i th:title="${user.enabled} ? #{user.enabled.yes} : #{user.enabled.no}" th:class="'bi ' + (${user.enabled} ? 'bi-lightbulb-fill text-success' : 'bi-lightbulb-fill text-danger') + ' ms-2'"></i></td>
-              <td th:class="${colPrefix} + 'modify pe-0 text-end fit-content'"><a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="@{${mainLink} + '/modify/'+${user.id}}"><i class="bi-pen"></i></a></td>
-              <td th:class="${colPrefix} + 'delete text-start fit-content'">
+            <tr th:if="${itemsPage.totalPages > 0}" th:each="item: ${itemsPage}">
+              <td th:class="${colPrefix} + 'test-message text-center pe-0 fit-content'"><a th:title="#{link.subscription.test}" class="btn btn-primary btn-block" th:attr="onclick=${'WebPushService.testUserSubscription(''' + item.username + ''')'}" th:href="@{#}"><i class="bi-chat-left-text-fill"></i></a></td>
+              <td th:with="curColumn='id'" th:class="${colPrefix} + ${curColumn} + ' fit-content'"><i th:title="*{__${'item.' + curColumn}__}" th:class="'bi bi-info-square text-primary fs-2 ps-0'"></i></td>
+              <td th:with="curColumn='username'" th:class="${colPrefix} + ${curColumn}" th:text="*{__${'item.' + curColumn}__}" />
+              <td th:with="curColumn='nickname'" th:class="${colPrefix} + ${curColumn}" th:text="*{__${'item.' + curColumn}__}" />
+              <td th:with="curColumn='email'" th:class="${colPrefix} + ${curColumn}" th:text="*{__${'item.' + curColumn}__}" />
+              <td th:with="curColumn='phone'" th:class="${colPrefix} + ${curColumn}" th:text="*{__${'item.' + curColumn}__}" />
+              <td th:with="curColumn='roles', curSubField='label'" th:class="${colPrefix} + 'roles'"><span th:utext="${#strings.arrayJoin(__${'item.' + curColumn}__.![__${curSubField}__], ',<br />')}" th:remove="tag"></span></td>
+              <td th:with="curColumn='enabled'" th:class="${colPrefix} + ${curColumn}"><i th:title="${__${'item.' + curColumn}__} ? #{__${messagePrefix}__ + __${curColumn}__ + '.yes'} : #{__${messagePrefix}__ + __${curColumn}__ + '.no'}" th:class="'bi ' + (${__${'item.' + curColumn}__} ? 'bi-lightbulb-fill text-success' : 'bi-lightbulb-fill text-danger') + ' ms-2'"></i></td>
+              <td th:class="${colPrefix} + 'modify pe-0 text-end fit-content'"><a th:title="#{link.modify}" class="btn btn-success btn-block" th:href="@{${mainLink} + '/modify/'+${item.id}}"><i class="bi-pen"></i></a></td>
+              <td th:with="curColumn='username'" th:class="${colPrefix} + 'delete text-start fit-content'">
                 <form th:action="${mainLink} + '/delete'"
                       method="post"
-                      th:data-name="${user.username}"
+                      th:data-name="*{__${'item.' + curColumn}__}"
                       th:onsubmit="'return confirm(\'' + #{confirm.delete} + ' \' + this.getAttribute(\'data-name\')+\'?\');'">
-                  <input type="hidden" name="userId" th:value="${user.id}"/>
+                  <input type="hidden" name="objId" th:value="${item.id}"/>
                   <button th:title="#{submit.delete}" class="btn btn-danger btn-block" type="submit"><i class="bi-trash"></i></button>
                 </form>
               </td>
@@ -111,33 +88,10 @@
         </div>
       </div>
     </div>
-    <div class="row" th:if="${itemsPage.totalPages > 0}">
-      <div class="col-12 gy-3">
-        <ul class="pagination pagination-sm justify-content-center flex-wrap">
-          <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
-            <a th:text="#{link.first}" th:class="page-link" th:href="@{${mainLink}(page=1)}"></a>
-          </li>
-          <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
-            <a th:text="#{link.prev}" th:class="page-link" th:href="@{${mainLink}(page=${itemsPage.number})}"></a>
-          </li>
-          <li th:class="${pageNumber==itemsPage.number + 1} ? 'page-item active' : 'page-item'" th:each="pageNumber : ${pageNumbers}">
-            <a th:text="${pageNumber}" th:class="page-link" th:href="@{${mainLink}(page=${pageNumber})}"></a>
-          </li>
-          <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
-            <a th:text="#{link.next}" th:class="page-link" th:href="@{${mainLink}(page=${itemsPage.number}+2)}"></a>
-          </li>
-          <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
-            <a th:text="#{link.last}" th:class="page-link" th:href="@{${mainLink}(page=${itemsPage.totalPages})}"></a>
-          </li>
-        </ul>
-      </div>
-      <div class="col-12 text-center" th:text="#{list.records.of.total(
-          ${itemsPage.number} * ${itemsPage.size} +1,
-          ${itemsPage.number} * ${itemsPage.size} +10 > ${itemsPage.getTotalElements()} ? ${itemsPage.getTotalElements()} : ${itemsPage.number} * ${itemsPage.size} +10,
-          ${itemsPage.getTotalElements()}
-          )}">
-      </div>
-    </div>
+    <!-- Just table stop -->
+    <!-- Paginator start -->
+    <div th:replace="fragments/list :: paginator"></div>
+    <!-- Paginator stop -->
   </div>
 </div>
 <div th:replace="fragments/footer :: commonFooter"></div>

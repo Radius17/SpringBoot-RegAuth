@@ -24,7 +24,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     ReloadableResourceBundleMessageSource ms;
     @Autowired
-    UserRepository userRepository;
+    UserRepository mainRepository;
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
@@ -32,26 +32,26 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        User user = mainRepository.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("User absent");
         }
         return user;
     }
 
-    public User getUserById(UUID id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.orElse(new User());
+    public User getById(UUID id) {
+        Optional<User> object = mainRepository.findById(id);
+        return object.orElse(new User());
     }
 
-    public User getEmptyUser() {
+    public User getEmptyObject() {
         return new User();
     }
 
     public User getMySelf() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
-            Optional<User> userFromDb = userRepository.findById(((User) principal).getId());
+            Optional<User> userFromDb = mainRepository.findById(((User) principal).getId());
             if(userFromDb.isEmpty()) throw new UsernameNotFoundException("Myself not found by id...");
             return userFromDb.orElse(new User());
         } else {
@@ -66,7 +66,7 @@ public class UserService implements UserDetailsService {
                 for (Role existingRole : listRoles) {
                     if (existingRole.getId().equals(userRole.getId())) {
                         selectedRoles.add(userRole.getId());
-                        System.out.println(existingRole.getId());
+                        // System.out.println(existingRole.getId());
                     }
                 }
             }
@@ -74,49 +74,35 @@ public class UserService implements UserDetailsService {
         return selectedRoles;
     }
 
-    public void saveUser(User user) throws UserServiceException {
-
-        if (user.getId() == null) {
-            // It is new user
-            user.setRoles(Collections.singleton(roleService.getDefaultRole()));
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        } else {
-            User mySelf = this.getMySelf();
-            if (mySelf.getId().equals(user.getId())) {
-                // It is myself
-                // Restrict to change roles
-                user.setRoles(mySelf.getRoles());
-            }
-            if (user.getPassword().equals(user.getPasswordConfirm())) {
-                user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            }
+    public void saveObject(User object) throws BaseServiceException {
+        if (object.getPassword().equals(object.getPasswordConfirm())) {
+            object.setPassword(bCryptPasswordEncoder.encode(object.getPassword()));
         }
 
         try {
-            this.transactionalSave(user);
+            this.transactionalSave(object);
         } catch (DataIntegrityViolationException e) {
-            throw new UserServiceException(e);
+            throw new BaseServiceException(e);
         } catch (Exception e) {
             System.out.print(e);
         }
     }
 
     @Transactional
-    public void transactionalSave(User user) {
-        userRepository.save(user);
+    public void transactionalSave(User object) {
+        mainRepository.save(object);
     }
 
     @Transactional
-    public void deleteUser(UUID userId) {
-        userRepository.deleteById(userId);
+    public void deleteObject(UUID objId) {
+        mainRepository.deleteById(objId);
     }
 
-    public Page<User> getUsersPaginated(Pageable pageable) {
-        Page<User> pagedResult = userRepository.findAll(pageable);
-        return pagedResult;
+    public List<User> getAll() {
+        return mainRepository.findAll();
     }
-    public Page<User> getUsersFilteredAndPaginated(Specification specification, Pageable pageable) {
-        Page<User> pagedResult = userRepository.findAll(specification, pageable);
-        return pagedResult;
+
+    public Page<User> getAllFilteredAndPaginated(Specification specification, Pageable pageable) {
+        return mainRepository.findAll(specification, pageable);
     }
 }

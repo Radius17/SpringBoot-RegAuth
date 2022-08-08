@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org http://www.ultraq.net.nz/thymeleaf/layout http://www.thymeleaf.org/extras/spring-security"
+>
+<head>
+</head>
+<body>
+
+<th:block th:fragment="filter-message">
+<span class="filter-criterias-title" th:text="${listInSearch} ? #{message.filtered} + ':' : ''">
+</span><span class="ps-1 filter-criteria"
+             th:each="searchCriteria: ${listSearchCriterias}"
+             th:if="${searchCriteria.getValue() != ''}"
+             th:with="filterFieldNamePostfix=${searchCriteria.getKey()}"
+             th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}} + ' ' + (${searchCriteria.getOperation}==':' ? '=' : ${searchCriteria.getOperation}) + ' ' + ${searchCriteria.getValue()}">
+</span>
+</th:block>
+
+<th:block th:fragment="filter-button">
+    <div th:if="${listSearchCriterias}" th:remove="tag">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:title="#{link.filter}" th:data-bs-target="'#' + ${idsPrefix} + 'FilterFormWrapper'"><i class="bi-filter-circle-fill"></i></button>
+    <div class="modal fade" th:id="${idsPrefix} + 'FilterFormWrapper'" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" th:aria-labelledby="${idsPrefix} + 'FilterFormWrapperLabel'" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="${mainLink} + '/'" method="get" th:id="${idsPrefix} + 'FilterForm'">
+                    <div class="modal-header">
+                        <h5 class="modal-title" th:id="${idsPrefix} + 'FilterFormWrapperLabel'" th:text="#{title.filter}">My title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{link.close}"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div th:each="searchCriteria: ${listSearchCriterias}" class="col-12 mb-2 text-start" th:with="filterFieldNamePostfix=${searchCriteria.getKey()}">
+                                <label class="form-label" th:for="'filter-form-' + ${filterFieldNamePostfix}" th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}+ (${searchCriteria.getOperation}==':' ? '' : ' ' + ${searchCriteria.getOperation})"></label>
+                                <div th:switch="${searchCriteria.getFieldType()}" th:remove="tag">
+                                    <input th:case="'date'" th:type="'date'" class="form-control" th:value="${searchCriteria.getValue()}" th:name="'filter-form-' + ${filterFieldNamePostfix}" th:id="'filter-form-' + ${filterFieldNamePostfix}" th:placeholder="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}" />
+                                    <input th:case="*" class="form-control" th:value="${searchCriteria.getValue()}" th:name="'filter-form-' + ${filterFieldNamePostfix}" th:id="'filter-form-' + ${filterFieldNamePostfix}" th:placeholder="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="submit" value="submit" th:name="'filter-form-submit'" class="btn btn-primary order-1" th:text="#{link.apply}">Apply</button>
+                        <button type="submit" value="reset" th:name="'filter-form-submit'" class="btn btn-secondary order-0" th:text="#{link.reset}">Reset</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="paginator">
+    <div class="row" th:if="${itemsPage.totalPages > 0}">
+        <div class="col-12 gy-3">
+            <ul class="pagination pagination-sm justify-content-center flex-wrap">
+                <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
+                    <a th:text="#{link.first}" th:class="page-link" th:href="@{${mainLink}(page=1)}"></a>
+                </li>
+                <li th:class="'page-item' + ${itemsPage.number <= 0 ? ' disabled' : ''}">
+                    <a th:text="#{link.prev}" th:class="page-link" th:href="@{${mainLink}(page=${itemsPage.number})}"></a>
+                </li>
+                <li th:class="${pageNumber==itemsPage.number + 1} ? 'page-item active' : 'page-item'" th:each="pageNumber : ${pageNumbers}">
+                    <a th:if="${pageNumber!=itemsPage.number + 1}" th:text="${pageNumber}" th:class="page-link" th:href="@{${mainLink}(page=${pageNumber})}"></a>
+                    <span th:if="${pageNumber==itemsPage.number + 1}" th:text="${pageNumber}" th:class="page-link"></span>
+                </li>
+                <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
+                    <a th:text="#{link.next}" th:class="page-link" th:href="@{${mainLink}(page=${itemsPage.number}+2)}"></a>
+                </li>
+                <li th:class="'page-item' + ${itemsPage.number + 1 >= itemsPage.totalPages ? ' disabled' : ''}">
+                    <a th:text="#{link.last}" th:class="page-link" th:href="@{${mainLink}(page=${itemsPage.totalPages})}"></a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-12 text-center" th:text="#{list.records.of.total(
+          ${itemsPage.number} * ${itemsPage.size} +1,
+          ${itemsPage.number} * ${itemsPage.size} +10 > ${itemsPage.getTotalElements()} ? ${itemsPage.getTotalElements()} : ${itemsPage.number} * ${itemsPage.size} +10,
+          ${itemsPage.getTotalElements()}
+          )}">
+        </div>
+    </div>
+</th:block>
+
+</body>
+</html>

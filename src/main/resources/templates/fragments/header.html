@@ -1,3 +1,15 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org http://www.ultraq.net.nz/thymeleaf/layout http://www.thymeleaf.org/extras/spring-security"
+>
+<head>
+</head>
+<body>
+
 <th:block th:fragment="messageBlock">
   <div class="col-12" th:if="${infoMessage}">
     <div class="alert alert-info alert-dismissible fade show" th:inline="text">[[${infoMessage}]]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
@@ -68,3 +80,6 @@
     </div>
   </header>
 </th:block>
+
+</body>
+</html>

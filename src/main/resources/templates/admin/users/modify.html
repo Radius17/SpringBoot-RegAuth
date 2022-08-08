@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org http://www.ultraq.net.nz/thymeleaf/layout http://www.thymeleaf.org/extras/spring-security"
+      th:with="
+      pageHeader=${isNewObject} ? #{title.newuser} : #{title.modifyuser},
+      appName=${@environment.getProperty('spring.application.name')},
+      pageTitle=${(appName!=null ? appName + ' - ' : '') + pageHeader},
+      mainLink='/admin/users',
+      messagePrefix = 'user.'
+      ">
+<head>
+  <th:block th:replace="fragments/header :: commonHead"></th:block>
+  <!-- other elements you want to reference in your layout -->
+</head>
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/header :: commonHeader"></div>
+<div class="main-wrapper">
+  <div class="container">
+    <form class="form-register row row-cols-lg-auto g-3 align-items-center" th:object="${objectForm}" th:action="${mainLink} + '/save'" method="post">
+      <h1 class="h3" th:text="${pageHeader}"></h1>
+      <div th:replace="fragments/header :: messageBlock"></div>
+
+      <div class="col-12" th:with="curColumn='username'">
+        <label class="form-label" th:for="${curColumn}" th:text="#{${messagePrefix} + ${curColumn}}"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="text" th:field="*{__${curColumn}__}" th:placeholder="#{${messagePrefix} + ${curColumn}}" />
+        <span th:if="${#fields.hasErrors(curColumn)}" th:errorclass="invalid-feedback" th:errors="*{__${curColumn}__}" autofocus="true" />
+      </div>
+      <div class="col-12" th:with="curColumn='password'">
+        <label class="form-label" th:for="${curColumn}" th:text="#{${messagePrefix} + ${curColumn}}"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="password" th:field="*{__${curColumn}__}" th:placeholder="#{${messagePrefix} + ${curColumn}}" />
+      </div>
+      <div class="col-12" th:with="curColumn='passwordConfirm'">
+        <label class="form-label" th:for="${curColumn}" th:text="#{${messagePrefix} + ${curColumn}}"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="password" th:field="*{__${curColumn}__}" th:placeholder="#{${messagePrefix} + ${curColumn}}" />
+        <span th:if="${#fields.hasErrors('password')}" th:errorclass="invalid-feedback" th:errors="*{password}" />
+      </div>
+      <div class="col-12" th:with="curColumn='nickname'">
+        <label class="form-label" th:for="${curColumn}" th:text="#{${messagePrefix} + ${curColumn}}"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="text" th:field="*{__${curColumn}__}" th:placeholder="#{${messagePrefix} + ${curColumn}}" />
+        <span th:if="${#fields.hasErrors(curColumn)}" th:errorclass="invalid-feedback" th:errors="*{__${curColumn}__}" autofocus="true" />
+      </div>
+      <div class="col-12" th:with="curColumn='phone'">
+        <label class="form-label" th:for="${curColumn}" th:text="#{${messagePrefix} + ${curColumn}}"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="text" th:field="*{__${curColumn}__}" th:placeholder="#{${messagePrefix} + ${curColumn}}" />
+        <span th:if="${#fields.hasErrors(curColumn)}" th:errorclass="invalid-feedback" th:errors="*{__${curColumn}__}" autofocus="true" />
+      </div>
+      <div class="col-12" th:with="curColumn='email'">
+        <!-- "th:text" with format such as in next label, is also works -->
+        <label class="form-label" th:for="${curColumn}" th:text="#{__${messagePrefix}__ + __${curColumn}__}"></label>
+        <input class="form-control" th:errorclass="is-invalid" type="email" th:field="*{__${curColumn}__}" th:placeholder="#{${messagePrefix} + ${curColumn}}" />
+        <span th:if="${#fields.hasErrors(curColumn)}" th:errorclass="invalid-feedback" th:errors="*{__${curColumn}__}" autofocus="true" />
+      </div>
+      <!-- ############################################################### -->
+      <div class="col-12" th:if="!${isMySelf}" th:with="curColumn='roles'">
+        <!-- With standart equals and hashCode in entity -->
+        <div th:each="role: ${listRoles}" class="form-check">
+          <input type="checkbox" class="form-check-input" th:checked="${selectedRoles.contains(role.getId())}" th:id="${{role}}" th:value="${{role}}" name="roles[]" th:field_tag_not_working="*{__${curColumn}__}" />
+          <label class="form-check-label" th:for="${{role}}" th:text="${role.label}"></label>
+        </div>
+      </div>
+      <!-- ############################################################### -->
+      <div class="col-12" th:with="curColumn='description'">
+        <label class="form-label" th:for="${curColumn}" th:text="#{${messagePrefix} + ${curColumn}}"></label>
+        <textarea class="form-control" th:errorclass="is-invalid" th:field="*{__${curColumn}__}" th:placeholder="#{${messagePrefix} + ${curColumn}}"></textarea>
+        <span th:if="${#fields.hasErrors(curColumn)}" th:errorclass="invalid-feedback" th:errors="*{__${curColumn}__}" autofocus="true" />
+      </div>
+      <div class="col-12" th:if="!${isMySelf}" th:with="curColumn='enabled'">
+        <input class="form-check-input" type="checkbox" th:field="*{__${curColumn}__}" />
+        <label class="form-check-label" th:for="${#ids.prev('__${curColumn}__')}" th:text="#{${messagePrefix} + ${curColumn}}"></label>
+      </div>
+      <div class="col-12">
+        <div class="row">
+          <div class="col text-center form-buttons">
+            <a class="btn btn-primary btn-block" th:href="@{${mainLink}}" th:text="#{link.cancel}"></a>
+          </div>
+          <div class="col text-center form-buttons">
+            <input th:if="${not isNewObject}" type="hidden" th:field="*{id}" />
+            <button class="btn btn-primary btn-block" type="submit" th:text="#{submit.save}"></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div th:replace="fragments/footer :: commonFooter"></div>
+</body>
+</html>
