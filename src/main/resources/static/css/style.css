@@ -9,7 +9,8 @@ header{
 }
 .form-signin,
 .form-register,
-.form-profile{
+.form-profile,
+.form-user{
     max-width: 100%;
     width: 560px;
     margin: 0 auto;

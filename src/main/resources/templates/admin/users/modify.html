@@ -20,7 +20,7 @@
 <div th:replace="fragments/header :: commonHeader"></div>
 <div class="main-wrapper">
   <div class="container">
-    <form class="form-register row row-cols-lg-auto g-3 align-items-center" th:object="${objectForm}" th:action="${mainLink} + '/save'" method="post">
+    <form class="form-user row row-cols-lg-auto g-3 align-items-center" th:object="${objectForm}" th:action="${mainLink} + '/save'" method="post">
       <h1 class="h3" th:text="${pageHeader}"></h1>
       <div th:replace="fragments/header :: messageBlock"></div>
 
