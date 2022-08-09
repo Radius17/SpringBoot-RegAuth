@@ -16,7 +16,7 @@
              th:each="searchCriteria: ${listSearchCriterias}"
              th:if="${searchCriteria.getValue() != ''}"
              th:with="filterFieldNamePostfix=${searchCriteria.getKey()}"
-             th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}} + ' ' + (${searchCriteria.getOperation}==':' ? '=' : ${searchCriteria.getOperation}) + ' ' + ${searchCriteria.getValue()}">
+             th:text="#{${messagePrefix} + ${filterFieldNamePostfix}} + ' ' + (${searchCriteria.getOperation}==':' ? '=' : ${searchCriteria.getOperation}) + ' ' + ${searchCriteria.getValue()}">
 </span>
 </th:block>
 
@@ -34,10 +34,10 @@
                     <div class="modal-body">
                         <div class="row">
                             <div th:each="searchCriteria: ${listSearchCriterias}" class="col-12 mb-2 text-start" th:with="filterFieldNamePostfix=${searchCriteria.getKey()}">
-                                <label class="form-label" th:for="'filter-form-' + ${filterFieldNamePostfix}" th:text="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}+ (${searchCriteria.getOperation}==':' ? '' : ' ' + ${searchCriteria.getOperation})"></label>
+                                <label class="form-label" th:for="'filter-form-' + ${filterFieldNamePostfix}" th:text="#{${messagePrefix} + ${filterFieldNamePostfix}}+ (${searchCriteria.getOperation}==':' ? '' : ' ' + ${searchCriteria.getOperation})"></label>
                                 <div th:switch="${searchCriteria.getFieldType()}" th:remove="tag">
-                                    <input th:case="'date'" th:type="'date'" class="form-control" th:value="${searchCriteria.getValue()}" th:name="'filter-form-' + ${filterFieldNamePostfix}" th:id="'filter-form-' + ${filterFieldNamePostfix}" th:placeholder="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}" />
-                                    <input th:case="*" class="form-control" th:value="${searchCriteria.getValue()}" th:name="'filter-form-' + ${filterFieldNamePostfix}" th:id="'filter-form-' + ${filterFieldNamePostfix}" th:placeholder="#{${filterFieldNamePrefix} + '.' + ${filterFieldNamePostfix}}" />
+                                    <input th:case="'date'" th:type="'date'" class="form-control" th:value="${searchCriteria.getValue()}" th:name="'filter-form-' + ${filterFieldNamePostfix}" th:id="'filter-form-' + ${filterFieldNamePostfix}" th:placeholder="#{${messagePrefix} + ${filterFieldNamePostfix}}" />
+                                    <input th:case="*" class="form-control" th:value="${searchCriteria.getValue()}" th:name="'filter-form-' + ${filterFieldNamePostfix}" th:id="'filter-form-' + ${filterFieldNamePostfix}" th:placeholder="#{${messagePrefix} + ${filterFieldNamePostfix}}" />
                                 </div>
                             </div>
                         </div>
