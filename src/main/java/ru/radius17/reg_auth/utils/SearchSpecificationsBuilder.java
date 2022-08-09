@@ -1,6 +1,8 @@
 package ru.radius17.reg_auth.utils;
 
 import lombok.Getter;
+import org.hibernate.query.criteria.internal.path.PluralAttributePath;
+import org.hibernate.query.criteria.internal.path.SingularAttributePath;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
@@ -111,17 +113,39 @@ public class SearchSpecificationsBuilder {
         @Override
         public Predicate toPredicate(Root<Object> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             String criteriaOperation = criteria.getOperation();
-
+            // --------------------------------------------------------
+            query.distinct(true);
             // --------------------------------------------------------
             // Check for path like user.username
             String[] criteriaKeys = criteria.getKey().split("\\.");
             Path criteriaPath;
             if(criteriaKeys.length == 2) {
-                criteriaPath = root.get(criteriaKeys[0]).get(criteriaKeys[1]);
+                Path criteriaPath_0 = root.get(criteriaKeys[0]);
+                // --------------------------------------------------------
+                String criteriaRelationType;
+                if (criteriaPath_0.getClass() == SingularAttributePath.class) {
+                    criteriaRelationType = ((SingularAttributePath) criteriaPath_0).getAttribute().getPersistentAttributeType().toString();
+                } else if (criteriaPath_0.getClass() == PluralAttributePath.class){
+                    criteriaRelationType = ((PluralAttributePath) criteriaPath_0).getAttribute().getPersistentAttributeType().toString();
+                } else {
+                    criteriaRelationType = "UNKNOWN";
+                }
+                // --------------------------------------------------------
+                switch (criteriaRelationType){
+                    case "MANY_TO_ONE":
+                        criteriaPath = root.get(criteriaKeys[0]).get(criteriaKeys[1]);
+                        break;
+                    case "MANY_TO_MANY":
+                        criteriaPath = root.join(criteriaKeys[0]).get(criteriaKeys[1]);
+                        break;
+                    default:
+                        criteriaPath = root.get(criteriaKeys[0]);
+                        break;
+                }
             } else {
                 criteriaPath = root.get(criteriaKeys[0]);
             }
-
+            // --------------------------------------------------------
             // For LocalDateTime > or >= is 1 second different
             if (criteriaOperation.equalsIgnoreCase(">")) {
                 if (criteriaPath.getJavaType() == LocalDateTime.class) {
