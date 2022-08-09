@@ -6,6 +6,7 @@ import org.hibernate.query.criteria.internal.path.SingularAttributePath;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
+import java.math.BigDecimal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -52,6 +53,13 @@ public class SearchSpecificationsBuilder {
                         try {
                             LocalDate localDate = LocalDate.parse(searchCriteriaInRequest, dateTimeFormatter);
                             searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), localDate, baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
+                        } catch (Exception e) {
+                            searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), "", baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
+                        }
+                    } else if(baseSearchCriteria.getFieldType() == "decimal") {
+                        try {
+                            BigDecimal decimal = BigDecimal.valueOf(Double.valueOf(searchCriteriaInRequest));
+                            searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), decimal, baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
                         } catch (Exception e) {
                             searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), "", baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
                         }
