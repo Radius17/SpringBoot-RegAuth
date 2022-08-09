@@ -47,6 +47,7 @@ public class User implements UserDetails {
     private String description;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @OrderBy("label")
     private Set<Role> roles;
 
     @Builder.Default

@@ -5,6 +5,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -99,7 +100,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<User> getAll() {
-        return mainRepository.findAll();
+        return mainRepository.findAll(Sort.by("username"));
     }
 
     public Page<User> getAllFilteredAndPaginated(Specification specification, Pageable pageable) {
