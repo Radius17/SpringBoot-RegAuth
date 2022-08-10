@@ -18,7 +18,7 @@
 <div th:replace="fragments/header :: commonHeader"></div>
 <div class="main-wrapper">
   <div class="container">
-    <form class="form-register row row-cols-lg-auto g-3 align-items-center"  th:object="${userForm}" action="/register" method="post">
+    <form class="form-register row row-cols-lg-auto gy-3 align-items-center"  th:object="${userForm}" action="/register" method="post">
       <h1 class="h3" th:text="${pageHeader}"></h1>
       <div th:replace="fragments/header :: messageBlock"></div>
       <div class="col-12">

@@ -23,6 +23,9 @@ header{
     white-space: nowrap;
     width: 1%;
 }
+.form-label{
+    margin-bottom: .15rem;
+}
 .form-label::after {
     content: ':';
 }
