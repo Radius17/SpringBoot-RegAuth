@@ -191,8 +191,8 @@ public class SearchSpecificationsBuilder {
             } else if (criteriaOperation.equalsIgnoreCase(":")) {
                 if (criteriaPath.getJavaType() == String.class) {
                     return criteriaBuilder.like(
-                            criteriaPath,
-                            "%" + criteria.getValue() + "%"
+                            criteriaBuilder.upper(criteriaPath),
+                            "%" + ((String) criteria.getValue()).toUpperCase() + "%"
                     );
                 } else {
                     return criteriaBuilder.equal(
