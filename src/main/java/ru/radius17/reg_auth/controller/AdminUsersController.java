@@ -148,7 +148,7 @@ public class AdminUsersController {
 
     @ModelAttribute("userListPageRequest")
     public PageRequest getDefaultListPageRequest() {
-        return PageRequest.of(0, 10, Sort.by(Sort.DEFAULT_DIRECTION,"username"));
+        return PageRequest.of(0, 20, Sort.by(Sort.DEFAULT_DIRECTION,"username"));
     }
 
     @ModelAttribute("userListSearchCriterias")

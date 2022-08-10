@@ -33,7 +33,7 @@ public class AdminLogsNotificationsController {
 
     @ModelAttribute("notificationListPageRequest")
     public PageRequest getDefaultNotificationListPageRequest() {
-        return PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC,"dateTime"));
+        return PageRequest.of(0, 50, Sort.by(Sort.Direction.DESC,"dateTime"));
     }
 
     @ModelAttribute("notificationListSearchCriterias")
