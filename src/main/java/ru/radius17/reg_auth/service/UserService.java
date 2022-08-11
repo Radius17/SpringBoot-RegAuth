@@ -84,8 +84,8 @@ public class UserService implements UserDetailsService {
             this.transactionalSave(object);
         } catch (DataIntegrityViolationException e) {
             throw new BaseServiceException(e);
-        } catch (Exception e) {
-            System.out.print(e);
+//        } catch (Exception e) {
+//            System.out.print(e);
         }
     }
 
