@@ -52,8 +52,8 @@ public class AdminUsersController {
         return this.modifyTemplate;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/modify/{id}")
-    public String modifyObject(@PathVariable("id") UUID objId, Model model) {
+    @RequestMapping(method = RequestMethod.GET, value = "/modify/{objId}")
+    public String modifyObject(@PathVariable("objId") UUID objId, Model model) {
         User object = mainService.getById(objId);
         model.addAttribute("objectForm", object);
         model.addAttribute("isNewObject", false);
