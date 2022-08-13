@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -58,8 +59,15 @@ public class SearchSpecificationsBuilder {
                         }
                     } else if(baseSearchCriteria.getFieldType() == "decimal") {
                         try {
-                            BigDecimal decimal = BigDecimal.valueOf(Double.valueOf(searchCriteriaInRequest));
-                            searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), decimal, baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
+                            BigDecimal decimalVal = BigDecimal.valueOf(Double.valueOf(searchCriteriaInRequest));
+                            searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), decimalVal, baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
+                        } catch (Exception e) {
+                            searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), "", baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
+                        }
+                    } else if(baseSearchCriteria.getFieldType() == "integer") {
+                        try {
+                            BigInteger intVal = BigInteger.valueOf(Long.valueOf(searchCriteriaInRequest));
+                            searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), intVal, baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
                         } catch (Exception e) {
                             searchCriterias.set(iter.previousIndex(), new SearchCriteria(baseSearchCriteria.getKey(), baseSearchCriteria.getOperation(), "", baseSearchCriteria.getSubstituteField(), baseSearchCriteria.getFieldType()));
                         }
@@ -122,7 +130,7 @@ public class SearchSpecificationsBuilder {
         public Predicate toPredicate(Root<Object> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             String criteriaOperation = criteria.getOperation();
             // --------------------------------------------------------
-            query.distinct(true);
+            // query.distinct(true); // @FIXME FOR WHAT ???
             // --------------------------------------------------------
             // Check for path like user.username
             String[] criteriaKeys = criteria.getKey().split("\\.");
