@@ -42,7 +42,7 @@
       </div>
       <div class="col-12">
         <label class="form-label" th:for="phone" th:text="#{user.phone}"></label>
-        <input class="form-control" th:errorclass="is-invalid" type="tel" th:field="*{phone}" th:placeholder="#{user.phone}" />
+        <input class="form-control form-control-phone" th:errorclass="is-invalid" type="tel" th:field="*{phone}" th:placeholder="#{user.phone}" />
         <span th:if="${#fields.hasErrors('phone')}" th:errorclass="invalid-feedback" th:errors="*{phone}" />
       </div>
       <div class="col-12">

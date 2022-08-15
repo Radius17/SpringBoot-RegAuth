@@ -126,6 +126,7 @@ public class AdminUsersController {
         }
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
             return this.modifyTemplate;
         }
 

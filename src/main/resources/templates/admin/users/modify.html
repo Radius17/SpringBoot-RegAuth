@@ -45,7 +45,7 @@
       </div>
       <div class="col-12" th:with="curColumn='phone'">
         <label class="form-label" th:for="${curColumn}" th:text="#{${messagePrefix} + ${curColumn}}"></label>
-        <input class="form-control" th:errorclass="is-invalid" type="text" th:field="*{__${curColumn}__}" th:placeholder="#{${messagePrefix} + ${curColumn}}" />
+        <input class="form-control form-control-phone" th:errorclass="is-invalid" type="text" th:field="*{__${curColumn}__}" th:placeholder="#{${messagePrefix} + ${curColumn}}" />
         <span th:if="${#fields.hasErrors(curColumn)}" th:errorclass="invalid-feedback" th:errors="*{__${curColumn}__}" autofocus="true" />
       </div>
       <div class="col-12" th:with="curColumn='email'">

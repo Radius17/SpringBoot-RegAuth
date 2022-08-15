@@ -96,6 +96,7 @@ public class UserController {
         }
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("errorMessage", ms.getMessage("registration.error", null, LocaleContextHolder.getLocale()));
             return "user/register";
         }
 
@@ -157,6 +158,7 @@ public class UserController {
         }
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("errorMessage", ms.getMessage("save.error", null, LocaleContextHolder.getLocale()));
             return "user/profile";
         }
 
