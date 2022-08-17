@@ -34,7 +34,7 @@
       </div>
       <div class="col-12">
         <div class="row">
-          <div class="col text-center form-buttons">
+          <div class="col text-center form-buttons" th:unless="${@environment.getProperty('spring.application.registration.disabled')}">
             <a class="btn btn-primary btn-block" href="/register" th:text="#{link.register}"></a>
           </div>
           <div class="col text-center form-buttons">

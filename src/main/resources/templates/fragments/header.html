@@ -59,7 +59,7 @@
                     <li><a class="dropdown-item" href="/admin/logs/notifications" th:text="#{link.logs.notifications}"></a></li>
                   </ul>
                 </li>
-                <li sec:authorize="!isAuthenticated()" class="nav-item">
+                <li sec:authorize="!isAuthenticated()" class="nav-item" th:unless="${@environment.getProperty('spring.application.registration.disabled')}">
                   <a class="nav-link" href="/register" th:text="#{link.registration}"></a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
