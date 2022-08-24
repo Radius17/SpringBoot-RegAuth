@@ -44,7 +44,8 @@ public class User implements UserDetails {
     @NotEmpty(message = "{user.emptyEmail}")
     private String email;
 
-    private String description;
+    @Builder.Default
+    private String description = "";
 
     @ManyToMany(fetch = FetchType.EAGER)
     @OrderBy("label")
@@ -55,7 +56,8 @@ public class User implements UserDetails {
 
 
     @Column(name="web_push_subscription")
-    private String webPushSubscription;
+    @Builder.Default
+    private String webPushSubscription = "";
 
     public User() {
     }
