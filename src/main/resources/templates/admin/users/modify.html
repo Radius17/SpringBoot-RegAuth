@@ -32,11 +32,12 @@
       <div class="col-12" th:with="curColumn='password'">
         <label class="form-label" th:for="${curColumn}" th:text="#{${messagePrefix} + ${curColumn}}"></label>
         <input class="form-control" th:errorclass="is-invalid" type="password" th:field="*{__${curColumn}__}" th:placeholder="#{${messagePrefix} + ${curColumn}}" />
+        <span th:if="${#fields.hasErrors('password')}" th:errorclass="invalid-feedback" th:errors="*{password}" />
       </div>
       <div class="col-12" th:with="curColumn='passwordConfirm'">
         <label class="form-label" th:for="${curColumn}" th:text="#{${messagePrefix} + ${curColumn}}"></label>
         <input class="form-control" th:errorclass="is-invalid" type="password" th:field="*{__${curColumn}__}" th:placeholder="#{${messagePrefix} + ${curColumn}}" />
-        <span th:if="${#fields.hasErrors('password')}" th:errorclass="invalid-feedback" th:errors="*{password}" />
+        <span th:if="${#fields.hasErrors('passwordConfirm') && !#fields.hasErrors('password')}" th:errorclass="invalid-feedback" th:errors="*{passwordConfirm}" autofocus="true" />
       </div>
       <div class="col-12" th:with="curColumn='nickname'">
         <label class="form-label" th:for="${curColumn}" th:text="#{${messagePrefix} + ${curColumn}}"></label>

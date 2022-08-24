@@ -29,11 +29,12 @@
       <div class="col-12">
         <label class="form-label" th:for="password" th:text="#{user.password}"></label>
         <input class="form-control" th:errorclass="is-invalid" type="password" th:field="*{password}" th:placeholder="#{user.password}" />
+        <span th:if="${#fields.hasErrors('password')}" th:errorclass="invalid-feedback" th:errors="*{password}" autofocus="true" />
       </div>
       <div class="col-12">
         <label class="form-label" th:for="passwordConfirm" th:text="#{user.passwordConfirm}"></label>
         <input class="form-control" th:errorclass="is-invalid" type="password" th:field="*{passwordConfirm}" th:placeholder="#{user.passwordConfirm}" />
-        <span th:if="${#fields.hasErrors('password')}" th:errorclass="invalid-feedback" th:errors="*{password}" />
+        <span th:if="${#fields.hasErrors('passwordConfirm') && !#fields.hasErrors('password')}" th:errorclass="invalid-feedback" th:errors="*{passwordConfirm}" autofocus="true" />
       </div>
       <div class="col-12">
         <label class="form-label" th:for="nickname" th:text="#{user.nickname}"></label>

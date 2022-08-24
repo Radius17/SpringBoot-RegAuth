@@ -96,13 +96,12 @@ public class AdminUsersController {
 
         model.addAttribute("isMySelf", mySelf.getId().equals(objectForm.getId()));
 
-        if (objectForm.getPassword().isEmpty() || objectForm.getPasswordConfirm().isEmpty()) {
+        if (objectForm.getPassword().isEmpty() && objectForm.getPasswordConfirm().isEmpty()) {
             // --------------------------------------------------------
             // One or both of passwords are empty
             if (isNewObject) {
                 String errMess = ms.getMessage("user.passwordCannotBeEmpty", null, LocaleContextHolder.getLocale());
                 bindingResult.rejectValue("password", null, errMess);
-                bindingResult.rejectValue("passwordConfirm", null, errMess);
             } else {
                 // --------------------------------------------------------
                 // For existing object password was not changed
@@ -110,12 +109,14 @@ public class AdminUsersController {
                 objectForm.setPassword(oldObject.getPassword());
                 objectForm.setPasswordConfirm(null);
             }
-        } else if (!objectForm.getPassword().equals(objectForm.getPasswordConfirm())) {
+        } else if (objectForm.getPassword().isEmpty() || !objectForm.getPassword().equals(objectForm.getPasswordConfirm())) {
             // --------------------------------------------------------
             // Passwords not equal
             String errMess = ms.getMessage("user.passwordsNotMatch", null, LocaleContextHolder.getLocale());
-            bindingResult.rejectValue("password", null, errMess);
             bindingResult.rejectValue("passwordConfirm", null, errMess);
+        } else if(!mainService.checkPasswordLength(objectForm.getPassword())){
+            String errMess = ms.getMessage("message.atLeastXCharacters", new Object[]{mainService.getMinPasswordLength()}, LocaleContextHolder.getLocale());
+            bindingResult.rejectValue("password", null, errMess);
         }
 
         if(!isNewObject){

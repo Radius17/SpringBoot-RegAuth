@@ -80,19 +80,19 @@ public class UserController {
             return "redirect:/";
         }
 
-        if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()) {
+        if (userForm.getPassword().isEmpty()) {
             String errMess = ms.getMessage("user.passwordCannotBeEmpty", null, LocaleContextHolder.getLocale());
             bindingResult.rejectValue("password", null, errMess);
-            bindingResult.rejectValue("passwordConfirm", null, errMess);
             // =========================================================
             // Another variant
             // =========================================================
             // bindingResult.addError(new FieldError("userForm", "password", null, false, null, null, errMess));
-            // bindingResult.addError(new FieldError("userForm", "passwordConfirm", null, false, null, null, errMess));
         } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
             String errMess = ms.getMessage("user.passwordsNotMatch", null, LocaleContextHolder.getLocale());
-            bindingResult.rejectValue("password", null, errMess);
             bindingResult.rejectValue("passwordConfirm", null, errMess);
+        } else if(!mainService.checkPasswordLength(userForm.getPassword())){
+            String errMess = ms.getMessage("message.atLeastXCharacters", new Object[]{mainService.getMinPasswordLength()}, LocaleContextHolder.getLocale());
+            bindingResult.rejectValue("password", null, errMess);
         }
 
         if (bindingResult.hasErrors()) {
@@ -144,17 +144,19 @@ public class UserController {
                               Model model) {
 
         User mySelf = mainService.getMySelf();
-        if (userForm.getPassword().isEmpty() || userForm.getPasswordConfirm().isEmpty()) {
+        if (userForm.getPassword().isEmpty() && userForm.getPasswordConfirm().isEmpty()) {
             // --------------------------------------------------------
             // One or both of passwords are empty
             userForm.setPassword(mySelf.getPassword());
             userForm.setPasswordConfirm(null);
-        } else if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
+        } else if (userForm.getPassword().isEmpty() || !userForm.getPassword().equals(userForm.getPasswordConfirm())) {
             // --------------------------------------------------------
             // Passwords not equal
             String errMess = ms.getMessage("user.passwordsNotMatch", null, LocaleContextHolder.getLocale());
-            bindingResult.rejectValue("password", null, errMess);
             bindingResult.rejectValue("passwordConfirm", null, errMess);
+        } else if(!mainService.checkPasswordLength(userForm.getPassword())){
+            String errMess = ms.getMessage("message.atLeastXCharacters", new Object[]{mainService.getMinPasswordLength()}, LocaleContextHolder.getLocale());
+            bindingResult.rejectValue("password", null, errMess);
         }
 
         if (bindingResult.hasErrors()) {

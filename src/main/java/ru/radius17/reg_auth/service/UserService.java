@@ -2,6 +2,7 @@ package ru.radius17.reg_auth.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +30,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
-    private RoleService roleService;
+    private Environment env;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -105,5 +106,13 @@ public class UserService implements UserDetailsService {
 
     public Page<User> getAllFilteredAndPaginated(Specification specification, Pageable pageable) {
         return mainRepository.findAll(specification, pageable);
+    }
+
+    public int getMinPasswordLength(){
+        return Integer.parseInt(env.getProperty("spring.application.min-length.password", "7"));
+    }
+
+    public boolean checkPasswordLength(String password) {
+        return password.length() >= this.getMinPasswordLength();
     }
 }

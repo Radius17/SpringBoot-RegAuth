@@ -26,7 +26,7 @@ public class User implements UserDetails {
     @GenericGenerator(name = "uuid4", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
-    @Size(min = 4, message = "{user.atLeastXCharacters}")
+    @Size(min = 4, message = "{object.atLeastXCharacters}")
     private String username;
 
     private String password;
@@ -34,7 +34,7 @@ public class User implements UserDetails {
     @Transient
     private String passwordConfirm;
 
-    @Size(min = 4, message = "{user.atLeastXCharacters}")
+    @Size(min = 4, message = "{object.atLeastXCharacters}")
     private String nickname;
 
     @NotEmpty(message = "{user.emptyPhone}")
