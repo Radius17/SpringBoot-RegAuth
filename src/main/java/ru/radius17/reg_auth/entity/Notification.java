@@ -23,6 +23,9 @@ public class Notification {
 
     private Integer status;
 
+    @Column(name = "notification_type")
+    private String notificationType;
+
     @Column(name = "date_time")
     private LocalDateTime dateTime;
 

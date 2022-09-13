@@ -42,6 +42,7 @@ public class NotificationService {
         Notification notification = new Notification();
         notification.setUser(user);
         notification.setStatus(statusCode);
+        notification.setNotificationType("push");
         notification.setDateTime(LocalDateTime.now());
         notification.setSubject(subject);
         notification.setMessage(message);

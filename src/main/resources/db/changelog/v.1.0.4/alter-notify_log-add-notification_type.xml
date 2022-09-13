@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="alter-notify_log-add-notification_type" author="Radius17">
+        <addColumn tableName="t_notify_log" >
+            <column afterColumn="description"
+                    name="notification_type"
+                    defaultValue=""
+                    type="varchar(20)" >
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="t_notify_log" columnName="notification_type" />
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

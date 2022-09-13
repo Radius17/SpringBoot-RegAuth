@@ -42,6 +42,7 @@ public class AdminLogsNotificationsController {
         searchCriterias.add(new SearchCriteria("user",":", "", "user.username", null));
         searchCriterias.add(new SearchCriteria("dateTime1",">=", "", "dateTime", "date"));
         searchCriterias.add(new SearchCriteria("dateTime2","<=", "", "dateTime", "date"));
+        searchCriterias.add(new SearchCriteria("notificationType",":", "", "", null));
         searchCriterias.add(new SearchCriteria("status",":", "","", null));
         return searchCriterias;
     }
