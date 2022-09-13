@@ -63,7 +63,7 @@
                 <th th:class="${colPrefix} + 'delete fit-content'"></th>
               </tr>
             </thead>
-            <tr th:if="${itemsPage.totalPages == 0}"><td colspan="10" th:text="#{message.data.absent}" /></tr>
+            <tr th:if="${itemsPage.totalPages == 0}"><td colspan="11" th:text="#{message.data.absent}" /></tr>
             <tr th:if="${itemsPage.totalPages > 0}" th:each="item: ${itemsPage}">
               <td th:class="${colPrefix} + 'test-push-message text-center pe-0 fit-content'"><a th:title="#{link.subscription.test}" class="btn btn-primary btn-block" th:attr="onclick=${'WebPushService.testUserSubscription(''' + item.username + ''')'}" th:href="@{#}"><i class="bi-chat-left-text-fill"></i></a></td>
               <td th:class="${colPrefix} + 'test-mail-message text-center pe-0 fit-content'"><a th:title="#{link.mail.test}" class="btn btn-primary btn-block" th:attr="onclick=${'testUserMail(''' + item.username + ''')'}" th:href="@{#}"><i class="bi-envelope"></i></a></td>
