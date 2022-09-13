@@ -24,6 +24,13 @@ public class AdminUsersRestController {
         User user = (User) mainService.loadUserByUsername(username);
         String subject = ms.getMessage("message.test.subscription.for.subject", null, LocaleContextHolder.getLocale()) + " " + user.getUsername();
         String text = ms.getMessage("message.test.subscription.for.text", null, LocaleContextHolder.getLocale()) + " " + user.getUsername();
-        return notificationService.send(user, subject, text);
+        return notificationService.sendPush(user, subject, text);
+    }
+    @PostMapping("/admin/users/mail-test")
+    public String sendTestMail( @RequestParam(name = "username") String username ) {
+        User user = (User) mainService.loadUserByUsername(username);
+        String subject = ms.getMessage("message.test.subscription.for.subject", null, LocaleContextHolder.getLocale()) + " " + user.getUsername();
+        String text = ms.getMessage("message.test.subscription.for.text", null, LocaleContextHolder.getLocale()) + " " + user.getUsername();
+        return notificationService.sendMail(user, subject, text);
     }
 }

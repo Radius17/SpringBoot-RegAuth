@@ -27,12 +27,12 @@ public class NotificationService {
         return notificationSender.getUint8Key();
     }
 
-    public String send(User user, String subject, String message){
+    public String sendPush(User user, String subject, String message){
         int statusCode = 500;
         String statusMessage = "";
 
         try {
-            statusCode = notificationSender.send(user, subject, message);
+            statusCode = notificationSender.sendPush(user, subject, message);
         } catch (Exception e){
             statusMessage = ExceptionUtils.getMessage(e);
         }
@@ -72,7 +72,52 @@ public class NotificationService {
         }
         return String.valueOf(statusCode);
     }
+    public String sendMail(User user, String subject, String message){
+        int statusCode = 500;
+        String statusMessage = "";
 
+        try {
+            statusCode = notificationSender.sendMail(user, subject, message);
+        } catch (Exception e){
+            statusMessage = ExceptionUtils.getMessage(e);
+        }
+
+        System.out.print("Status: " + statusCode);
+
+        Notification notification = new Notification();
+        notification.setUser(user);
+        notification.setStatus(statusCode);
+        notification.setNotificationType("mail");
+        notification.setDateTime(LocalDateTime.now());
+        notification.setSubject(subject);
+        notification.setMessage(message);
+        notification.setDescription(statusMessage);
+
+        String logging_level = env.getProperty("spring.application.notifications.logging.level");
+
+        switch (logging_level){
+            case "error":
+                // @FIXME Check response code
+                if(statusCode != 201){
+                    try {
+                        mainRepository.save(notification);
+                    } catch (Exception e){
+                        System.out.print(ExceptionUtils.getStackTrace(e));
+                    }
+                }
+                break;
+            case "debug":
+                try {
+                    mainRepository.save(notification);
+                } catch (Exception e){
+                    System.out.print(ExceptionUtils.getStackTrace(e));
+                }
+                break;
+            default:
+                break;
+        }
+        return String.valueOf(statusCode);
+    }
     public Page<Notification> getAllFilteredAndPaginated(Specification specification, Pageable pageable) {
         return mainRepository.findAll(specification, pageable);
     }

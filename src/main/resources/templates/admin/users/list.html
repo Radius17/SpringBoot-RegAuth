@@ -50,7 +50,8 @@
           <table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th th:class="${colPrefix} + 'test-message pe-0 fit-content'"></th>
+                <th th:class="${colPrefix} + 'test-push-message pe-0 fit-content'"></th>
+                <th th:class="${colPrefix} + 'test-mail-message pe-0 fit-content'"></th>
                 <th th:with="curColumn='id'" th:class="${colPrefix} + ${curColumn} + ' fit-content'"><span th:text="#{${messagePrefix} + ${curColumn}}"></span></th>
                 <th th:with="curColumn='username'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{${messagePrefix} + ${curColumn}}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
                 <th th:with="curColumn='nickname'" th:class="${colPrefix} + ${curColumn}"><a th:href="@{${mainLink}(sort=${curColumn}, direction=(${sortBy}==${curColumn} ? (${sortDir}=='ASC' ? 'DESC' : 'ASC') : 'ASC'))}"><span th:text="#{${messagePrefix} + ${curColumn}}"></span><i th:class="(${sortBy}==${curColumn}) ? 'bi ' + (${sortDir}=='DESC' ? 'bi-sort-up' : 'bi-sort-down') + ' ms-2' : 'hidden'"></i></a></th>
@@ -64,7 +65,8 @@
             </thead>
             <tr th:if="${itemsPage.totalPages == 0}"><td colspan="10" th:text="#{message.data.absent}" /></tr>
             <tr th:if="${itemsPage.totalPages > 0}" th:each="item: ${itemsPage}">
-              <td th:class="${colPrefix} + 'test-message text-center pe-0 fit-content'"><a th:title="#{link.subscription.test}" class="btn btn-primary btn-block" th:attr="onclick=${'WebPushService.testUserSubscription(''' + item.username + ''')'}" th:href="@{#}"><i class="bi-chat-left-text-fill"></i></a></td>
+              <td th:class="${colPrefix} + 'test-push-message text-center pe-0 fit-content'"><a th:title="#{link.subscription.test}" class="btn btn-primary btn-block" th:attr="onclick=${'WebPushService.testUserSubscription(''' + item.username + ''')'}" th:href="@{#}"><i class="bi-chat-left-text-fill"></i></a></td>
+              <td th:class="${colPrefix} + 'test-mail-message text-center pe-0 fit-content'"><a th:title="#{link.mail.test}" class="btn btn-primary btn-block" th:attr="onclick=${'testUserMail(''' + item.username + ''')'}" th:href="@{#}"><i class="bi-envelope"></i></a></td>
               <td th:with="curColumn='id'" th:class="${colPrefix} + ${curColumn} + ' fit-content'"><i th:title="*{__${'item.' + curColumn}__}" th:class="'bi bi-info-square text-primary fs-2 ps-0'"></i></td>
               <td th:with="curColumn='username'" th:class="${colPrefix} + ${curColumn}" th:text="*{__${'item.' + curColumn}__}" />
               <td th:with="curColumn='nickname'" th:class="${colPrefix} + ${curColumn}" th:text="*{__${'item.' + curColumn}__}" />

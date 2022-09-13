@@ -34,7 +34,7 @@ public class NotificationSender {
         return buffer;
     }
 
-    public int send(User user, String subject, String message) throws GeneralSecurityException, JoseException, IOException, ExecutionException, InterruptedException {
+    public int sendPush(User user, String subject, String message) throws GeneralSecurityException, JoseException, IOException, ExecutionException, InterruptedException {
         Security.addProvider(new BouncyCastleProvider());
 
         String subscriptionJson = user.getWebPushSubscription();
@@ -47,5 +47,8 @@ public class NotificationSender {
 
         return httpResponse.getStatusLine().getStatusCode();
     }
+    public int sendMail(User user, String subject, String message){
 
+        return 333;
+    }
 }

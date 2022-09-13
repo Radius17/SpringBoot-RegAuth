@@ -44,7 +44,7 @@ public class UserRestController {
         User mySelf = mainService.getMySelf();
         String subject = ms.getMessage("message.test.subscription.subject", null, LocaleContextHolder.getLocale());
         String text = ms.getMessage("message.test.subscription.text", null, LocaleContextHolder.getLocale());
-        return notificationService.send(mySelf, subject, text);
+        return notificationService.sendPush(mySelf, subject, text);
     }
 
 }
