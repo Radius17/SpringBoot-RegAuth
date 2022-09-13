@@ -3,7 +3,7 @@ spring:
     name: Reg and auth example (DEV)
     copyright:
       name: Moya firma
-      year-start: 2015
+      year-start: 2010
       year-stop: 2022
       designed-by: Radius17
     registration:
@@ -14,6 +14,25 @@ spring:
       keys:
         public: ${REG_AUTH_PUBLIC_KEY_FOR_NOTIFICATIONS:ENV_VAR_NEEDED}
         private: ${REG_AUTH_PRIVATE_KEY_FOR_NOTIFICATIONS:ENV_VAR_NEEDED}
+  mail:
+    host: ${MAILER_SMTP_HOST:ENV_VAR_NEEDED}
+    port: ${MAILER_SMTP_PORT:ENV_VAR_NEEDED}
+    username: ${MAILER_SMTP_USERNAME:ENV_VAR_NEEDED}
+    password: ${MAILER_SMTP_PASSWORD:ENV_VAR_NEEDED}
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
+          timeout: 2000
+    from:
+      email: ${MAILER_SMTP_FROM_EMAIL:ENV_VAR_NEEDED}
+      name: RegAuth
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${APP_POSTGRES_HOST:localhost}:${APP_POSTGRES_PORT:5432}/${APP_POSTGRES_DB:reg_auth}

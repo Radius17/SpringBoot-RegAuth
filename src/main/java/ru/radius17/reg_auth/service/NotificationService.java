@@ -78,11 +78,11 @@ public class NotificationService {
 
         try {
             statusCode = notificationSender.sendMail(user, subject, message);
-        } catch (Exception e){
+        } catch (Exception e) {
             statusMessage = ExceptionUtils.getMessage(e);
         }
 
-        System.out.print("Status: " + statusCode);
+        System.out.println("Status: " + statusCode + ". Status message: " + statusMessage);
 
         Notification notification = new Notification();
         notification.setUser(user);
@@ -97,8 +97,7 @@ public class NotificationService {
 
         switch (logging_level){
             case "error":
-                // @FIXME Check response code
-                if(statusCode != 201){
+                if(statusCode != 200){
                     try {
                         mainRepository.save(notification);
                     } catch (Exception e){

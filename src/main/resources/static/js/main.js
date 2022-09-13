@@ -13,8 +13,7 @@ function testUserMail (username) {
             return response.json();
         })
         .then((data) => {
-            // @FIXME Check response code
-            if(data != 201) {
+            if(data != 200) {
                 WebPushService.errorMessage(data);
                 alert('Failed !!!');
             } else {
