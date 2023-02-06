@@ -104,6 +104,9 @@ public class UserService implements UserDetailsService {
         return mainRepository.findAll(Sort.by("username"));
     }
 
+    public List<User> getAllByRoles(List<Role> roleList) {
+        return mainRepository.findDistinctByRolesIn(roleList);
+    }
     public Page<User> getAllFilteredAndPaginated(Specification specification, Pageable pageable) {
         return mainRepository.findAll(specification, pageable);
     }
