@@ -33,11 +33,12 @@ public class UserController {
     private Environment env;
 
     @RequestMapping("/login")
-    public String loginForm(Model model) {
+    public String loginForm(@RequestParam(value = "error", required = false) String errorLogin, Model model) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
             return "redirect:/";
         }
+        if(errorLogin != null) model.addAttribute("errorMessage", ms.getMessage("login.wrongUsernaneOrPassword", null, LocaleContextHolder.getLocale()));
         return "user/login";
     }
 
